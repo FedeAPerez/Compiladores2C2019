@@ -23,6 +23,12 @@ void pprintf(const char *str) {
 
 %}
 
+%union
+{
+        int intValue;
+        char *stringValue;
+}
+
 // Declare
 %token VAR ENDVAR
 // Conditions
@@ -30,29 +36,30 @@ void pprintf(const char *str) {
 // Cycles
 %token REPEAT
 // Asign
-%token OP_ASIG
+%token ID OP_ASIG
+// Const
+%token CONST_STRING CONST_INT
 
 %%
 programa: 
         programa1 {
                 pprintf("--- Compilacion ok ---");
-        }
-        ;
+        };
 
 programa1:
         declaraciones cuerpo
         | declaraciones
-        | cuerpo
-        ;
+        | cuerpo;
 
 
-cuerpo: cuerpo sentencia | sentencia;
+cuerpo: 
+        cuerpo sentencia 
+        | sentencia;
 
 sentencia:
         ciclo_repeat
         | asignacion
-        | condicional
-        ;
+        | condicional;
 
 declaraciones: 
         VAR ENDVAR {
@@ -65,13 +72,16 @@ ciclo_repeat:
         };
 
 asignacion:
-        OP_ASIG {
+        ID OP_ASIG termino {
                 pprintf("ASIGNACION");
         };
+
+termino:
+        CONST_STRING
+        | CONST_INT;
 
 condicional:
         IF {
                 pprintf("CONDICIONAL");
         };
-
 %%

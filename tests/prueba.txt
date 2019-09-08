@@ -1,5 +1,6 @@
 VAR
 ENDVAR
-:=
+pepe := "32"
+pepe2 := 32
 IF
 REPEAT

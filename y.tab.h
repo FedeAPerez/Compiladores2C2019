@@ -43,7 +43,10 @@
      ENDVAR = 259,
      IF = 260,
      REPEAT = 261,
-     OP_ASIG = 262
+     ID = 262,
+     OP_ASIG = 263,
+     CONST_STRING = 264,
+     CONST_INT = 265
    };
 #endif
 /* Tokens.  */
@@ -51,13 +54,24 @@
 #define ENDVAR 259
 #define IF 260
 #define REPEAT 261
-#define OP_ASIG 262
+#define ID 262
+#define OP_ASIG 263
+#define CONST_STRING 264
+#define CONST_INT 265
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+typedef union YYSTYPE
+#line 27 "Sintactico.y"
+{
+        int intValue;
+        char *stringValue;
+}
+/* Line 1529 of yacc.c.  */
+#line 74 "y.tab.h"
+	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 # define YYSTYPE_IS_TRIVIAL 1

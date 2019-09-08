@@ -40,12 +40,18 @@
       know about them.  */
    enum yytokentype {
      VAR = 258,
-     ENDVAR = 259
+     ENDVAR = 259,
+     IF = 260,
+     REPEAT = 261,
+     OP_ASIG = 262
    };
 #endif
 /* Tokens.  */
 #define VAR 258
 #define ENDVAR 259
+#define IF 260
+#define REPEAT 261
+#define OP_ASIG 262
 
 
 

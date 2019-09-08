@@ -5,7 +5,10 @@
 %}
 %%
 VAR                                     return VAR;
-ENDVAR                                  return ENDVAR;                        
+ENDVAR                                  return ENDVAR;
+REPEAT                                  return REPEAT;
+IF                                      return IF;
+":="                                    return OP_ASIG;
 \n                                      /* ignore end of line */;
 [ \t]+                                  /* ignore whitespace */;
 %%

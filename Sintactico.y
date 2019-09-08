@@ -25,6 +25,12 @@ void pprintf(const char *str) {
 
 // Declare
 %token VAR ENDVAR
+// Conditions
+%token IF
+// Cycles
+%token REPEAT
+// Asign
+%token OP_ASIG
 
 %%
 programa: 
@@ -34,12 +40,38 @@ programa:
         ;
 
 programa1:
-        declaraciones
+        declaraciones cuerpo
+        | declaraciones
+        | cuerpo
+        ;
+
+
+cuerpo: cuerpo sentencia | sentencia;
+
+sentencia:
+        ciclo_repeat
+        | asignacion
+        | condicional
         ;
 
 declaraciones: 
         VAR ENDVAR {
                 pprintf("DECLARACIONES");
+        };
+
+ciclo_repeat:
+        REPEAT {
+                pprintf("CICLO REPEAT");
+        };
+
+asignacion:
+        OP_ASIG {
+                pprintf("ASIGNACION");
+        };
+
+condicional:
+        IF {
+                pprintf("CONDICIONAL");
         };
 
 %%

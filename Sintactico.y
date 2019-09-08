@@ -29,28 +29,34 @@ void pprintf(const char *str) {
         char *stringValue;
 }
 
-// Declare
+// Sector declaraciones
 %token VAR ENDVAR
-// Conditions
+// Condiciones
 %token IF
-// Cycles
+// Ciclos
 %token REPEAT
-// Asign
+// Asignacion
 %token ID OP_ASIG
-// Const
+// Constantes
 %token CONST_STRING CONST_INT
+// Operadores
+%token OP_MULTIPLICACION
 
 %%
-programa: 
-        programa1 {
+programa_aumentado: 
+        programa {
                 pprintf("--- Compilacion ok ---");
         };
 
-programa1:
+programa:
         declaraciones cuerpo
         | declaraciones
         | cuerpo;
 
+declaraciones: 
+        VAR ENDVAR {
+                pprintf("VAR ENDVAR -> declaraciones\n");
+        };
 
 cuerpo: 
         cuerpo sentencia 
@@ -61,27 +67,36 @@ sentencia:
         | asignacion
         | condicional;
 
-declaraciones: 
-        VAR ENDVAR {
-                pprintf("DECLARACIONES");
+condicional:
+        IF {
+                pprintf("IF -> condicional\n");
         };
 
 ciclo_repeat:
         REPEAT {
-                pprintf("CICLO REPEAT");
+                pprintf("REPEAT -> ciclo_repeat\n");
         };
 
 asignacion:
         ID OP_ASIG termino {
-                pprintf("ASIGNACION");
+                pprintf("id OP_ASIG termino -> asignacion\n");
         };
 
 termino:
-        CONST_STRING
-        | CONST_INT;
-
-condicional:
-        IF {
-                pprintf("CONDICIONAL");
+        termino OP_MULTIPLICACION factor {
+                pprintf("\ttermino OP_MULTIPLICACION factor -> termino");
+        }
+        | factor {
+                pprintf("\tfactor -> termino");
         };
+
+factor:
+        CONST_STRING {
+                pprintf("\t\tCTE STRING -> factor");
+        }
+        | CONST_INT {
+                pprintf("\t\tCTE INT -> factor");
+        };
+
+
 %%

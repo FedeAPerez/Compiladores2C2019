@@ -2,5 +2,6 @@ VAR
 ENDVAR
 pepe := "32"
 pepe2 := 32
+factor := 24 * 32
 IF
 REPEAT

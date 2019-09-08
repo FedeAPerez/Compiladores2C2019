@@ -455,8 +455,9 @@ char *yytext;
 #line 1 "Lexico.l"
 #line 2 "Lexico.l"
 #include <stdio.h>
+#include "y.tab.h"
 
-#line 460 "lex.yy.c"
+#line 461 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -638,9 +639,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 5 "Lexico.l"
+#line 6 "Lexico.l"
 
-#line 644 "lex.yy.c"
+#line 645 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -725,31 +726,31 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 6 "Lexico.l"
+#line 7 "Lexico.l"
 return VAR;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 7 "Lexico.l"
+#line 8 "Lexico.l"
 return ENDVAR;                        
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 8 "Lexico.l"
+#line 9 "Lexico.l"
 /* ignore end of line */;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 9 "Lexico.l"
+#line 10 "Lexico.l"
 /* ignore whitespace */;
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 10 "Lexico.l"
+#line 11 "Lexico.l"
 ECHO;
 	YY_BREAK
-#line 753 "lex.yy.c"
+#line 754 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1746,6 +1747,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 10 "Lexico.l"
+#line 11 "Lexico.l"
 
 

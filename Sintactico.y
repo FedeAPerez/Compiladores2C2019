@@ -40,7 +40,11 @@ void pprintf(const char *str) {
 // Constantes
 %token CONST_STRING CONST_INT
 // Operadores
-%token OP_MULTIPLICACION
+%token OP_MULTIPLICACION OP_SUMA OP_RESTA OP_DIVISION
+// Parentesis
+%token PA PC
+
+
 
 %%
 programa_aumentado: 
@@ -83,11 +87,25 @@ asignacion:
         };
 
 termino:
-        termino OP_MULTIPLICACION factor {
-                pprintf("\ttermino OP_MULTIPLICACION factor -> termino");
+        termino operacion factor {
+                pprintf("\ttermino operacion factor -> termino\n");
         }
         | factor {
                 pprintf("\tfactor -> termino");
+        };
+
+operacion:
+        OP_MULTIPLICACION {
+                pprintf("\t multiplicacion -> operacion");
+        }
+        | OP_RESTA {
+                pprintf("\t resta -> operacion");
+        }
+        | OP_SUMA {
+                pprintf("\t suma -> operacion");
+        }
+        | OP_DIVISION{
+                pprintf("\t division -> operacion");
         };
 
 factor:
@@ -96,6 +114,12 @@ factor:
         }
         | CONST_INT {
                 pprintf("\t\tCTE INT -> factor");
+        }
+        | ID{
+                pprintf("\t\t ID -> factor");
+        }
+        | PA termino PC {
+                pprintf("\t\tParentesisA operacion parentesisC -> factor");
         };
 
 %%

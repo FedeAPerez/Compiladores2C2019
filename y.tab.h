@@ -47,7 +47,12 @@
      OP_ASIG = 263,
      CONST_STRING = 264,
      CONST_INT = 265,
-     OP_MULTIPLICACION = 266
+     OP_MULTIPLICACION = 266,
+     OP_SUMA = 267,
+     OP_RESTA = 268,
+     OP_DIVISION = 269,
+     PA = 270,
+     PC = 271
    };
 #endif
 /* Tokens.  */
@@ -60,6 +65,11 @@
 #define CONST_STRING 264
 #define CONST_INT 265
 #define OP_MULTIPLICACION 266
+#define OP_SUMA 267
+#define OP_RESTA 268
+#define OP_DIVISION 269
+#define PA 270
+#define PC 271
 
 
 
@@ -72,7 +82,7 @@ typedef union YYSTYPE
         char *stringValue;
 }
 /* Line 1529 of yacc.c.  */
-#line 76 "y.tab.h"
+#line 86 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

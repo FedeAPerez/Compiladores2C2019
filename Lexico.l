@@ -10,6 +10,11 @@ REPEAT                                  return REPEAT;
 IF                                      return IF;
 ":="                                    return OP_ASIG;
 "*"                                     return OP_MULTIPLICACION;
+"+"                                     return OP_SUMA;
+"/"                                     return OP_DIVISION;
+"-"                                     return OP_RESTA;
+"("                                     return PA;
+")"                                     return PC;
 [0-9]*                                  { yylval.intValue = atoi(yytext); return CONST_INT; }
 [a-zA-Z][a-zA-Z0-9_]*                   { yylval.stringValue = yytext; return ID; }
 \"[(a-zA-Z0-9_ )]*\"                    { yylval.stringValue = yytext; return CONST_STRING; }

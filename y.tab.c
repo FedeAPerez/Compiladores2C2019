@@ -1479,7 +1479,7 @@ yyreduce:
   case 24:
 #line 121 "Sintactico.y"
     {
-                pprintf("\tParentesisA operacion parentesisC -> factor");
+                pprintf("\t\tParentesisA operacion parentesisC -> factor");
         }
     break;
 

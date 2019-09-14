@@ -1,50 +1,61 @@
 %{
-#include <stdio.h>
-#include <string.h>
- 
-void yyerror(const char *str)
-{
-        fprintf(stderr,"error: %s\n",str);
-}
- 
-int yywrap()
-{
-        return 1;
-} 
-  
-int main()
-{
-        yyparse();
-}
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <conio.h>
+	#include <string.h>
+	#include "y.tab.h"
 
-void pprintf(const char *str) {
-        printf("\t %s \n", str);
-}
-
+	
+	//Declaracion de funciones
+	void yyerror(const char *str);
+	int yywrap();
+	void pprintf(const char *str);
+	
+	int yystopparser=0;
+	FILE  *yyin;
 %}
 
 %union
 {
         int intValue;
+		float floatValue;
         char *stringValue;
 }
 
 // Sector declaraciones
-%token VAR ENDVAR INTEGER FLOAT
+%token VAR ENDVAR
+
+//Tipos de datos
+%token TIPO_INTEGER TIPO_FLOAT TIPO_STRING
+%token ID
+
 // Condiciones
-%token IF
+%token IF THEN ELSE ENDIF AND OR NOT
+
 // Ciclos
-%token REPEAT
+%token REPEAT UNTIL
+
 // Asignacion
-%token ID OP_ASIG
+%token OP_ASIG
+
 // Constantes
-%token CONST_STRING CONST_INT
+%token CONST_FLOAT CONST_INT CONST_STRING
+
 // Operadores
 %token OP_MULTIPLICACION OP_SUMA OP_RESTA OP_DIVISION
-// Parentesis, corchetes, otros caracteres
-%token PA PC CA CC COMA DOS_PUNTOS
 
+// Parentesis, corchetes
+%token PARENTESIS_ABRE PARENTESIS_CIERRA CORCHETE_ABRE CORCHETE_CIERRA
 
+//Entrada y salida
+%token PRINT READ
+
+//Operadores comparativos
+%token OP_MENOR OP_MENOR_IGUAL OP_MAYOR OP_MAYOR_IGUAL
+%token OP_IGUAL OP_DISTINTO
+
+//Operadores de puntuacion
+%token PYC COMA DOS_PUNTOS
 
 %%
 programa_aumentado: 
@@ -65,7 +76,7 @@ declaraciones:
         | VAR ENDVAR;
 
 linea_declaraciones:
-        CA lista_tipo_datos CC DOS_PUNTOS CA lista_variables CC{
+        CORCHETE_ABRE lista_tipo_datos CORCHETE_CIERRA DOS_PUNTOS CORCHETE_ABRE lista_variables CORCHETE_CIERRA {
                 pprintf("\tCA lista_tipo_datos CC DOS_PUNTOS CA lista_variables CC -> linea_declaraciones");
         };
 
@@ -86,14 +97,15 @@ lista_variables:
         };
 
 tipo_dato:
-        INTEGER {
+        TIPO_INTEGER {
                 pprintf("\t\tINTEGER -> tipo_dato");
         };
-        | FLOAT{
+        | TIPO_FLOAT{
                 pprintf("\t\tFLOAT -> tipo_dato");
         };
 //Fin Declaraciones
 
+//Seccion codigo
 cuerpo: 
         cuerpo sentencia 
         | sentencia;
@@ -102,39 +114,67 @@ sentencia:
         ciclo_repeat
         | asignacion
         | asignacion_multiple
-        | condicional;
+        | condicional
+		| expresion_aritmetica;
 
 condicional:
-        IF {
-                pprintf("IF -> condicional\n");
-        };
+        IF expresion_logica THEN cuerpo ENDIF 	{ pprintf("condicional -> IF expresion_logica THEN cuerpo ENDIF"); };
+		
+condicional: 
+		IF expresion_logica THEN cuerpo ELSE cuerpo ENDIF 	{ pprintf("IF expresion_logica THEN cuerpo ELSE cuerpo ENDIF"); };
 
 ciclo_repeat:
-        REPEAT {
-                pprintf("REPEAT -> ciclo_repeat\n");
-        };
+        REPEAT cuerpo UNTIL expresion_logica 	{  pprintf("ciclo_repeat -> REPEAT cuerpo UNTIL expresion_logica\n");} 
 
 asignacion:
-        ID OP_ASIG termino {
-                pprintf("id OP_ASIG termino -> asignacion\n");
-        };
+        ID OP_ASIG expresion_aritmetica { pprintf("asignacion -> ID OP_ASIG expresion_aritmetica\n"); };
 
 asignacion_multiple:
-        CA lista_variables CC OP_ASIG CA lista_datos CC{
-                pprintf("CA lista_variables CC OP_ASIG CA lista_datos CC --> asignacion_multiple\n");
+        asignacion_multiple_declare OP_ASIG asignacion_multiple_asign {
+                pprintf("asignacion_multiple_declare OP_ASIG asignacion_multiple_asign --> asignacion_multiple\n");
+        };
+
+asignacion_multiple_declare:
+        CORCHETE_ABRE lista_variables CORCHETE_CIERRA {
+                pprintf("\t\tCA lista_variables CC --> asignacion_multiple_declare\n");
+        };
+
+asignacion_multiple_asign: 
+        CORCHETE_ABRE lista_datos CORCHETE_CIERRA {
+                pprintf("\t\tCA lista_datos CC --> asignacion_multiple_asign\n");
         };
 
 lista_datos:
-        lista_datos COMA factor{
-                pprintf("\tlista_datos COMA factor -> lista_datos");
+        lista_datos COMA expresion_aritmetica  {
+                pprintf("\tlista_datos COMA termino -> lista_datos");
         }
-        | factor {
-                pprintf("\t\tfactor -> lista_datos");
+        | expresion_aritmetica {
+                pprintf("\t\ttermino -> lista_datos");
         };
+		
 
-termino:
-        termino operacion factor {
-                pprintf("\t\ttermino operacion factor -> termino");
+
+//Expresiones
+expresion_logica:
+		termino_logico AND termino_logico			{pprintf("expresion_logica -> termino_logico AND termino_logico");}
+		| termino_logico OR termino_logico			{pprintf("expresion_logica -> termino_logico OR termino_logico");}
+		| NOT termino_logico						{pprintf("expresion_logica -> NOT termino_logico");}
+		| termino_logico							{pprintf("expresion_logica -> termino_logico");}
+
+termino_logico:
+		expresion_aritmetica comparacion expresion_aritmetica 			{pprintf("termino_logico -> expresion_aritmetica comparacion expresion_aritmetica");}
+
+comparacion:
+		OP_MENOR 					{pprintf("comparacion -> OP_MENOR");}
+		| OP_MENOR_IGUAL 			{pprintf("comparacion -> OP_MENOR_IGUAL");}
+		| OP_MAYOR 					{pprintf("comparacion -> OP_MAYOR");}
+		| OP_MAYOR_IGUAL			{pprintf("comparacion -> OP_MAYOR_IGUAL");}
+		| OP_IGUAL 					{pprintf("comparacion -> OP_IGUAL");}
+		| OP_DISTINTO				{pprintf("comparacion -> OP_DISTINTO");}
+
+expresion_aritmetica:
+        expresion_aritmetica operacion factor {
+                pprintf("\t\ttermino operacion factor -> expresion_aritmetica");
         }
         | factor {
                 pprintf("\t\tfactor -> termino");
@@ -161,14 +201,46 @@ factor:
         | CONST_INT {
                 pprintf("\t\t\tCTE INT -> factor");
         }
+		| CONST_FLOAT {
+                pprintf("\t\t\tCTE FLOAT -> factor");
+        }
         | ID{
                 pprintf("\t\t\tID -> factor");
         }
-        | termino{
-                pprintf("\t\t\toperacion-> factor");                
-        }
-        | PA termino PC {
+        | PARENTESIS_ABRE expresion_aritmetica PARENTESIS_CIERRA {
                 pprintf("\t\t\tParentesisA operacion parentesisC -> factor");
         };
 
+
 %%
+
+
+  
+int main(int argc,char *argv[])
+{
+	if ((yyin = fopen(argv[1], "rt")) == NULL)
+	{
+		printf("\nNo se puede abrir el archivo: %s\n", argv[1]);
+	}
+	else
+	{
+		yyparse();
+		fclose(yyin);
+	}
+	return 0;
+}
+
+void pprintf(const char *str) {
+        printf("\t %s \n", str);
+}
+
+void yyerror(const char *str)
+{
+        fprintf(stderr,"error: %s\n",str);
+		exit(1);
+}
+ 
+int yywrap()
+{
+        return 1;
+} 

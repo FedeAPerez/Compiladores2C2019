@@ -1,0 +1,1176 @@
+Terminals unused in grammar
+
+   TIPO_STRING
+   PRINT
+   READ
+   PYC
+
+
+Gramática
+
+    0 $accept: programa_aumentado $end
+
+    1 programa_aumentado: programa
+
+    2 programa: declaraciones cuerpo
+    3         | declaraciones
+    4         | cuerpo
+
+    5 declaraciones: VAR linea_declaraciones ENDVAR
+    6              | VAR ENDVAR
+
+    7 linea_declaraciones: CORCHETE_ABRE lista_tipo_datos CORCHETE_CIERRA DOS_PUNTOS CORCHETE_ABRE lista_variables CORCHETE_CIERRA
+
+    8 lista_tipo_datos: lista_tipo_datos COMA tipo_dato
+    9                 | tipo_dato
+
+   10 lista_variables: lista_variables COMA ID
+   11                | ID
+
+   12 tipo_dato: TIPO_INTEGER
+   13          | TIPO_FLOAT
+
+   14 cuerpo: cuerpo sentencia
+   15       | sentencia
+
+   16 sentencia: ciclo_repeat
+   17          | asignacion
+   18          | asignacion_multiple
+   19          | condicional
+   20          | expresion_aritmetica
+
+   21 condicional: IF expresion_logica THEN cuerpo ENDIF
+   22            | IF expresion_logica THEN cuerpo ELSE cuerpo ENDIF
+
+   23 ciclo_repeat: REPEAT cuerpo UNTIL expresion_logica
+
+   24 asignacion: ID OP_ASIG expresion_aritmetica
+
+   25 asignacion_multiple: asignacion_multiple_declare OP_ASIG asignacion_multiple_asign
+
+   26 asignacion_multiple_declare: CORCHETE_ABRE lista_variables CORCHETE_CIERRA
+
+   27 asignacion_multiple_asign: CORCHETE_ABRE lista_datos CORCHETE_CIERRA
+
+   28 lista_datos: lista_datos COMA expresion_aritmetica
+   29            | expresion_aritmetica
+
+   30 expresion_logica: termino_logico AND termino_logico
+   31                 | termino_logico OR termino_logico
+   32                 | NOT termino_logico
+   33                 | termino_logico
+
+   34 termino_logico: expresion_aritmetica comparacion expresion_aritmetica
+
+   35 comparacion: OP_MENOR
+   36            | OP_MENOR_IGUAL
+   37            | OP_MAYOR
+   38            | OP_MAYOR_IGUAL
+   39            | OP_IGUAL
+   40            | OP_DISTINTO
+
+   41 expresion_aritmetica: expresion_aritmetica operacion factor
+   42                     | factor
+
+   43 operacion: OP_MULTIPLICACION
+   44          | OP_RESTA
+   45          | OP_SUMA
+   46          | OP_DIVISION
+
+   47 factor: CONST_STRING
+   48       | CONST_INT
+   49       | CONST_FLOAT
+   50       | ID
+   51       | PARENTESIS_ABRE expresion_aritmetica PARENTESIS_CIERRA
+
+
+Terminales con las reglas donde aparecen
+
+$end (0) 0
+error (256)
+VAR (258) 5 6
+ENDVAR (259) 5 6
+TIPO_INTEGER (260) 12
+TIPO_FLOAT (261) 13
+TIPO_STRING (262)
+ID (263) 10 11 24 50
+IF (264) 21 22
+THEN (265) 21 22
+ELSE (266) 22
+ENDIF (267) 21 22
+AND (268) 30
+OR (269) 31
+NOT (270) 32
+REPEAT (271) 23
+UNTIL (272) 23
+OP_ASIG (273) 24 25
+CONST_FLOAT (274) 49
+CONST_INT (275) 48
+CONST_STRING (276) 47
+OP_MULTIPLICACION (277) 43
+OP_SUMA (278) 45
+OP_RESTA (279) 44
+OP_DIVISION (280) 46
+PARENTESIS_ABRE (281) 51
+PARENTESIS_CIERRA (282) 51
+CORCHETE_ABRE (283) 7 26 27
+CORCHETE_CIERRA (284) 7 26 27
+PRINT (285)
+READ (286)
+OP_MENOR (287) 35
+OP_MENOR_IGUAL (288) 36
+OP_MAYOR (289) 37
+OP_MAYOR_IGUAL (290) 38
+OP_IGUAL (291) 39
+OP_DISTINTO (292) 40
+PYC (293)
+COMA (294) 8 10 28
+DOS_PUNTOS (295) 7
+
+
+No terminales con las reglas donde aparecen
+
+$accept (41)
+    en la izquierda: 0
+programa_aumentado (42)
+    en la izquierda: 1, en la derecha: 0
+programa (43)
+    en la izquierda: 2 3 4, en la derecha: 1
+declaraciones (44)
+    en la izquierda: 5 6, en la derecha: 2 3
+linea_declaraciones (45)
+    en la izquierda: 7, en la derecha: 5
+lista_tipo_datos (46)
+    en la izquierda: 8 9, en la derecha: 7 8
+lista_variables (47)
+    en la izquierda: 10 11, en la derecha: 7 10 26
+tipo_dato (48)
+    en la izquierda: 12 13, en la derecha: 8 9
+cuerpo (49)
+    en la izquierda: 14 15, en la derecha: 2 4 14 21 22 23
+sentencia (50)
+    en la izquierda: 16 17 18 19 20, en la derecha: 14 15
+condicional (51)
+    en la izquierda: 21 22, en la derecha: 19
+ciclo_repeat (52)
+    en la izquierda: 23, en la derecha: 16
+asignacion (53)
+    en la izquierda: 24, en la derecha: 17
+asignacion_multiple (54)
+    en la izquierda: 25, en la derecha: 18
+asignacion_multiple_declare (55)
+    en la izquierda: 26, en la derecha: 25
+asignacion_multiple_asign (56)
+    en la izquierda: 27, en la derecha: 25
+lista_datos (57)
+    en la izquierda: 28 29, en la derecha: 27 28
+expresion_logica (58)
+    en la izquierda: 30 31 32 33, en la derecha: 21 22 23
+termino_logico (59)
+    en la izquierda: 34, en la derecha: 30 31 32 33
+comparacion (60)
+    en la izquierda: 35 36 37 38 39 40, en la derecha: 34
+expresion_aritmetica (61)
+    en la izquierda: 41 42, en la derecha: 20 24 28 29 34 41 51
+operacion (62)
+    en la izquierda: 43 44 45 46, en la derecha: 41
+factor (63)
+    en la izquierda: 47 48 49 50 51, en la derecha: 41 42
+
+
+estado 0
+
+    0 $accept: . programa_aumentado $end
+
+    VAR              desplazar e ir al estado 1
+    ID               desplazar e ir al estado 2
+    IF               desplazar e ir al estado 3
+    REPEAT           desplazar e ir al estado 4
+    CONST_FLOAT      desplazar e ir al estado 5
+    CONST_INT        desplazar e ir al estado 6
+    CONST_STRING     desplazar e ir al estado 7
+    PARENTESIS_ABRE  desplazar e ir al estado 8
+    CORCHETE_ABRE    desplazar e ir al estado 9
+
+    programa_aumentado           ir al estado 10
+    programa                     ir al estado 11
+    declaraciones                ir al estado 12
+    cuerpo                       ir al estado 13
+    sentencia                    ir al estado 14
+    condicional                  ir al estado 15
+    ciclo_repeat                 ir al estado 16
+    asignacion                   ir al estado 17
+    asignacion_multiple          ir al estado 18
+    asignacion_multiple_declare  ir al estado 19
+    expresion_aritmetica         ir al estado 20
+    factor                       ir al estado 21
+
+
+estado 1
+
+    5 declaraciones: VAR . linea_declaraciones ENDVAR
+    6              | VAR . ENDVAR
+
+    ENDVAR         desplazar e ir al estado 22
+    CORCHETE_ABRE  desplazar e ir al estado 23
+
+    linea_declaraciones  ir al estado 24
+
+
+estado 2
+
+   24 asignacion: ID . OP_ASIG expresion_aritmetica
+   50 factor: ID .
+
+    OP_ASIG  desplazar e ir al estado 25
+
+    $default  reduce usando la regla 50 (factor)
+
+
+estado 3
+
+   21 condicional: IF . expresion_logica THEN cuerpo ENDIF
+   22            | IF . expresion_logica THEN cuerpo ELSE cuerpo ENDIF
+
+    ID               desplazar e ir al estado 26
+    NOT              desplazar e ir al estado 27
+    CONST_FLOAT      desplazar e ir al estado 5
+    CONST_INT        desplazar e ir al estado 6
+    CONST_STRING     desplazar e ir al estado 7
+    PARENTESIS_ABRE  desplazar e ir al estado 8
+
+    expresion_logica      ir al estado 28
+    termino_logico        ir al estado 29
+    expresion_aritmetica  ir al estado 30
+    factor                ir al estado 21
+
+
+estado 4
+
+   23 ciclo_repeat: REPEAT . cuerpo UNTIL expresion_logica
+
+    ID               desplazar e ir al estado 2
+    IF               desplazar e ir al estado 3
+    REPEAT           desplazar e ir al estado 4
+    CONST_FLOAT      desplazar e ir al estado 5
+    CONST_INT        desplazar e ir al estado 6
+    CONST_STRING     desplazar e ir al estado 7
+    PARENTESIS_ABRE  desplazar e ir al estado 8
+    CORCHETE_ABRE    desplazar e ir al estado 9
+
+    cuerpo                       ir al estado 31
+    sentencia                    ir al estado 14
+    condicional                  ir al estado 15
+    ciclo_repeat                 ir al estado 16
+    asignacion                   ir al estado 17
+    asignacion_multiple          ir al estado 18
+    asignacion_multiple_declare  ir al estado 19
+    expresion_aritmetica         ir al estado 20
+    factor                       ir al estado 21
+
+
+estado 5
+
+   49 factor: CONST_FLOAT .
+
+    $default  reduce usando la regla 49 (factor)
+
+
+estado 6
+
+   48 factor: CONST_INT .
+
+    $default  reduce usando la regla 48 (factor)
+
+
+estado 7
+
+   47 factor: CONST_STRING .
+
+    $default  reduce usando la regla 47 (factor)
+
+
+estado 8
+
+   51 factor: PARENTESIS_ABRE . expresion_aritmetica PARENTESIS_CIERRA
+
+    ID               desplazar e ir al estado 26
+    CONST_FLOAT      desplazar e ir al estado 5
+    CONST_INT        desplazar e ir al estado 6
+    CONST_STRING     desplazar e ir al estado 7
+    PARENTESIS_ABRE  desplazar e ir al estado 8
+
+    expresion_aritmetica  ir al estado 32
+    factor                ir al estado 21
+
+
+estado 9
+
+   26 asignacion_multiple_declare: CORCHETE_ABRE . lista_variables CORCHETE_CIERRA
+
+    ID  desplazar e ir al estado 33
+
+    lista_variables  ir al estado 34
+
+
+estado 10
+
+    0 $accept: programa_aumentado . $end
+
+    $end  desplazar e ir al estado 35
+
+
+estado 11
+
+    1 programa_aumentado: programa .
+
+    $default  reduce usando la regla 1 (programa_aumentado)
+
+
+estado 12
+
+    2 programa: declaraciones . cuerpo
+    3         | declaraciones .
+
+    ID               desplazar e ir al estado 2
+    IF               desplazar e ir al estado 3
+    REPEAT           desplazar e ir al estado 4
+    CONST_FLOAT      desplazar e ir al estado 5
+    CONST_INT        desplazar e ir al estado 6
+    CONST_STRING     desplazar e ir al estado 7
+    PARENTESIS_ABRE  desplazar e ir al estado 8
+    CORCHETE_ABRE    desplazar e ir al estado 9
+
+    $default  reduce usando la regla 3 (programa)
+
+    cuerpo                       ir al estado 36
+    sentencia                    ir al estado 14
+    condicional                  ir al estado 15
+    ciclo_repeat                 ir al estado 16
+    asignacion                   ir al estado 17
+    asignacion_multiple          ir al estado 18
+    asignacion_multiple_declare  ir al estado 19
+    expresion_aritmetica         ir al estado 20
+    factor                       ir al estado 21
+
+
+estado 13
+
+    4 programa: cuerpo .
+   14 cuerpo: cuerpo . sentencia
+
+    ID               desplazar e ir al estado 2
+    IF               desplazar e ir al estado 3
+    REPEAT           desplazar e ir al estado 4
+    CONST_FLOAT      desplazar e ir al estado 5
+    CONST_INT        desplazar e ir al estado 6
+    CONST_STRING     desplazar e ir al estado 7
+    PARENTESIS_ABRE  desplazar e ir al estado 8
+    CORCHETE_ABRE    desplazar e ir al estado 9
+
+    $default  reduce usando la regla 4 (programa)
+
+    sentencia                    ir al estado 37
+    condicional                  ir al estado 15
+    ciclo_repeat                 ir al estado 16
+    asignacion                   ir al estado 17
+    asignacion_multiple          ir al estado 18
+    asignacion_multiple_declare  ir al estado 19
+    expresion_aritmetica         ir al estado 20
+    factor                       ir al estado 21
+
+
+estado 14
+
+   15 cuerpo: sentencia .
+
+    $default  reduce usando la regla 15 (cuerpo)
+
+
+estado 15
+
+   19 sentencia: condicional .
+
+    $default  reduce usando la regla 19 (sentencia)
+
+
+estado 16
+
+   16 sentencia: ciclo_repeat .
+
+    $default  reduce usando la regla 16 (sentencia)
+
+
+estado 17
+
+   17 sentencia: asignacion .
+
+    $default  reduce usando la regla 17 (sentencia)
+
+
+estado 18
+
+   18 sentencia: asignacion_multiple .
+
+    $default  reduce usando la regla 18 (sentencia)
+
+
+estado 19
+
+   25 asignacion_multiple: asignacion_multiple_declare . OP_ASIG asignacion_multiple_asign
+
+    OP_ASIG  desplazar e ir al estado 38
+
+
+estado 20
+
+   20 sentencia: expresion_aritmetica .
+   41 expresion_aritmetica: expresion_aritmetica . operacion factor
+
+    OP_MULTIPLICACION  desplazar e ir al estado 39
+    OP_SUMA            desplazar e ir al estado 40
+    OP_RESTA           desplazar e ir al estado 41
+    OP_DIVISION        desplazar e ir al estado 42
+
+    $default  reduce usando la regla 20 (sentencia)
+
+    operacion  ir al estado 43
+
+
+estado 21
+
+   42 expresion_aritmetica: factor .
+
+    $default  reduce usando la regla 42 (expresion_aritmetica)
+
+
+estado 22
+
+    6 declaraciones: VAR ENDVAR .
+
+    $default  reduce usando la regla 6 (declaraciones)
+
+
+estado 23
+
+    7 linea_declaraciones: CORCHETE_ABRE . lista_tipo_datos CORCHETE_CIERRA DOS_PUNTOS CORCHETE_ABRE lista_variables CORCHETE_CIERRA
+
+    TIPO_INTEGER  desplazar e ir al estado 44
+    TIPO_FLOAT    desplazar e ir al estado 45
+
+    lista_tipo_datos  ir al estado 46
+    tipo_dato         ir al estado 47
+
+
+estado 24
+
+    5 declaraciones: VAR linea_declaraciones . ENDVAR
+
+    ENDVAR  desplazar e ir al estado 48
+
+
+estado 25
+
+   24 asignacion: ID OP_ASIG . expresion_aritmetica
+
+    ID               desplazar e ir al estado 26
+    CONST_FLOAT      desplazar e ir al estado 5
+    CONST_INT        desplazar e ir al estado 6
+    CONST_STRING     desplazar e ir al estado 7
+    PARENTESIS_ABRE  desplazar e ir al estado 8
+
+    expresion_aritmetica  ir al estado 49
+    factor                ir al estado 21
+
+
+estado 26
+
+   50 factor: ID .
+
+    $default  reduce usando la regla 50 (factor)
+
+
+estado 27
+
+   32 expresion_logica: NOT . termino_logico
+
+    ID               desplazar e ir al estado 26
+    CONST_FLOAT      desplazar e ir al estado 5
+    CONST_INT        desplazar e ir al estado 6
+    CONST_STRING     desplazar e ir al estado 7
+    PARENTESIS_ABRE  desplazar e ir al estado 8
+
+    termino_logico        ir al estado 50
+    expresion_aritmetica  ir al estado 30
+    factor                ir al estado 21
+
+
+estado 28
+
+   21 condicional: IF expresion_logica . THEN cuerpo ENDIF
+   22            | IF expresion_logica . THEN cuerpo ELSE cuerpo ENDIF
+
+    THEN  desplazar e ir al estado 51
+
+
+estado 29
+
+   30 expresion_logica: termino_logico . AND termino_logico
+   31                 | termino_logico . OR termino_logico
+   33                 | termino_logico .
+
+    AND  desplazar e ir al estado 52
+    OR   desplazar e ir al estado 53
+
+    $default  reduce usando la regla 33 (expresion_logica)
+
+
+estado 30
+
+   34 termino_logico: expresion_aritmetica . comparacion expresion_aritmetica
+   41 expresion_aritmetica: expresion_aritmetica . operacion factor
+
+    OP_MULTIPLICACION  desplazar e ir al estado 39
+    OP_SUMA            desplazar e ir al estado 40
+    OP_RESTA           desplazar e ir al estado 41
+    OP_DIVISION        desplazar e ir al estado 42
+    OP_MENOR           desplazar e ir al estado 54
+    OP_MENOR_IGUAL     desplazar e ir al estado 55
+    OP_MAYOR           desplazar e ir al estado 56
+    OP_MAYOR_IGUAL     desplazar e ir al estado 57
+    OP_IGUAL           desplazar e ir al estado 58
+    OP_DISTINTO        desplazar e ir al estado 59
+
+    comparacion  ir al estado 60
+    operacion    ir al estado 43
+
+
+estado 31
+
+   14 cuerpo: cuerpo . sentencia
+   23 ciclo_repeat: REPEAT cuerpo . UNTIL expresion_logica
+
+    ID               desplazar e ir al estado 2
+    IF               desplazar e ir al estado 3
+    REPEAT           desplazar e ir al estado 4
+    UNTIL            desplazar e ir al estado 61
+    CONST_FLOAT      desplazar e ir al estado 5
+    CONST_INT        desplazar e ir al estado 6
+    CONST_STRING     desplazar e ir al estado 7
+    PARENTESIS_ABRE  desplazar e ir al estado 8
+    CORCHETE_ABRE    desplazar e ir al estado 9
+
+    sentencia                    ir al estado 37
+    condicional                  ir al estado 15
+    ciclo_repeat                 ir al estado 16
+    asignacion                   ir al estado 17
+    asignacion_multiple          ir al estado 18
+    asignacion_multiple_declare  ir al estado 19
+    expresion_aritmetica         ir al estado 20
+    factor                       ir al estado 21
+
+
+estado 32
+
+   41 expresion_aritmetica: expresion_aritmetica . operacion factor
+   51 factor: PARENTESIS_ABRE expresion_aritmetica . PARENTESIS_CIERRA
+
+    OP_MULTIPLICACION  desplazar e ir al estado 39
+    OP_SUMA            desplazar e ir al estado 40
+    OP_RESTA           desplazar e ir al estado 41
+    OP_DIVISION        desplazar e ir al estado 42
+    PARENTESIS_CIERRA  desplazar e ir al estado 62
+
+    operacion  ir al estado 43
+
+
+estado 33
+
+   11 lista_variables: ID .
+
+    $default  reduce usando la regla 11 (lista_variables)
+
+
+estado 34
+
+   10 lista_variables: lista_variables . COMA ID
+   26 asignacion_multiple_declare: CORCHETE_ABRE lista_variables . CORCHETE_CIERRA
+
+    CORCHETE_CIERRA  desplazar e ir al estado 63
+    COMA             desplazar e ir al estado 64
+
+
+estado 35
+
+    0 $accept: programa_aumentado $end .
+
+    $default  aceptar
+
+
+estado 36
+
+    2 programa: declaraciones cuerpo .
+   14 cuerpo: cuerpo . sentencia
+
+    ID               desplazar e ir al estado 2
+    IF               desplazar e ir al estado 3
+    REPEAT           desplazar e ir al estado 4
+    CONST_FLOAT      desplazar e ir al estado 5
+    CONST_INT        desplazar e ir al estado 6
+    CONST_STRING     desplazar e ir al estado 7
+    PARENTESIS_ABRE  desplazar e ir al estado 8
+    CORCHETE_ABRE    desplazar e ir al estado 9
+
+    $default  reduce usando la regla 2 (programa)
+
+    sentencia                    ir al estado 37
+    condicional                  ir al estado 15
+    ciclo_repeat                 ir al estado 16
+    asignacion                   ir al estado 17
+    asignacion_multiple          ir al estado 18
+    asignacion_multiple_declare  ir al estado 19
+    expresion_aritmetica         ir al estado 20
+    factor                       ir al estado 21
+
+
+estado 37
+
+   14 cuerpo: cuerpo sentencia .
+
+    $default  reduce usando la regla 14 (cuerpo)
+
+
+estado 38
+
+   25 asignacion_multiple: asignacion_multiple_declare OP_ASIG . asignacion_multiple_asign
+
+    CORCHETE_ABRE  desplazar e ir al estado 65
+
+    asignacion_multiple_asign  ir al estado 66
+
+
+estado 39
+
+   43 operacion: OP_MULTIPLICACION .
+
+    $default  reduce usando la regla 43 (operacion)
+
+
+estado 40
+
+   45 operacion: OP_SUMA .
+
+    $default  reduce usando la regla 45 (operacion)
+
+
+estado 41
+
+   44 operacion: OP_RESTA .
+
+    $default  reduce usando la regla 44 (operacion)
+
+
+estado 42
+
+   46 operacion: OP_DIVISION .
+
+    $default  reduce usando la regla 46 (operacion)
+
+
+estado 43
+
+   41 expresion_aritmetica: expresion_aritmetica operacion . factor
+
+    ID               desplazar e ir al estado 26
+    CONST_FLOAT      desplazar e ir al estado 5
+    CONST_INT        desplazar e ir al estado 6
+    CONST_STRING     desplazar e ir al estado 7
+    PARENTESIS_ABRE  desplazar e ir al estado 8
+
+    factor  ir al estado 67
+
+
+estado 44
+
+   12 tipo_dato: TIPO_INTEGER .
+
+    $default  reduce usando la regla 12 (tipo_dato)
+
+
+estado 45
+
+   13 tipo_dato: TIPO_FLOAT .
+
+    $default  reduce usando la regla 13 (tipo_dato)
+
+
+estado 46
+
+    7 linea_declaraciones: CORCHETE_ABRE lista_tipo_datos . CORCHETE_CIERRA DOS_PUNTOS CORCHETE_ABRE lista_variables CORCHETE_CIERRA
+    8 lista_tipo_datos: lista_tipo_datos . COMA tipo_dato
+
+    CORCHETE_CIERRA  desplazar e ir al estado 68
+    COMA             desplazar e ir al estado 69
+
+
+estado 47
+
+    9 lista_tipo_datos: tipo_dato .
+
+    $default  reduce usando la regla 9 (lista_tipo_datos)
+
+
+estado 48
+
+    5 declaraciones: VAR linea_declaraciones ENDVAR .
+
+    $default  reduce usando la regla 5 (declaraciones)
+
+
+estado 49
+
+   24 asignacion: ID OP_ASIG expresion_aritmetica .
+   41 expresion_aritmetica: expresion_aritmetica . operacion factor
+
+    OP_MULTIPLICACION  desplazar e ir al estado 39
+    OP_SUMA            desplazar e ir al estado 40
+    OP_RESTA           desplazar e ir al estado 41
+    OP_DIVISION        desplazar e ir al estado 42
+
+    $default  reduce usando la regla 24 (asignacion)
+
+    operacion  ir al estado 43
+
+
+estado 50
+
+   32 expresion_logica: NOT termino_logico .
+
+    $default  reduce usando la regla 32 (expresion_logica)
+
+
+estado 51
+
+   21 condicional: IF expresion_logica THEN . cuerpo ENDIF
+   22            | IF expresion_logica THEN . cuerpo ELSE cuerpo ENDIF
+
+    ID               desplazar e ir al estado 2
+    IF               desplazar e ir al estado 3
+    REPEAT           desplazar e ir al estado 4
+    CONST_FLOAT      desplazar e ir al estado 5
+    CONST_INT        desplazar e ir al estado 6
+    CONST_STRING     desplazar e ir al estado 7
+    PARENTESIS_ABRE  desplazar e ir al estado 8
+    CORCHETE_ABRE    desplazar e ir al estado 9
+
+    cuerpo                       ir al estado 70
+    sentencia                    ir al estado 14
+    condicional                  ir al estado 15
+    ciclo_repeat                 ir al estado 16
+    asignacion                   ir al estado 17
+    asignacion_multiple          ir al estado 18
+    asignacion_multiple_declare  ir al estado 19
+    expresion_aritmetica         ir al estado 20
+    factor                       ir al estado 21
+
+
+estado 52
+
+   30 expresion_logica: termino_logico AND . termino_logico
+
+    ID               desplazar e ir al estado 26
+    CONST_FLOAT      desplazar e ir al estado 5
+    CONST_INT        desplazar e ir al estado 6
+    CONST_STRING     desplazar e ir al estado 7
+    PARENTESIS_ABRE  desplazar e ir al estado 8
+
+    termino_logico        ir al estado 71
+    expresion_aritmetica  ir al estado 30
+    factor                ir al estado 21
+
+
+estado 53
+
+   31 expresion_logica: termino_logico OR . termino_logico
+
+    ID               desplazar e ir al estado 26
+    CONST_FLOAT      desplazar e ir al estado 5
+    CONST_INT        desplazar e ir al estado 6
+    CONST_STRING     desplazar e ir al estado 7
+    PARENTESIS_ABRE  desplazar e ir al estado 8
+
+    termino_logico        ir al estado 72
+    expresion_aritmetica  ir al estado 30
+    factor                ir al estado 21
+
+
+estado 54
+
+   35 comparacion: OP_MENOR .
+
+    $default  reduce usando la regla 35 (comparacion)
+
+
+estado 55
+
+   36 comparacion: OP_MENOR_IGUAL .
+
+    $default  reduce usando la regla 36 (comparacion)
+
+
+estado 56
+
+   37 comparacion: OP_MAYOR .
+
+    $default  reduce usando la regla 37 (comparacion)
+
+
+estado 57
+
+   38 comparacion: OP_MAYOR_IGUAL .
+
+    $default  reduce usando la regla 38 (comparacion)
+
+
+estado 58
+
+   39 comparacion: OP_IGUAL .
+
+    $default  reduce usando la regla 39 (comparacion)
+
+
+estado 59
+
+   40 comparacion: OP_DISTINTO .
+
+    $default  reduce usando la regla 40 (comparacion)
+
+
+estado 60
+
+   34 termino_logico: expresion_aritmetica comparacion . expresion_aritmetica
+
+    ID               desplazar e ir al estado 26
+    CONST_FLOAT      desplazar e ir al estado 5
+    CONST_INT        desplazar e ir al estado 6
+    CONST_STRING     desplazar e ir al estado 7
+    PARENTESIS_ABRE  desplazar e ir al estado 8
+
+    expresion_aritmetica  ir al estado 73
+    factor                ir al estado 21
+
+
+estado 61
+
+   23 ciclo_repeat: REPEAT cuerpo UNTIL . expresion_logica
+
+    ID               desplazar e ir al estado 26
+    NOT              desplazar e ir al estado 27
+    CONST_FLOAT      desplazar e ir al estado 5
+    CONST_INT        desplazar e ir al estado 6
+    CONST_STRING     desplazar e ir al estado 7
+    PARENTESIS_ABRE  desplazar e ir al estado 8
+
+    expresion_logica      ir al estado 74
+    termino_logico        ir al estado 29
+    expresion_aritmetica  ir al estado 30
+    factor                ir al estado 21
+
+
+estado 62
+
+   51 factor: PARENTESIS_ABRE expresion_aritmetica PARENTESIS_CIERRA .
+
+    $default  reduce usando la regla 51 (factor)
+
+
+estado 63
+
+   26 asignacion_multiple_declare: CORCHETE_ABRE lista_variables CORCHETE_CIERRA .
+
+    $default  reduce usando la regla 26 (asignacion_multiple_declare)
+
+
+estado 64
+
+   10 lista_variables: lista_variables COMA . ID
+
+    ID  desplazar e ir al estado 75
+
+
+estado 65
+
+   27 asignacion_multiple_asign: CORCHETE_ABRE . lista_datos CORCHETE_CIERRA
+
+    ID               desplazar e ir al estado 26
+    CONST_FLOAT      desplazar e ir al estado 5
+    CONST_INT        desplazar e ir al estado 6
+    CONST_STRING     desplazar e ir al estado 7
+    PARENTESIS_ABRE  desplazar e ir al estado 8
+
+    lista_datos           ir al estado 76
+    expresion_aritmetica  ir al estado 77
+    factor                ir al estado 21
+
+
+estado 66
+
+   25 asignacion_multiple: asignacion_multiple_declare OP_ASIG asignacion_multiple_asign .
+
+    $default  reduce usando la regla 25 (asignacion_multiple)
+
+
+estado 67
+
+   41 expresion_aritmetica: expresion_aritmetica operacion factor .
+
+    $default  reduce usando la regla 41 (expresion_aritmetica)
+
+
+estado 68
+
+    7 linea_declaraciones: CORCHETE_ABRE lista_tipo_datos CORCHETE_CIERRA . DOS_PUNTOS CORCHETE_ABRE lista_variables CORCHETE_CIERRA
+
+    DOS_PUNTOS  desplazar e ir al estado 78
+
+
+estado 69
+
+    8 lista_tipo_datos: lista_tipo_datos COMA . tipo_dato
+
+    TIPO_INTEGER  desplazar e ir al estado 44
+    TIPO_FLOAT    desplazar e ir al estado 45
+
+    tipo_dato  ir al estado 79
+
+
+estado 70
+
+   14 cuerpo: cuerpo . sentencia
+   21 condicional: IF expresion_logica THEN cuerpo . ENDIF
+   22            | IF expresion_logica THEN cuerpo . ELSE cuerpo ENDIF
+
+    ID               desplazar e ir al estado 2
+    IF               desplazar e ir al estado 3
+    ELSE             desplazar e ir al estado 80
+    ENDIF            desplazar e ir al estado 81
+    REPEAT           desplazar e ir al estado 4
+    CONST_FLOAT      desplazar e ir al estado 5
+    CONST_INT        desplazar e ir al estado 6
+    CONST_STRING     desplazar e ir al estado 7
+    PARENTESIS_ABRE  desplazar e ir al estado 8
+    CORCHETE_ABRE    desplazar e ir al estado 9
+
+    sentencia                    ir al estado 37
+    condicional                  ir al estado 15
+    ciclo_repeat                 ir al estado 16
+    asignacion                   ir al estado 17
+    asignacion_multiple          ir al estado 18
+    asignacion_multiple_declare  ir al estado 19
+    expresion_aritmetica         ir al estado 20
+    factor                       ir al estado 21
+
+
+estado 71
+
+   30 expresion_logica: termino_logico AND termino_logico .
+
+    $default  reduce usando la regla 30 (expresion_logica)
+
+
+estado 72
+
+   31 expresion_logica: termino_logico OR termino_logico .
+
+    $default  reduce usando la regla 31 (expresion_logica)
+
+
+estado 73
+
+   34 termino_logico: expresion_aritmetica comparacion expresion_aritmetica .
+   41 expresion_aritmetica: expresion_aritmetica . operacion factor
+
+    OP_MULTIPLICACION  desplazar e ir al estado 39
+    OP_SUMA            desplazar e ir al estado 40
+    OP_RESTA           desplazar e ir al estado 41
+    OP_DIVISION        desplazar e ir al estado 42
+
+    $default  reduce usando la regla 34 (termino_logico)
+
+    operacion  ir al estado 43
+
+
+estado 74
+
+   23 ciclo_repeat: REPEAT cuerpo UNTIL expresion_logica .
+
+    $default  reduce usando la regla 23 (ciclo_repeat)
+
+
+estado 75
+
+   10 lista_variables: lista_variables COMA ID .
+
+    $default  reduce usando la regla 10 (lista_variables)
+
+
+estado 76
+
+   27 asignacion_multiple_asign: CORCHETE_ABRE lista_datos . CORCHETE_CIERRA
+   28 lista_datos: lista_datos . COMA expresion_aritmetica
+
+    CORCHETE_CIERRA  desplazar e ir al estado 82
+    COMA             desplazar e ir al estado 83
+
+
+estado 77
+
+   29 lista_datos: expresion_aritmetica .
+   41 expresion_aritmetica: expresion_aritmetica . operacion factor
+
+    OP_MULTIPLICACION  desplazar e ir al estado 39
+    OP_SUMA            desplazar e ir al estado 40
+    OP_RESTA           desplazar e ir al estado 41
+    OP_DIVISION        desplazar e ir al estado 42
+
+    $default  reduce usando la regla 29 (lista_datos)
+
+    operacion  ir al estado 43
+
+
+estado 78
+
+    7 linea_declaraciones: CORCHETE_ABRE lista_tipo_datos CORCHETE_CIERRA DOS_PUNTOS . CORCHETE_ABRE lista_variables CORCHETE_CIERRA
+
+    CORCHETE_ABRE  desplazar e ir al estado 84
+
+
+estado 79
+
+    8 lista_tipo_datos: lista_tipo_datos COMA tipo_dato .
+
+    $default  reduce usando la regla 8 (lista_tipo_datos)
+
+
+estado 80
+
+   22 condicional: IF expresion_logica THEN cuerpo ELSE . cuerpo ENDIF
+
+    ID               desplazar e ir al estado 2
+    IF               desplazar e ir al estado 3
+    REPEAT           desplazar e ir al estado 4
+    CONST_FLOAT      desplazar e ir al estado 5
+    CONST_INT        desplazar e ir al estado 6
+    CONST_STRING     desplazar e ir al estado 7
+    PARENTESIS_ABRE  desplazar e ir al estado 8
+    CORCHETE_ABRE    desplazar e ir al estado 9
+
+    cuerpo                       ir al estado 85
+    sentencia                    ir al estado 14
+    condicional                  ir al estado 15
+    ciclo_repeat                 ir al estado 16
+    asignacion                   ir al estado 17
+    asignacion_multiple          ir al estado 18
+    asignacion_multiple_declare  ir al estado 19
+    expresion_aritmetica         ir al estado 20
+    factor                       ir al estado 21
+
+
+estado 81
+
+   21 condicional: IF expresion_logica THEN cuerpo ENDIF .
+
+    $default  reduce usando la regla 21 (condicional)
+
+
+estado 82
+
+   27 asignacion_multiple_asign: CORCHETE_ABRE lista_datos CORCHETE_CIERRA .
+
+    $default  reduce usando la regla 27 (asignacion_multiple_asign)
+
+
+estado 83
+
+   28 lista_datos: lista_datos COMA . expresion_aritmetica
+
+    ID               desplazar e ir al estado 26
+    CONST_FLOAT      desplazar e ir al estado 5
+    CONST_INT        desplazar e ir al estado 6
+    CONST_STRING     desplazar e ir al estado 7
+    PARENTESIS_ABRE  desplazar e ir al estado 8
+
+    expresion_aritmetica  ir al estado 86
+    factor                ir al estado 21
+
+
+estado 84
+
+    7 linea_declaraciones: CORCHETE_ABRE lista_tipo_datos CORCHETE_CIERRA DOS_PUNTOS CORCHETE_ABRE . lista_variables CORCHETE_CIERRA
+
+    ID  desplazar e ir al estado 33
+
+    lista_variables  ir al estado 87
+
+
+estado 85
+
+   14 cuerpo: cuerpo . sentencia
+   22 condicional: IF expresion_logica THEN cuerpo ELSE cuerpo . ENDIF
+
+    ID               desplazar e ir al estado 2
+    IF               desplazar e ir al estado 3
+    ENDIF            desplazar e ir al estado 88
+    REPEAT           desplazar e ir al estado 4
+    CONST_FLOAT      desplazar e ir al estado 5
+    CONST_INT        desplazar e ir al estado 6
+    CONST_STRING     desplazar e ir al estado 7
+    PARENTESIS_ABRE  desplazar e ir al estado 8
+    CORCHETE_ABRE    desplazar e ir al estado 9
+
+    sentencia                    ir al estado 37
+    condicional                  ir al estado 15
+    ciclo_repeat                 ir al estado 16
+    asignacion                   ir al estado 17
+    asignacion_multiple          ir al estado 18
+    asignacion_multiple_declare  ir al estado 19
+    expresion_aritmetica         ir al estado 20
+    factor                       ir al estado 21
+
+
+estado 86
+
+   28 lista_datos: lista_datos COMA expresion_aritmetica .
+   41 expresion_aritmetica: expresion_aritmetica . operacion factor
+
+    OP_MULTIPLICACION  desplazar e ir al estado 39
+    OP_SUMA            desplazar e ir al estado 40
+    OP_RESTA           desplazar e ir al estado 41
+    OP_DIVISION        desplazar e ir al estado 42
+
+    $default  reduce usando la regla 28 (lista_datos)
+
+    operacion  ir al estado 43
+
+
+estado 87
+
+    7 linea_declaraciones: CORCHETE_ABRE lista_tipo_datos CORCHETE_CIERRA DOS_PUNTOS CORCHETE_ABRE lista_variables . CORCHETE_CIERRA
+   10 lista_variables: lista_variables . COMA ID
+
+    CORCHETE_CIERRA  desplazar e ir al estado 89
+    COMA             desplazar e ir al estado 64
+
+
+estado 88
+
+   22 condicional: IF expresion_logica THEN cuerpo ELSE cuerpo ENDIF .
+
+    $default  reduce usando la regla 22 (condicional)
+
+
+estado 89
+
+    7 linea_declaraciones: CORCHETE_ABRE lista_tipo_datos CORCHETE_CIERRA DOS_PUNTOS CORCHETE_ABRE lista_variables CORCHETE_CIERRA .
+
+    $default  reduce usando la regla 7 (linea_declaraciones)

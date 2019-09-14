@@ -1,5 +1,11 @@
+rm lex.yy.c
+rm y.tab.c
+rm y.tab.h
+rm Ejecutable
 bison -yd Sintactico.y
 flex Lexico.l
 gcc y.tab.c lex.yy.c -ll -o Ejecutable
 echo "PRUEBA"
 cat tests/prueba.txt | ./Ejecutable
+echo "PRUEBA"
+cat tests/prueba2.txt | ./Ejecutable

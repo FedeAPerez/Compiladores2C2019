@@ -26,11 +26,12 @@ void pprintf(const char *str) {
 %union
 {
         int intValue;
+        float floatValue;
         char *stringValue;
 }
 
 // Sector declaraciones
-%token VAR ENDVAR INTEGER FLOAT
+%token VAR ENDVAR TIPO_INTEGER TIPO_FLOAT
 // Condiciones
 %token IF
 // Ciclos
@@ -38,11 +39,11 @@ void pprintf(const char *str) {
 // Asignacion
 %token ID OP_ASIG
 // Constantes
-%token CONST_STRING CONST_INT
+%token CONST_STRING CONST_INT CONST_FLOAT
 // Operadores
 %token OP_MULTIPLICACION OP_SUMA OP_RESTA OP_DIVISION
 // Parentesis, corchetes, otros caracteres
-%token PA PC CA CC COMA DOS_PUNTOS
+%token PARENTESIS_ABRE PARENTESIS_CIERRA CORCHETE_ABRE CORCHETE_CIERRA COMA DOS_PUNTOS
 
 
 
@@ -65,7 +66,7 @@ declaraciones:
         | VAR ENDVAR;
 
 linea_declaraciones:
-        CA lista_tipo_datos CC DOS_PUNTOS CA lista_variables CC{
+        CORCHETE_ABRE lista_tipo_datos CORCHETE_CIERRA DOS_PUNTOS CORCHETE_CIERRA lista_variables CORCHETE_CIERRA{
                 pprintf("\tCA lista_tipo_datos CC DOS_PUNTOS CA lista_variables CC -> linea_declaraciones");
         };
 
@@ -86,10 +87,10 @@ lista_variables:
         };
 
 tipo_dato:
-        INTEGER {
+        TIPO_INTEGER {
                 pprintf("\t\tINTEGER -> tipo_dato");
         };
-        | FLOAT{
+        | TIPO_FLOAT{
                 pprintf("\t\tFLOAT -> tipo_dato");
         };
 //Fin Declaraciones
@@ -120,7 +121,7 @@ asignacion:
         };
 
 asignacion_multiple:
-        CA lista_variables CC OP_ASIG CA lista_datos CC{
+        CORCHETE_ABRE lista_variables CORCHETE_CIERRA OP_ASIG CORCHETE_ABRE lista_datos CORCHETE_CIERRA{
                 pprintf("CA lista_variables CC OP_ASIG CA lista_datos CC --> asignacion_multiple\n");
         };
 
@@ -161,13 +162,16 @@ factor:
         | CONST_INT {
                 pprintf("\t\t\tCTE INT -> factor");
         }
+        | CONST_FLOAT {
+                pprintf("\t\t\tCTE FLOAT -> factor");
+        }
         | ID{
                 pprintf("\t\t\tID -> factor");
         }
         | termino{
                 pprintf("\t\t\toperacion-> factor");                
         }
-        | PA termino PC {
+        | PARENTESIS_ABRE termino PARENTESIS_CIERRA {
                 pprintf("\t\t\tParentesisA operacion parentesisC -> factor");
         };
 

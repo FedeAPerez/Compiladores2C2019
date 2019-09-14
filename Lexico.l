@@ -42,7 +42,6 @@ COMENTARIO				[{INICIO_COMENTARIO}{CADENA}*{FIN_COMENTARIO}]
 
 %%
 
-
 "REPEAT"	{return REPEAT; }
 "UNTIL"		{return UNTIL; }
 "IF"		{return IF; }
@@ -96,13 +95,8 @@ COMENTARIO				[{INICIO_COMENTARIO}{CADENA}*{FIN_COMENTARIO}]
 			                }
 							cota_error("El nombre de variable excede el limite permitido.");
 			              }               
-{CONSTANTE_REAL}  		  {
-		                    if(atof(yytext)>=-3.40282347e+38F && atof(yytext)<=3.40282347e+38F){
-		                    	yylval.floatValue = atof(yytext);
-		                    	return CONST_FLOAT;
-		                    }
-							cota_error("El valor de un flotante excede el limite permitido.");
-		                  } 
+{CONSTANTE_REAL}  		  { validType(yytext, TYPE_FLOAT, saveTs); yylval.floatValue = atof(yytext); return CONST_FLOAT; }
+
 {CONSTANTE_ENTERA}        { validType(yytext, TYPE_INT, saveTs); yylval.intValue = atoi(yytext); return CONST_INT; }
 
 {CONST_STRING}		  { validType(yytext, TYPE_STRING, saveTs); yylval.stringValue = yytext; return CONST_STRING; }

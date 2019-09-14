@@ -61,6 +61,11 @@ int validType(char *text, int type, void (*next)(char *, char *, char *, char *)
             next(text, "CONST_INT", text, "");
         }
         break;
+    case TYPE_FLOAT:
+        sprintf(stringLength, "%d", length);
+        next(text, "CONST_FLOAT", text, "");
+        return 1;
+        break;
     default:
         return 1;
         break;

@@ -15,6 +15,12 @@ IF                                      return IF;
 "-"                                     return OP_RESTA;
 "("                                     return PA;
 ")"                                     return PC;
+"["                                     return CA;
+"]"                                     return CC;
+","                                     return COMA;
+":"                                     return DOS_PUNTOS;
+INTEGER                                 return INTEGER;
+FLOAT                                   return FLOAT;
 [0-9]*                                  { yylval.intValue = atoi(yytext); return CONST_INT; }
 [a-zA-Z][a-zA-Z0-9_]*                   { yylval.stringValue = yytext; return ID; }
 \"[(a-zA-Z0-9_ )]*\"                    { yylval.stringValue = yytext; return CONST_STRING; }

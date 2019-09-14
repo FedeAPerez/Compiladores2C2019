@@ -30,7 +30,7 @@ void pprintf(const char *str) {
 }
 
 // Sector declaraciones
-%token VAR ENDVAR
+%token VAR ENDVAR INTEGER FLOAT
 // Condiciones
 %token IF
 // Ciclos
@@ -41,8 +41,8 @@ void pprintf(const char *str) {
 %token CONST_STRING CONST_INT
 // Operadores
 %token OP_MULTIPLICACION OP_SUMA OP_RESTA OP_DIVISION
-// Parentesis
-%token PA PC
+// Parentesis, corchetes, otros caracteres
+%token PA PC CA CC COMA DOS_PUNTOS
 
 
 
@@ -57,10 +57,38 @@ programa:
         | declaraciones
         | cuerpo;
 
-declaraciones: 
-        VAR ENDVAR {
+// Declaraciones
+declaraciones:
+        VAR linea_declaraciones ENDVAR {
                 pprintf("VAR ENDVAR -> declaraciones\n");
+        }
+        | VAR ENDVAR;
+
+linea_declaraciones:
+        CA lista_tipo_datos CC DOS_PUNTOS CA lista_variables CC{
+                pprintf("CA lista_tipo_datos CC DOS_PUNTOS CA lista_variables CC -> linea_declaraciones\n");
         };
+
+lista_tipo_datos:
+        lista_tipo_datos COMA tipo_dato {
+                pprintf("lista_tipo_datos COMA TIPO_DATO -> lista_tipo_datos\n");
+        }
+        | tipo_dato {
+                pprintf("TIPO_DATO -> lista_tipo_datos\n");
+        };
+
+lista_variables:
+        lista_variables COMA ID {
+                pprintf("lista_variables COMA ID -> lista_variables\n");
+        }
+        | ID {
+                pprintf("lista_variables -> lista_Variables\n");
+        };
+
+tipo_dato:
+        INTEGER
+        | FLOAT;
+//Fin Declaraciones
 
 cuerpo: 
         cuerpo sentencia 

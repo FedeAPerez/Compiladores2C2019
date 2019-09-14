@@ -41,35 +41,47 @@
    enum yytokentype {
      VAR = 258,
      ENDVAR = 259,
-     IF = 260,
-     REPEAT = 261,
-     ID = 262,
-     OP_ASIG = 263,
-     CONST_STRING = 264,
-     CONST_INT = 265,
-     OP_MULTIPLICACION = 266,
-     OP_SUMA = 267,
-     OP_RESTA = 268,
-     OP_DIVISION = 269,
-     PA = 270,
-     PC = 271
+     INTEGER = 260,
+     FLOAT = 261,
+     IF = 262,
+     REPEAT = 263,
+     ID = 264,
+     OP_ASIG = 265,
+     CONST_STRING = 266,
+     CONST_INT = 267,
+     OP_MULTIPLICACION = 268,
+     OP_SUMA = 269,
+     OP_RESTA = 270,
+     OP_DIVISION = 271,
+     PA = 272,
+     PC = 273,
+     CA = 274,
+     CC = 275,
+     COMA = 276,
+     DOS_PUNTOS = 277
    };
 #endif
 /* Tokens.  */
 #define VAR 258
 #define ENDVAR 259
-#define IF 260
-#define REPEAT 261
-#define ID 262
-#define OP_ASIG 263
-#define CONST_STRING 264
-#define CONST_INT 265
-#define OP_MULTIPLICACION 266
-#define OP_SUMA 267
-#define OP_RESTA 268
-#define OP_DIVISION 269
-#define PA 270
-#define PC 271
+#define INTEGER 260
+#define FLOAT 261
+#define IF 262
+#define REPEAT 263
+#define ID 264
+#define OP_ASIG 265
+#define CONST_STRING 266
+#define CONST_INT 267
+#define OP_MULTIPLICACION 268
+#define OP_SUMA 269
+#define OP_RESTA 270
+#define OP_DIVISION 271
+#define PA 272
+#define PC 273
+#define CA 274
+#define CC 275
+#define COMA 276
+#define DOS_PUNTOS 277
 
 
 
@@ -82,7 +94,7 @@ typedef union YYSTYPE
         char *stringValue;
 }
 /* Line 1529 of yacc.c.  */
-#line 86 "y.tab.h"
+#line 98 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

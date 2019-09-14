@@ -1,0 +1,3 @@
+NAME                                TYPE                 VALUE                                         LENGTH              
+"32"                                CONST_STRING         "32"                                          2                   
+"34"                                CONST_STRING         "34"                                          2                   

@@ -7,8 +7,8 @@ flex Lexico.l
 gcc y.tab.c lex.yy.c -ll -o Ejecutable
 echo "PRUEBA"
 cat tests/prueba.txt | ./Ejecutable
-echo "PRUEBA"
-cat tests/prueba2.txt | ./Ejecutable
+echo "PRUEBA PARENTESIS"
+cat tests/parentesis.txt | ./Ejecutable
 echo "PRUEBA STRING RECHAZADA"
 cat tests/string.rejected.txt | ./Ejecutable
 echo "PRUEBA ENTERO RECHAZADO"

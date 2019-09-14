@@ -23,8 +23,8 @@
 "INTEGER"                               return TIPO_INTEGER;
 "FLOAT"                                 return TIPO_FLOAT;
 [0-9]+                                  { validType(yytext, TYPE_INT, saveTs); yylval.intValue = atoi(yytext); return CONST_INT; }
-[0-9]+"."[0-9]+                         { yylval.floatValue = atof(yytext); return CONST_FLOAT; }
-[a-zA-Z][a-zA-Z0-9_]*                   { yylval.stringValue = yytext; return ID; }
+[0-9]+"."[0-9]+                         { validType(yytext, TYPE_FLOAT, saveTs); yylval.floatValue = atof(yytext); return CONST_FLOAT; }
+[a-zA-Z][a-zA-Z0-9_]*                   { validType(yytext, TYPE_ID, saveTs); yylval.stringValue = yytext; return ID; }
 \"[(a-zA-Z0-9_ )]*\"                    { validType(yytext, TYPE_STRING, saveTs); yylval.stringValue = yytext; return CONST_STRING; }
 \-\-\/[a-zA-Z0-9_ ]*\/\-\-              { printf("\t comentario \n\n"); };
 \n                                      /* ignore end of line */;

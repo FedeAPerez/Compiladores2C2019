@@ -1,0 +1,3 @@
+VAR 
+  [INTEGER, FLOAT, INTEGER, FLOAT] : [pepe3, pepe4, pepe5, pepe6] 
+ENDVAR

@@ -168,9 +168,6 @@ factor:
         | ID{
                 pprintf("\t\t\tID -> factor");
         }
-        | termino{
-                pprintf("\t\t\toperacion-> factor");                
-        }
         | PARENTESIS_ABRE termino PARENTESIS_CIERRA {
                 pprintf("\t\t\tParentesisA operacion parentesisC -> factor");
         };

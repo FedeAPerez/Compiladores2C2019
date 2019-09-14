@@ -21,8 +21,8 @@ IF                                      return IF;
 ":"                                     return DOS_PUNTOS;
 "INTEGER"                               return TIPO_INTEGER;
 "FLOAT"                                 return TIPO_FLOAT;
-[0-9]*                                  { yylval.intValue = atoi(yytext); return CONST_INT; }
-[0-9]+.[0-9]+                           { yylval.floatValue = atof(yytext); return CONST_FLOAT; }
+[0-9]+                                  { yylval.intValue = atoi(yytext); return CONST_INT; }
+[0-9]+"."[0-9]+                         { yylval.floatValue = atof(yytext); return CONST_FLOAT; }
 [a-zA-Z][a-zA-Z0-9_]*                   { yylval.stringValue = yytext; return ID; }
 \"[(a-zA-Z0-9_ )]*\"                    { yylval.stringValue = yytext; return CONST_STRING; }
 \-\-\/[a-zA-Z0-9_ ]*\/\-\-               { printf("\t comentario \n\n"); };

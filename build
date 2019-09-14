@@ -1,4 +1,9 @@
-bison -yd Sintactico.y
+rm lex.yy.c
+rm y.tab.c
+rm y.tab.h
+rm y.output
+rm Ejecutable
+bison -ydv Sintactico.y
 flex Lexico.l
 gcc y.tab.c lex.yy.c -ll -o Ejecutable
 echo "PRUEBA"

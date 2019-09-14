@@ -1,0 +1,746 @@
+State 33 conflicts: 4 shift/reduce, 5 reduce/reduce
+State 39 conflicts: 5 shift/reduce
+State 50 conflicts: 4 shift/reduce
+State 51 conflicts: 12 reduce/reduce
+State 55 conflicts: 2 reduce/reduce
+State 60 conflicts: 2 reduce/reduce
+
+
+Grammar
+
+    0 $accept: programa_aumentado $end
+
+    1 programa_aumentado: programa
+
+    2 programa: declaraciones cuerpo
+    3         | declaraciones
+    4         | cuerpo
+
+    5 declaraciones: VAR linea_declaraciones ENDVAR
+    6              | VAR ENDVAR
+
+    7 linea_declaraciones: CA lista_tipo_datos CC DOS_PUNTOS CA lista_variables CC
+
+    8 lista_tipo_datos: lista_tipo_datos COMA tipo_dato
+    9                 | tipo_dato
+
+   10 lista_variables: lista_variables COMA ID
+   11                | ID
+
+   12 tipo_dato: INTEGER
+   13          | FLOAT
+
+   14 cuerpo: cuerpo sentencia
+   15       | sentencia
+
+   16 sentencia: ciclo_repeat
+   17          | asignacion
+   18          | asignacion_multiple
+   19          | condicional
+
+   20 condicional: IF
+
+   21 ciclo_repeat: REPEAT
+
+   22 asignacion: ID OP_ASIG termino
+
+   23 asignacion_multiple: CA lista_variables CC OP_ASIG CA lista_datos CC
+
+   24 lista_datos: lista_datos COMA factor
+   25            | factor
+
+   26 termino: termino operacion factor
+   27        | factor
+
+   28 operacion: OP_MULTIPLICACION
+   29          | OP_RESTA
+   30          | OP_SUMA
+   31          | OP_DIVISION
+
+   32 factor: CONST_STRING
+   33       | CONST_INT
+   34       | ID
+   35       | termino
+   36       | PA termino PC
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+VAR (258) 5 6
+ENDVAR (259) 5 6
+INTEGER (260) 12
+FLOAT (261) 13
+IF (262) 20
+REPEAT (263) 21
+ID (264) 10 11 22 34
+OP_ASIG (265) 22 23
+CONST_STRING (266) 32
+CONST_INT (267) 33
+OP_MULTIPLICACION (268) 28
+OP_SUMA (269) 30
+OP_RESTA (270) 29
+OP_DIVISION (271) 31
+PA (272) 36
+PC (273) 36
+CA (274) 7 23
+CC (275) 7 23
+COMA (276) 8 10 24
+DOS_PUNTOS (277) 7
+
+
+Nonterminals, with rules where they appear
+
+$accept (23)
+    on left: 0
+programa_aumentado (24)
+    on left: 1, on right: 0
+programa (25)
+    on left: 2 3 4, on right: 1
+declaraciones (26)
+    on left: 5 6, on right: 2 3
+linea_declaraciones (27)
+    on left: 7, on right: 5
+lista_tipo_datos (28)
+    on left: 8 9, on right: 7 8
+lista_variables (29)
+    on left: 10 11, on right: 7 10 23
+tipo_dato (30)
+    on left: 12 13, on right: 8 9
+cuerpo (31)
+    on left: 14 15, on right: 2 4 14
+sentencia (32)
+    on left: 16 17 18 19, on right: 14 15
+condicional (33)
+    on left: 20, on right: 19
+ciclo_repeat (34)
+    on left: 21, on right: 16
+asignacion (35)
+    on left: 22, on right: 17
+asignacion_multiple (36)
+    on left: 23, on right: 18
+lista_datos (37)
+    on left: 24 25, on right: 23 24
+termino (38)
+    on left: 26 27, on right: 22 26 35 36
+operacion (39)
+    on left: 28 29 30 31, on right: 26
+factor (40)
+    on left: 32 33 34 35 36, on right: 24 25 26 27
+
+
+state 0
+
+    0 $accept: . programa_aumentado $end
+
+    VAR     shift, and go to state 1
+    IF      shift, and go to state 2
+    REPEAT  shift, and go to state 3
+    ID      shift, and go to state 4
+    CA      shift, and go to state 5
+
+    programa_aumentado   go to state 6
+    programa             go to state 7
+    declaraciones        go to state 8
+    cuerpo               go to state 9
+    sentencia            go to state 10
+    condicional          go to state 11
+    ciclo_repeat         go to state 12
+    asignacion           go to state 13
+    asignacion_multiple  go to state 14
+
+
+state 1
+
+    5 declaraciones: VAR . linea_declaraciones ENDVAR
+    6              | VAR . ENDVAR
+
+    ENDVAR  shift, and go to state 15
+    CA      shift, and go to state 16
+
+    linea_declaraciones  go to state 17
+
+
+state 2
+
+   20 condicional: IF .
+
+    $default  reduce using rule 20 (condicional)
+
+
+state 3
+
+   21 ciclo_repeat: REPEAT .
+
+    $default  reduce using rule 21 (ciclo_repeat)
+
+
+state 4
+
+   22 asignacion: ID . OP_ASIG termino
+
+    OP_ASIG  shift, and go to state 18
+
+
+state 5
+
+   23 asignacion_multiple: CA . lista_variables CC OP_ASIG CA lista_datos CC
+
+    ID  shift, and go to state 19
+
+    lista_variables  go to state 20
+
+
+state 6
+
+    0 $accept: programa_aumentado . $end
+
+    $end  shift, and go to state 21
+
+
+state 7
+
+    1 programa_aumentado: programa .
+
+    $default  reduce using rule 1 (programa_aumentado)
+
+
+state 8
+
+    2 programa: declaraciones . cuerpo
+    3         | declaraciones .
+
+    IF      shift, and go to state 2
+    REPEAT  shift, and go to state 3
+    ID      shift, and go to state 4
+    CA      shift, and go to state 5
+
+    $default  reduce using rule 3 (programa)
+
+    cuerpo               go to state 22
+    sentencia            go to state 10
+    condicional          go to state 11
+    ciclo_repeat         go to state 12
+    asignacion           go to state 13
+    asignacion_multiple  go to state 14
+
+
+state 9
+
+    4 programa: cuerpo .
+   14 cuerpo: cuerpo . sentencia
+
+    IF      shift, and go to state 2
+    REPEAT  shift, and go to state 3
+    ID      shift, and go to state 4
+    CA      shift, and go to state 5
+
+    $default  reduce using rule 4 (programa)
+
+    sentencia            go to state 23
+    condicional          go to state 11
+    ciclo_repeat         go to state 12
+    asignacion           go to state 13
+    asignacion_multiple  go to state 14
+
+
+state 10
+
+   15 cuerpo: sentencia .
+
+    $default  reduce using rule 15 (cuerpo)
+
+
+state 11
+
+   19 sentencia: condicional .
+
+    $default  reduce using rule 19 (sentencia)
+
+
+state 12
+
+   16 sentencia: ciclo_repeat .
+
+    $default  reduce using rule 16 (sentencia)
+
+
+state 13
+
+   17 sentencia: asignacion .
+
+    $default  reduce using rule 17 (sentencia)
+
+
+state 14
+
+   18 sentencia: asignacion_multiple .
+
+    $default  reduce using rule 18 (sentencia)
+
+
+state 15
+
+    6 declaraciones: VAR ENDVAR .
+
+    $default  reduce using rule 6 (declaraciones)
+
+
+state 16
+
+    7 linea_declaraciones: CA . lista_tipo_datos CC DOS_PUNTOS CA lista_variables CC
+
+    INTEGER  shift, and go to state 24
+    FLOAT    shift, and go to state 25
+
+    lista_tipo_datos  go to state 26
+    tipo_dato         go to state 27
+
+
+state 17
+
+    5 declaraciones: VAR linea_declaraciones . ENDVAR
+
+    ENDVAR  shift, and go to state 28
+
+
+state 18
+
+   22 asignacion: ID OP_ASIG . termino
+
+    ID            shift, and go to state 29
+    CONST_STRING  shift, and go to state 30
+    CONST_INT     shift, and go to state 31
+    PA            shift, and go to state 32
+
+    termino  go to state 33
+    factor   go to state 34
+
+
+state 19
+
+   11 lista_variables: ID .
+
+    $default  reduce using rule 11 (lista_variables)
+
+
+state 20
+
+   10 lista_variables: lista_variables . COMA ID
+   23 asignacion_multiple: CA lista_variables . CC OP_ASIG CA lista_datos CC
+
+    CC    shift, and go to state 35
+    COMA  shift, and go to state 36
+
+
+state 21
+
+    0 $accept: programa_aumentado $end .
+
+    $default  accept
+
+
+state 22
+
+    2 programa: declaraciones cuerpo .
+   14 cuerpo: cuerpo . sentencia
+
+    IF      shift, and go to state 2
+    REPEAT  shift, and go to state 3
+    ID      shift, and go to state 4
+    CA      shift, and go to state 5
+
+    $default  reduce using rule 2 (programa)
+
+    sentencia            go to state 23
+    condicional          go to state 11
+    ciclo_repeat         go to state 12
+    asignacion           go to state 13
+    asignacion_multiple  go to state 14
+
+
+state 23
+
+   14 cuerpo: cuerpo sentencia .
+
+    $default  reduce using rule 14 (cuerpo)
+
+
+state 24
+
+   12 tipo_dato: INTEGER .
+
+    $default  reduce using rule 12 (tipo_dato)
+
+
+state 25
+
+   13 tipo_dato: FLOAT .
+
+    $default  reduce using rule 13 (tipo_dato)
+
+
+state 26
+
+    7 linea_declaraciones: CA lista_tipo_datos . CC DOS_PUNTOS CA lista_variables CC
+    8 lista_tipo_datos: lista_tipo_datos . COMA tipo_dato
+
+    CC    shift, and go to state 37
+    COMA  shift, and go to state 38
+
+
+state 27
+
+    9 lista_tipo_datos: tipo_dato .
+
+    $default  reduce using rule 9 (lista_tipo_datos)
+
+
+state 28
+
+    5 declaraciones: VAR linea_declaraciones ENDVAR .
+
+    $default  reduce using rule 5 (declaraciones)
+
+
+state 29
+
+   34 factor: ID .
+
+    $default  reduce using rule 34 (factor)
+
+
+state 30
+
+   32 factor: CONST_STRING .
+
+    $default  reduce using rule 32 (factor)
+
+
+state 31
+
+   33 factor: CONST_INT .
+
+    $default  reduce using rule 33 (factor)
+
+
+state 32
+
+   36 factor: PA . termino PC
+
+    ID            shift, and go to state 29
+    CONST_STRING  shift, and go to state 30
+    CONST_INT     shift, and go to state 31
+    PA            shift, and go to state 32
+
+    termino  go to state 39
+    factor   go to state 34
+
+
+state 33
+
+   22 asignacion: ID OP_ASIG termino .
+   26 termino: termino . operacion factor
+   35 factor: termino .
+
+    OP_MULTIPLICACION  shift, and go to state 40
+    OP_SUMA            shift, and go to state 41
+    OP_RESTA           shift, and go to state 42
+    OP_DIVISION        shift, and go to state 43
+
+    $end               reduce using rule 22 (asignacion)
+    $end               [reduce using rule 35 (factor)]
+    IF                 reduce using rule 22 (asignacion)
+    IF                 [reduce using rule 35 (factor)]
+    REPEAT             reduce using rule 22 (asignacion)
+    REPEAT             [reduce using rule 35 (factor)]
+    ID                 reduce using rule 22 (asignacion)
+    ID                 [reduce using rule 35 (factor)]
+    OP_MULTIPLICACION  [reduce using rule 35 (factor)]
+    OP_SUMA            [reduce using rule 35 (factor)]
+    OP_RESTA           [reduce using rule 35 (factor)]
+    OP_DIVISION        [reduce using rule 35 (factor)]
+    CA                 reduce using rule 22 (asignacion)
+    CA                 [reduce using rule 35 (factor)]
+    $default           reduce using rule 22 (asignacion)
+
+    operacion  go to state 44
+
+
+state 34
+
+   27 termino: factor .
+
+    $default  reduce using rule 27 (termino)
+
+
+state 35
+
+   23 asignacion_multiple: CA lista_variables CC . OP_ASIG CA lista_datos CC
+
+    OP_ASIG  shift, and go to state 45
+
+
+state 36
+
+   10 lista_variables: lista_variables COMA . ID
+
+    ID  shift, and go to state 46
+
+
+state 37
+
+    7 linea_declaraciones: CA lista_tipo_datos CC . DOS_PUNTOS CA lista_variables CC
+
+    DOS_PUNTOS  shift, and go to state 47
+
+
+state 38
+
+    8 lista_tipo_datos: lista_tipo_datos COMA . tipo_dato
+
+    INTEGER  shift, and go to state 24
+    FLOAT    shift, and go to state 25
+
+    tipo_dato  go to state 48
+
+
+state 39
+
+   26 termino: termino . operacion factor
+   35 factor: termino .
+   36       | PA termino . PC
+
+    OP_MULTIPLICACION  shift, and go to state 40
+    OP_SUMA            shift, and go to state 41
+    OP_RESTA           shift, and go to state 42
+    OP_DIVISION        shift, and go to state 43
+    PC                 shift, and go to state 49
+
+    OP_MULTIPLICACION  [reduce using rule 35 (factor)]
+    OP_SUMA            [reduce using rule 35 (factor)]
+    OP_RESTA           [reduce using rule 35 (factor)]
+    OP_DIVISION        [reduce using rule 35 (factor)]
+    PC                 [reduce using rule 35 (factor)]
+
+    operacion  go to state 44
+
+
+state 40
+
+   28 operacion: OP_MULTIPLICACION .
+
+    $default  reduce using rule 28 (operacion)
+
+
+state 41
+
+   30 operacion: OP_SUMA .
+
+    $default  reduce using rule 30 (operacion)
+
+
+state 42
+
+   29 operacion: OP_RESTA .
+
+    $default  reduce using rule 29 (operacion)
+
+
+state 43
+
+   31 operacion: OP_DIVISION .
+
+    $default  reduce using rule 31 (operacion)
+
+
+state 44
+
+   26 termino: termino operacion . factor
+
+    ID            shift, and go to state 29
+    CONST_STRING  shift, and go to state 30
+    CONST_INT     shift, and go to state 31
+    PA            shift, and go to state 32
+
+    termino  go to state 50
+    factor   go to state 51
+
+
+state 45
+
+   23 asignacion_multiple: CA lista_variables CC OP_ASIG . CA lista_datos CC
+
+    CA  shift, and go to state 52
+
+
+state 46
+
+   10 lista_variables: lista_variables COMA ID .
+
+    $default  reduce using rule 10 (lista_variables)
+
+
+state 47
+
+    7 linea_declaraciones: CA lista_tipo_datos CC DOS_PUNTOS . CA lista_variables CC
+
+    CA  shift, and go to state 53
+
+
+state 48
+
+    8 lista_tipo_datos: lista_tipo_datos COMA tipo_dato .
+
+    $default  reduce using rule 8 (lista_tipo_datos)
+
+
+state 49
+
+   36 factor: PA termino PC .
+
+    $default  reduce using rule 36 (factor)
+
+
+state 50
+
+   26 termino: termino . operacion factor
+   35 factor: termino .
+
+    OP_MULTIPLICACION  shift, and go to state 40
+    OP_SUMA            shift, and go to state 41
+    OP_RESTA           shift, and go to state 42
+    OP_DIVISION        shift, and go to state 43
+
+    OP_MULTIPLICACION  [reduce using rule 35 (factor)]
+    OP_SUMA            [reduce using rule 35 (factor)]
+    OP_RESTA           [reduce using rule 35 (factor)]
+    OP_DIVISION        [reduce using rule 35 (factor)]
+    $default           reduce using rule 35 (factor)
+
+    operacion  go to state 44
+
+
+state 51
+
+   26 termino: termino operacion factor .
+   27        | factor .
+
+    $end               reduce using rule 26 (termino)
+    $end               [reduce using rule 27 (termino)]
+    IF                 reduce using rule 26 (termino)
+    IF                 [reduce using rule 27 (termino)]
+    REPEAT             reduce using rule 26 (termino)
+    REPEAT             [reduce using rule 27 (termino)]
+    ID                 reduce using rule 26 (termino)
+    ID                 [reduce using rule 27 (termino)]
+    OP_MULTIPLICACION  reduce using rule 26 (termino)
+    OP_MULTIPLICACION  [reduce using rule 27 (termino)]
+    OP_SUMA            reduce using rule 26 (termino)
+    OP_SUMA            [reduce using rule 27 (termino)]
+    OP_RESTA           reduce using rule 26 (termino)
+    OP_RESTA           [reduce using rule 27 (termino)]
+    OP_DIVISION        reduce using rule 26 (termino)
+    OP_DIVISION        [reduce using rule 27 (termino)]
+    PC                 reduce using rule 26 (termino)
+    PC                 [reduce using rule 27 (termino)]
+    CA                 reduce using rule 26 (termino)
+    CA                 [reduce using rule 27 (termino)]
+    CC                 reduce using rule 26 (termino)
+    CC                 [reduce using rule 27 (termino)]
+    COMA               reduce using rule 26 (termino)
+    COMA               [reduce using rule 27 (termino)]
+    $default           reduce using rule 26 (termino)
+
+
+state 52
+
+   23 asignacion_multiple: CA lista_variables CC OP_ASIG CA . lista_datos CC
+
+    ID            shift, and go to state 29
+    CONST_STRING  shift, and go to state 30
+    CONST_INT     shift, and go to state 31
+    PA            shift, and go to state 32
+
+    lista_datos  go to state 54
+    termino      go to state 50
+    factor       go to state 55
+
+
+state 53
+
+    7 linea_declaraciones: CA lista_tipo_datos CC DOS_PUNTOS CA . lista_variables CC
+
+    ID  shift, and go to state 19
+
+    lista_variables  go to state 56
+
+
+state 54
+
+   23 asignacion_multiple: CA lista_variables CC OP_ASIG CA lista_datos . CC
+   24 lista_datos: lista_datos . COMA factor
+
+    CC    shift, and go to state 57
+    COMA  shift, and go to state 58
+
+
+state 55
+
+   25 lista_datos: factor .
+   27 termino: factor .
+
+    CC        reduce using rule 25 (lista_datos)
+    CC        [reduce using rule 27 (termino)]
+    COMA      reduce using rule 25 (lista_datos)
+    COMA      [reduce using rule 27 (termino)]
+    $default  reduce using rule 27 (termino)
+
+
+state 56
+
+    7 linea_declaraciones: CA lista_tipo_datos CC DOS_PUNTOS CA lista_variables . CC
+   10 lista_variables: lista_variables . COMA ID
+
+    CC    shift, and go to state 59
+    COMA  shift, and go to state 36
+
+
+state 57
+
+   23 asignacion_multiple: CA lista_variables CC OP_ASIG CA lista_datos CC .
+
+    $default  reduce using rule 23 (asignacion_multiple)
+
+
+state 58
+
+   24 lista_datos: lista_datos COMA . factor
+
+    ID            shift, and go to state 29
+    CONST_STRING  shift, and go to state 30
+    CONST_INT     shift, and go to state 31
+    PA            shift, and go to state 32
+
+    termino  go to state 50
+    factor   go to state 60
+
+
+state 59
+
+    7 linea_declaraciones: CA lista_tipo_datos CC DOS_PUNTOS CA lista_variables CC .
+
+    $default  reduce using rule 7 (linea_declaraciones)
+
+
+state 60
+
+   24 lista_datos: lista_datos COMA factor .
+   27 termino: factor .
+
+    CC        reduce using rule 24 (lista_datos)
+    CC        [reduce using rule 27 (termino)]
+    COMA      reduce using rule 24 (lista_datos)
+    COMA      [reduce using rule 27 (termino)]
+    $default  reduce using rule 27 (termino)

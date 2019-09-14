@@ -10,11 +10,11 @@
 #include "stdlib.h"
 
 #define ERR_STRING_LENGTH "Cadena de caracteres mayor a 30"
-
-const int TYPE_ID = 1;
-const int TYPE_FLOAT = 2;
-const int TYPE_STRING = 3;
-const int TYPE_INT = 4;
+#define ERR_INT_MAX "Entero fuera de rango de los 16 bits (sin signo)"
+#define TYPE_ID 1
+#define TYPE_FLOAT 2
+#define TYPE_STRING 3
+#define TYPE_INT 4
 
 void printError(char *errorMessage, char *errorLex)
 {
@@ -47,6 +47,18 @@ int validType(char *text, int type, void (*next)(char *, char *, char *, char *)
             sprintf(stringLength, "%d", length);
             next(text, "CONST_STRING", text, stringLength);
             return 1;
+        }
+        break;
+    case TYPE_INT:
+        if (atoi(text) > 65535)
+        {
+            printError(ERR_INT_MAX, text);
+            exit(0);
+        }
+        else
+        {
+            sprintf(stringLength, "%d", length);
+            next(text, "CONST_INT", text, "");
         }
         break;
     default:

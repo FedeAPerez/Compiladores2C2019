@@ -11,3 +11,5 @@ echo "PRUEBA"
 cat tests/prueba2.txt | ./Ejecutable
 echo "PRUEBA STRING RECHAZADA"
 cat tests/string.rejected.txt | ./Ejecutable
+echo "PRUEBA ENTERO RECHAZADO"
+cat tests/int.rejected.txt | ./Ejecutable

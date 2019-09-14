@@ -7,6 +7,7 @@
 
 #include "stdio.h"
 #include "string.h"
+#include "stdlib.h"
 
 #define ERR_STRING_LENGTH "Cadena de caracteres mayor a 30"
 
@@ -19,7 +20,7 @@ void printError(char *errorMessage, char *errorLex)
 {
 
     printf("\033[0;31m");
-    printf("[LEXICAL ERROR] - %s: %s\n", errorMessage, errorLex);
+    printf("\t[LEXICAL ERROR] - %s: %s\n", errorMessage, errorLex);
     printf("\033[0m");
 }
 
@@ -39,7 +40,7 @@ int validType(char *text, int type, void (*next)(char *, char *, char *, char *)
         if (length > 30)
         {
             printError(ERR_STRING_LENGTH, text);
-            return 0;
+            exit(0);
         }
         else
         {

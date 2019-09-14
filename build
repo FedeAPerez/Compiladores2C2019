@@ -9,3 +9,5 @@ echo "PRUEBA"
 cat tests/prueba.txt | ./Ejecutable
 echo "PRUEBA"
 cat tests/prueba2.txt | ./Ejecutable
+echo "PRUEBA STRING RECHAZADA"
+cat tests/string.rejected.txt | ./Ejecutable

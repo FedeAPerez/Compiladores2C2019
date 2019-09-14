@@ -1,26 +1,18 @@
 %{
-#include <stdio.h>
-#include <string.h>
- 
-void yyerror(const char *str)
-{
-        fprintf(stderr,"error: %s\n",str);
-}
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <conio.h>
+	#include <string.h>
+	#include "y.tab.h"
 
-int yywrap()
-{
-        return 1;
-} 
-  
-int main()
-{
-        yyparse();
-}
-
-void pprintf(const char *str) {
-        printf("\t %s \n", str);
-}
-
+	//Declaracion de funciones
+	void yyerror(const char *str);
+	int yywrap();
+	void pprintf(const char *str);
+	
+	int yystopparser=0;
+	FILE  *yyin;
+	int yylex();
 %}
 
 %union
@@ -31,21 +23,40 @@ void pprintf(const char *str) {
 }
 
 // Sector declaraciones
-%token VAR ENDVAR TIPO_INTEGER TIPO_FLOAT
+
+%token VAR ENDVAR
+
+//Tipos de datos
+%token TIPO_INTEGER TIPO_FLOAT TIPO_STRING
+%token ID
+
 // Condiciones
-%token IF
+%token IF THEN ELSE ENDIF AND OR NOT
+
 // Ciclos
-%token REPEAT
+%token REPEAT UNTIL
+
 // Asignacion
-%token ID OP_ASIG
+%token OP_ASIG
+
 // Constantes
-%token CONST_STRING CONST_INT CONST_FLOAT
+%token CONST_FLOAT CONST_INT CONST_STRING
+
 // Operadores
 %token OP_MULTIPLICACION OP_SUMA OP_RESTA OP_DIVISION
-// Parentesis, corchetes, otros caracteres
-%token PARENTESIS_ABRE PARENTESIS_CIERRA CORCHETE_ABRE CORCHETE_CIERRA COMA DOS_PUNTOS
 
+// Parentesis, corchetes
+%token PARENTESIS_ABRE PARENTESIS_CIERRA CORCHETE_ABRE CORCHETE_CIERRA
 
+//Entrada y salida
+%token PRINT READ
+
+//Operadores comparativos
+%token OP_MENOR OP_MENOR_IGUAL OP_MAYOR OP_MAYOR_IGUAL
+%token OP_IGUAL OP_DISTINTO
+
+//Operadores de puntuacion
+%token PYC COMA DOS_PUNTOS
 
 %%
 programa_aumentado: 
@@ -88,13 +99,15 @@ lista_variables:
 tipo_dato:
         TIPO_INTEGER {
                 pprintf("\t\tINTEGER -> tipo_dato");
-        }
+
+        };
         | TIPO_FLOAT{
                 pprintf("\t\tFLOAT -> tipo_dato");
         };
 
 //Fin Declaraciones
 
+//Seccion codigo
 cuerpo: 
         cuerpo sentencia 
         | sentencia;
@@ -103,22 +116,20 @@ sentencia:
         ciclo_repeat
         | asignacion
         | asignacion_multiple
-        | condicional;
+        | condicional
+		| expresion_aritmetica;
 
 condicional:
-        IF {
-                pprintf("IF -> condicional\n");
-        };
+        IF expresion_logica THEN cuerpo ENDIF 	{ pprintf("condicional -> IF expresion_logica THEN cuerpo ENDIF"); };
+		
+condicional: 
+		IF expresion_logica THEN cuerpo ELSE cuerpo ENDIF 	{ pprintf("IF expresion_logica THEN cuerpo ELSE cuerpo ENDIF"); };
 
 ciclo_repeat:
-        REPEAT {
-                pprintf("REPEAT -> ciclo_repeat\n");
-        };
+        REPEAT cuerpo UNTIL expresion_logica 	{  pprintf("ciclo_repeat -> REPEAT cuerpo UNTIL expresion_logica\n");} 
 
 asignacion:
-        ID OP_ASIG termino {
-                pprintf("id OP_ASIG termino -> asignacion\n");
-        };
+        ID OP_ASIG expresion_aritmetica { pprintf("asignacion -> ID OP_ASIG expresion_aritmetica\n"); };
 
 asignacion_multiple:
         asignacion_multiple_declare OP_ASIG asignacion_multiple_asign {
@@ -136,16 +147,36 @@ asignacion_multiple_asign:
         };
 
 lista_datos:
-        lista_datos COMA termino  {
+        lista_datos COMA expresion_aritmetica  {
                 pprintf("\tlista_datos COMA termino -> lista_datos");
         }
-        | termino {
+        | expresion_aritmetica {
                 pprintf("\t\ttermino -> lista_datos");
         };
+		
 
-termino:
-        termino operacion factor {
-                pprintf("\t\ttermino operacion factor -> termino");
+
+//Expresiones
+expresion_logica:
+		termino_logico AND termino_logico			{pprintf("expresion_logica -> termino_logico AND termino_logico");}
+		| termino_logico OR termino_logico			{pprintf("expresion_logica -> termino_logico OR termino_logico");}
+		| NOT termino_logico						{pprintf("expresion_logica -> NOT termino_logico");}
+		| termino_logico							{pprintf("expresion_logica -> termino_logico");}
+
+termino_logico:
+		expresion_aritmetica comparacion expresion_aritmetica 			{pprintf("termino_logico -> expresion_aritmetica comparacion expresion_aritmetica");}
+
+comparacion:
+		OP_MENOR 					{pprintf("comparacion -> OP_MENOR");}
+		| OP_MENOR_IGUAL 			{pprintf("comparacion -> OP_MENOR_IGUAL");}
+		| OP_MAYOR 					{pprintf("comparacion -> OP_MAYOR");}
+		| OP_MAYOR_IGUAL			{pprintf("comparacion -> OP_MAYOR_IGUAL");}
+		| OP_IGUAL 					{pprintf("comparacion -> OP_IGUAL");}
+		| OP_DISTINTO				{pprintf("comparacion -> OP_DISTINTO");}
+
+expresion_aritmetica:
+        expresion_aritmetica operacion factor {
+                pprintf("\t\ttermino operacion factor -> expresion_aritmetica");
         }
         | factor {
                 pprintf("\t\tfactor -> termino");
@@ -172,14 +203,48 @@ factor:
         | CONST_INT {
                 pprintf("\tCTE INT -> factor");
         }
-        | CONST_FLOAT {
-                pprintf("\tCTE FLOAT -> factor");
+
+		| CONST_FLOAT {
+                pprintf("\t\t\tCTE FLOAT -> factor");
         }
-        | ID {
-                pprintf("\tID -> factor");
+        | ID{
+                pprintf("\t\t\tID -> factor");
         }
-        | PARENTESIS_ABRE termino PARENTESIS_CIERRA {
-                pprintf("\tParentesisA operacion parentesisC -> factor");
+        | PARENTESIS_ABRE expresion_aritmetica PARENTESIS_CIERRA {
+                pprintf("\t\t\tParentesisA operacion parentesisC -> factor");
+
         };
 
+
 %%
+
+
+  
+int main(int argc,char *argv[])
+{
+	if ((yyin = fopen(argv[1], "rt")) == NULL)
+	{
+		printf("\nNo se puede abrir el archivo: %s\n", argv[1]);
+	}
+	else
+	{
+		yyparse();
+		fclose(yyin);
+	}
+	return 0;
+}
+
+void pprintf(const char *str) {
+        printf("\t %s \n", str);
+}
+
+void yyerror(const char *str)
+{
+        fprintf(stderr,"error: %s\n",str);
+		exit(1);
+}
+ 
+int yywrap()
+{
+        return 1;
+} 

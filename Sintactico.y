@@ -5,7 +5,6 @@
 	#include <string.h>
 	#include "y.tab.h"
 
-	
 	//Declaracion de funciones
 	void yyerror(const char *str);
 	int yywrap();
@@ -13,16 +12,18 @@
 	
 	int yystopparser=0;
 	FILE  *yyin;
+	int yylex();
 %}
 
 %union
 {
         int intValue;
-		float floatValue;
+        float floatValue;
         char *stringValue;
 }
 
 // Sector declaraciones
+
 %token VAR ENDVAR
 
 //Tipos de datos
@@ -72,8 +73,7 @@ programa:
 declaraciones:
         VAR linea_declaraciones ENDVAR {
                 pprintf("VAR ENDVAR -> declaraciones");
-        }
-        | VAR ENDVAR;
+        };
 
 linea_declaraciones:
         CORCHETE_ABRE lista_tipo_datos CORCHETE_CIERRA DOS_PUNTOS CORCHETE_ABRE lista_variables CORCHETE_CIERRA {
@@ -82,7 +82,7 @@ linea_declaraciones:
 
 lista_tipo_datos:
         lista_tipo_datos COMA tipo_dato {
-                pprintf("\tlista_tipo_datos COMA TIPO_DATO -> lista_tipo_datos");
+                pprintf("\tlista_tipo_datos COMA tipo_dato -> lista_tipo_datos");
         }
         | tipo_dato {
                 pprintf("\ttipo_dato -> lista_tipo_datos");
@@ -90,19 +90,21 @@ lista_tipo_datos:
 
 lista_variables:
         lista_variables COMA ID {
-                pprintf("\tlista_variables COMA ID -> lista_variables");
+                pprintf("\t\tlista_variables COMA ID -> lista_variables");
         }
         | ID {
-                pprintf("\t\tID -> lista_Variables");
+                pprintf("\tID -> lista_Variables");
         };
 
 tipo_dato:
         TIPO_INTEGER {
                 pprintf("\t\tINTEGER -> tipo_dato");
+
         };
         | TIPO_FLOAT{
                 pprintf("\t\tFLOAT -> tipo_dato");
         };
+
 //Fin Declaraciones
 
 //Seccion codigo
@@ -182,25 +184,26 @@ expresion_aritmetica:
 
 operacion:
         OP_MULTIPLICACION {
-                pprintf("\tmultiplicacion -> operacion");
+                pprintf("\tOP_MULTIPLICACION -> operacion");
         }
         | OP_RESTA {
-                pprintf("\tresta -> operacion");
+                pprintf("\tOP_RESTA -> operacion");
         }
         | OP_SUMA {
-                pprintf("\tsuma -> operacion");
+                pprintf("\tOP_SUMA -> operacion");
         }
         | OP_DIVISION{
-                pprintf("\tdivision -> operacion");
+                pprintf("\tOP_DIVISION -> operacion");
         };
 
 factor:
         CONST_STRING {
-                pprintf("\t\t\tCTE STRING -> factor");
+                pprintf("\tCTE STRING -> factor");
         }
         | CONST_INT {
-                pprintf("\t\t\tCTE INT -> factor");
+                pprintf("\tCTE INT -> factor");
         }
+
 		| CONST_FLOAT {
                 pprintf("\t\t\tCTE FLOAT -> factor");
         }
@@ -209,6 +212,7 @@ factor:
         }
         | PARENTESIS_ABRE expresion_aritmetica PARENTESIS_CIERRA {
                 pprintf("\t\t\tParentesisA operacion parentesisC -> factor");
+
         };
 
 

@@ -10,6 +10,8 @@
 
 void cota_error(char* mensaje);
 
+
+
 %}
 
 %option noyywrap
@@ -39,6 +41,7 @@ FIN_COMENTARIO			["/--"]
 COMENTARIO				[{INICIO_COMENTARIO}{CADENA}*{FIN_COMENTARIO}]
 
 %%
+
 
 "REPEAT"	{return REPEAT; }
 "UNTIL"		{return UNTIL; }
@@ -72,49 +75,37 @@ COMENTARIO				[{INICIO_COMENTARIO}{CADENA}*{FIN_COMENTARIO}]
 ")"			{return PARENTESIS_CIERRA; }
 ":"			{return DOS_PUNTOS; }
 "INTEGER"                     { 
-                            yylval.valor_int = atoi( yytext );
+                            yylval.intValue = atoi( yytext );
                             return TIPO_INTEGER;
                           }
 
 "FLOAT"                   { 
-                            yylval.valor_float = atof( yytext );
+                            yylval.floatValue = atof( yytext );
                             return TIPO_FLOAT;
                           }
 
 "STRING"                  { 
-                            yylval.valor_string = strdup( yytext );
+                            yylval.stringValue = strdup( yytext );
                             return TIPO_STRING;
                           }
 
 {ID}          			  {
 			                if(strlen(yytext) <= 30){
-			                  yylval.valor_string = strdup(yytext);
+			                  yylval.stringValue = strdup(yytext);
 			                  return ID;
 			                }
 							cota_error("El nombre de variable excede el limite permitido.");
 			              }               
 {CONSTANTE_REAL}  		  {
 		                    if(atof(yytext)>=-3.40282347e+38F && atof(yytext)<=3.40282347e+38F){
-		                    	yylval.valor_float = atof(yytext);
+		                    	yylval.floatValue = atof(yytext);
 		                    	return CONST_FLOAT;
 		                    }
 							cota_error("El valor de un flotante excede el limite permitido.");
 		                  } 
-{CONSTANTE_ENTERA}        {
-		                      if(atoll(yytext)>=-32768 && atoll(yytext)<=32767){
-		                      	yylval.valor_int = atoi(yytext);
-		                      	return CONST_INT;
-		                      }
-							  cota_error("El valor de un entero excede el limite permitido.");
-		                  } 
+{CONSTANTE_ENTERA}        { validType(yytext, TYPE_INT, saveTs); yylval.intValue = atoi(yytext); return CONST_INT; }
 
-{CONST_STRING}		  {	
-							if(strlen(yytext)<=30){
-							strcpy(yylval.valor_string,yytext);
-							return CONST_STRING;
-							}
-							cota_error("El contenido de una cadena excede el limite permitido.");
-						  }
+{CONST_STRING}		  { validType(yytext, TYPE_STRING, saveTs); yylval.stringValue = yytext; return CONST_STRING; }
 {COMENTARIO}              { printf("\t comentario \n\n"); };
 \n                                      /* ignore end of line */;
 [ \t]+                                  /* ignore whitespace */;

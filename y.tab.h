@@ -130,7 +130,7 @@ typedef union YYSTYPE
 #line 19 "Sintactico.y"
 
         int intValue;
-		float floatValue;
+        float floatValue;
         char *stringValue;
 
 

@@ -16,6 +16,12 @@ Una vez instalado pueden ejecutar
 sh build
 ```
 
+Para ver el output completo de bison
+
+```shell
+sh build:debug
+```
+
 Ese comando ejecuta los casos de prueba dentro de la carpeta `tests`
 
 ## Implementación

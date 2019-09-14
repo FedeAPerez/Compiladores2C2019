@@ -1,2 +1,2 @@
-Primera.exe prueba.txt
+Primera.exe tests/prueba.txt
 pause

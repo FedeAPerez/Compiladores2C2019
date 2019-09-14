@@ -1,5 +1,4 @@
 lex.yy.c
+ts.txt
 y.tab.*
 y.*
-Ejecutable.*
-.DS_Store

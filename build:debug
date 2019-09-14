@@ -6,4 +6,4 @@ bison --verbose -yd Sintactico.y
 flex Lexico.l
 gcc y.tab.c lex.yy.c -ll -o Ejecutable
 echo "PRUEBA"
-cat tests/prueba.txt | ./Ejecutable
+cat tests/prueba.min.txt | ./Ejecutable

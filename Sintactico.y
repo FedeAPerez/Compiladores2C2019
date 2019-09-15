@@ -21,6 +21,13 @@ void pprintf(const char *str) {
         printf("\t %s \n", str);
 }
 
+void pprints()
+{
+    printf("\033[0;32m");
+    printf("\t[Successful Compilation]\n");
+    printf("\033[0m");
+}
+
 %}
 
 %union
@@ -39,6 +46,9 @@ void pprintf(const char *str) {
 // Ciclos
 %token REPEAT
 
+// MOD / DIV
+%token MOD
+
 // Asignacion
 %token ID OP_ASIG
 
@@ -54,7 +64,7 @@ void pprintf(const char *str) {
 %%
 programa_aumentado: 
         programa {
-                pprintf("--- Compilacion ok ---");
+                pprints();
         };
 
 programa:
@@ -126,17 +136,17 @@ asignacion:
 
 asignacion_multiple:
         asignacion_multiple_declare OP_ASIG asignacion_multiple_asign {
-                pprintf("asignacion_multiple_declare OP_ASIG asignacion_multiple_asign --> asignacion_multiple\n");
+                pprintf("asignacion_multiple_declare OP_ASIG asignacion_multiple_asign -> asignacion_multiple\n");
         };
 
 asignacion_multiple_declare:
         CORCHETE_ABRE lista_variables CORCHETE_CIERRA {
-                pprintf("\t\tCA lista_variables CC --> asignacion_multiple_declare\n");
+                pprintf("\t\tCA lista_variables CC -> asignacion_multiple_declare\n");
         };
 
 asignacion_multiple_asign: 
         CORCHETE_ABRE lista_datos CORCHETE_CIERRA {
-                pprintf("\t\tCA lista_datos CC --> asignacion_multiple_asign\n");
+                pprintf("\t\tCA lista_datos CC -> asignacion_multiple_asign\n");
         };
 
 lista_datos:
@@ -190,8 +200,11 @@ factor:
         | ID {
                 pprintf("\tID -> factor");
         }
-        | PARENTESIS_ABRE termino PARENTESIS_CIERRA {
-                pprintf("\tParentesisA operacion parentesisC -> factor");
+        | PARENTESIS_ABRE expresion PARENTESIS_CIERRA {
+                pprintf("\tPARENTESIS_ABRE expresion PARENTESIS_CIERRA -> factor");
+        }
+        | expresion MOD expresion {
+                pprintf("\t expresion MOD expresion -> factor");
         };
 
 %%

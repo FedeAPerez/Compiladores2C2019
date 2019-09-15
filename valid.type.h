@@ -18,7 +18,6 @@
 
 void printError(char *errorMessage, char *errorLex)
 {
-
     printf("\033[0;31m");
     printf("\t[LEXICAL ERROR] - %s: %s\n", errorMessage, errorLex);
     printf("\033[0m");

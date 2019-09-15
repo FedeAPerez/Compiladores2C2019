@@ -9,6 +9,7 @@
 "ENDVAR"                                return ENDVAR;
 "REPEAT"                                return REPEAT;
 "IF"                                    return IF;
+"MOD"                                   return MOD;
 ":="                                    return OP_ASIG;
 "*"                                     return OP_MULTIPLICACION;
 "+"                                     return OP_SUMA;

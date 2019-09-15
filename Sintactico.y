@@ -32,20 +32,24 @@ void pprintf(const char *str) {
 
 // Sector declaraciones
 %token VAR ENDVAR TIPO_INTEGER TIPO_FLOAT
+
 // Condiciones
 %token IF
+
 // Ciclos
 %token REPEAT
+
 // Asignacion
 %token ID OP_ASIG
+
 // Constantes
 %token CONST_STRING CONST_INT CONST_FLOAT
+
 // Operadores
 %token OP_MULTIPLICACION OP_SUMA OP_RESTA OP_DIVISION
+
 // Parentesis, corchetes, otros caracteres
 %token PARENTESIS_ABRE PARENTESIS_CIERRA CORCHETE_ABRE CORCHETE_CIERRA COMA DOS_PUNTOS
-
-
 
 %%
 programa_aumentado: 
@@ -116,8 +120,8 @@ ciclo_repeat:
         };
 
 asignacion:
-        ID OP_ASIG termino {
-                pprintf("id OP_ASIG termino -> asignacion\n");
+        ID OP_ASIG expresion {
+                pprintf("id OP_ASIG expresion -> asignacion\n");
         };
 
 asignacion_multiple:
@@ -136,11 +140,19 @@ asignacion_multiple_asign:
         };
 
 lista_datos:
-        lista_datos COMA termino  {
+        lista_datos COMA expresion  {
                 pprintf("\tlista_datos COMA termino -> lista_datos");
         }
-        | termino {
+        | expresion {
                 pprintf("\t\ttermino -> lista_datos");
+        };
+
+expresion:
+        expresion OP_SUMA termino {
+                pprintf("\texpresion OP_SUMA termino -> termino");
+        }
+        | termino {
+                pprintf("\ttermino -> expresion");
         };
 
 termino:

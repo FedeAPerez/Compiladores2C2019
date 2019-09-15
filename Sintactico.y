@@ -1,18 +1,39 @@
 %{
-	#include <stdio.h>
-	#include <stdlib.h>
-	#include <conio.h>
-	#include <string.h>
-	#include "y.tab.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+ 
+void yyerror(const char *str)
+{
 
-	//Declaracion de funciones
-	void yyerror(const char *str);
-	int yywrap();
-	void pprintf(const char *str);
-	
-	int yystopparser=0;
-	FILE  *yyin;
-	int yylex();
+        printf("\033[0;31m");        
+        printf("\t[SYNTAX ERROR]: %s\n", str);
+        printf("\033[0m");
+}
+
+int yywrap()
+{
+        return 1;
+} 
+  
+int main()
+{
+        yyparse();
+        exit(0);
+}
+
+void pprintf(const char *str) {
+        printf("\t %s \n", str);
+}
+
+void pprints()
+{
+    printf("\033[0;32m");
+    printf("\t[Compilacion Exitosa]\n");
+    printf("\033[0m");
+    exit(0);
+}
+
 %}
 
 %union
@@ -23,135 +44,220 @@
 }
 
 // Sector declaraciones
-
-%token VAR ENDVAR
-
-//Tipos de datos
-%token TIPO_INTEGER TIPO_FLOAT TIPO_STRING
-%token ID
+%token VAR ENDVAR TIPO_INTEGER TIPO_FLOAT
 
 // Condiciones
-%token IF THEN ELSE ENDIF AND OR NOT
+%token IF THEN ELSE ENDIF
+
+// Operadores de Comparación
+%token OP_MENOR OP_MENOR_IGUAL OP_MAYOR OP_MAYOR_IGUAL
+%token OP_IGUAL OP_DISTINTO
+%token AND NOT OR
 
 // Ciclos
 %token REPEAT UNTIL
 
+// I/O
+%token PRINT READ
+
+// MOD / DIV
+%token MOD DIV
+
 // Asignacion
-%token OP_ASIG
+%token ID OP_ASIG
 
 // Constantes
-%token CONST_FLOAT CONST_INT CONST_STRING
+%token CONST_STRING CONST_INT CONST_FLOAT
 
 // Operadores
 %token OP_MULTIPLICACION OP_SUMA OP_RESTA OP_DIVISION
 
-// Parentesis, corchetes
-%token PARENTESIS_ABRE PARENTESIS_CIERRA CORCHETE_ABRE CORCHETE_CIERRA
-
-//Entrada y salida
-%token PRINT READ
-
-//Operadores comparativos
-%token OP_MENOR OP_MENOR_IGUAL OP_MAYOR OP_MAYOR_IGUAL
-%token OP_IGUAL OP_DISTINTO
-
-//Operadores de puntuacion
-%token PYC COMA DOS_PUNTOS
+// Parentesis, corchetes, otros caracteres
+%token PARENTESIS_ABRE PARENTESIS_CIERRA CORCHETE_ABRE CORCHETE_CIERRA COMA DOS_PUNTOS
 
 %%
 programa_aumentado: 
         programa {
-                pprintf("--- Compilacion ok ---");
+                pprints();
         };
 
 programa:
-        declaraciones cuerpo
-        | declaraciones
-        | cuerpo;
+        declaraciones cuerpo {
+                pprintf("\tdeclaraciones cuerpo - es -  programa\n");
+        }
+        | declaraciones {
+                pprintf("\tdeclaraciones - es -  programa");
+        }
+        | cuerpo {
+                pprintf("\tcuerpo - es -  programa");
+        };
 
 // Declaraciones
 declaraciones:
         VAR linea_declaraciones ENDVAR {
-                pprintf("VAR ENDVAR -> declaraciones");
+                pprintf("VAR ENDVAR - es - declaraciones");
         };
 
 linea_declaraciones:
         CORCHETE_ABRE lista_tipo_datos CORCHETE_CIERRA DOS_PUNTOS CORCHETE_ABRE lista_variables CORCHETE_CIERRA {
-                pprintf("\tCA lista_tipo_datos CC DOS_PUNTOS CA lista_variables CC -> linea_declaraciones");
+                pprintf("\tCA lista_tipo_datos CC DOS_PUNTOS CA lista_variables CC - es - linea_declaraciones");
         };
 
 lista_tipo_datos:
         lista_tipo_datos COMA tipo_dato {
-                pprintf("\tlista_tipo_datos COMA tipo_dato -> lista_tipo_datos");
+                pprintf("\tlista_tipo_datos COMA tipo_dato - es - lista_tipo_datos");
         }
         | tipo_dato {
-                pprintf("\ttipo_dato -> lista_tipo_datos");
+                pprintf("\ttipo_dato - es - lista_tipo_datos");
         };
 
 lista_variables:
         lista_variables COMA ID {
-                pprintf("\t\tlista_variables COMA ID -> lista_variables");
+                pprintf("\t\tlista_variables COMA ID - es - lista_variables");
         }
         | ID {
-                pprintf("\tID -> lista_Variables");
+                pprintf("\tID - es - lista_Variables");
         };
 
 tipo_dato:
         TIPO_INTEGER {
-                pprintf("\t\tINTEGER -> tipo_dato");
-
-        };
+                pprintf("\t\tINTEGER - es - tipo_dato");
+        }
         | TIPO_FLOAT{
-                pprintf("\t\tFLOAT -> tipo_dato");
+                pprintf("\t\tFLOAT - es - tipo_dato");
         };
 
 //Fin Declaraciones
 
 //Seccion codigo
 cuerpo: 
-        cuerpo sentencia 
-        | sentencia;
+        cuerpo sentencia {
+                pprintf("\tcuerpo sentencia - es - cuerpo\n");
+        }
+        | sentencia {
+                pprintf("\tsentencia - es - cuerpo\n");
+        };
 
 sentencia:
-        ciclo_repeat
-        | asignacion
-        | asignacion_multiple
-        | condicional
-		| expresion_aritmetica;
+        ciclo_repeat {
+                pprintf("\tciclo_repeat - es - sentencia");
+        }
+        | asignacion {
+                pprintf("\tasignacion - es - sentencia");
+        }
+        | asignacion_multiple {
+                pprintf("\tsignacion_multiple - es - sentencia");
+        }
+        | condicional {
+                pprintf("\tcondicional - es - sentencia");
+        }
+        | io_lectura {
+                pprintf("\t io_lectura - es - sentencia");
+        }
+        | io_salida {
+                pprintf("\t io_salida - es - sentencia");
+        };
+
+io_lectura:
+        READ ID {
+                pprintf("READ ID - es - io_lectura");
+        };
+
+io_salida:
+        PRINT CONST_STRING {
+                pprintf("PRINT CONST_STRING - es - io_salida");
+        }
+        | PRINT ID
+        {
+                pprintf("PRINT ID - es - io_salida");
+        };
 
 condicional:
-        IF expresion_logica THEN cuerpo ENDIF 	{ pprintf("condicional -> IF expresion_logica THEN cuerpo ENDIF"); };
-		
-condicional: 
-		IF expresion_logica THEN cuerpo ELSE cuerpo ENDIF 	{ pprintf("IF expresion_logica THEN cuerpo ELSE cuerpo ENDIF"); };
+        IF expresion_logica THEN cuerpo ELSE cuerpo ENDIF {
+                pprintf("IF expresion_logica THEN cuerpo ELSE cuerpo ENDIF - es - condicional");
+        }
+        | IF expresion_logica THEN cuerpo ENDIF {
+                pprintf("IF expresion_logica THEN cuerpo ENDIF - es - condicional");
+        };
 
 ciclo_repeat:
-        REPEAT cuerpo UNTIL expresion_logica 	{  pprintf("ciclo_repeat -> REPEAT cuerpo UNTIL expresion_logica\n");} 
+        REPEAT cuerpo UNTIL expresion_logica {
+                pprintf("REPEAT cuerpo UNTIL expresion_logica - es - ciclo_repeat");
+        };
 
 asignacion:
-        ID OP_ASIG expresion_aritmetica { pprintf("asignacion -> ID OP_ASIG expresion_aritmetica\n"); };
+        ID OP_ASIG expresion {
+                pprintf("id OP_ASIG expresion - es - asignacion");
+        };
 
 asignacion_multiple:
         asignacion_multiple_declare OP_ASIG asignacion_multiple_asign {
-                pprintf("asignacion_multiple_declare OP_ASIG asignacion_multiple_asign --> asignacion_multiple\n");
+                pprintf("asignacion_multiple_declare OP_ASIG asignacion_multiple_asign - es - asignacion_multiple");
         };
 
 asignacion_multiple_declare:
         CORCHETE_ABRE lista_variables CORCHETE_CIERRA {
-                pprintf("\t\tCA lista_variables CC --> asignacion_multiple_declare\n");
+                pprintf("\t\tCA lista_variables CC - es - asignacion_multiple_declare");
         };
 
 asignacion_multiple_asign: 
         CORCHETE_ABRE lista_datos CORCHETE_CIERRA {
-                pprintf("\t\tCA lista_datos CC --> asignacion_multiple_asign\n");
+                pprintf("\t\tCA lista_datos CC - es - asignacion_multiple_asign");
         };
 
 lista_datos:
-        lista_datos COMA expresion_aritmetica  {
-                pprintf("\tlista_datos COMA termino -> lista_datos");
+        lista_datos COMA expresion  {
+                pprintf("\tlista_datos COMA termino - es - lista_datos");
         }
-        | expresion_aritmetica {
-                pprintf("\t\ttermino -> lista_datos");
+        | expresion {
+                pprintf("\t\ttermino - es - lista_datos");
+        };
+
+expresion_logica:
+        termino_logico AND termino_logico {
+                pprintf(" termino_logico AND termino_logico es expresion_logica");
+        }
+        | termino_logico OR termino_logico {
+                pprintf("termino_logico OR termino_logico - es - expresion_logica");
+        }
+        | NOT termino_logico {
+                pprintf("NOT termino_logico - es - expresion_logica");
+        }
+        | termino_logico {
+                pprintf("termino_logico - es - expresion_logica");
+        };
+
+termino_logico: 
+        expresion comparacion expresion {
+                pprintf("\t\texpresion comparacion expresion  - es - expresion_logica");
+        };
+
+comparacion:
+        OP_MENOR {
+                pprintf("comparacion - es - OP_MENOR");
+        }
+        | OP_MENOR_IGUAL {
+                pprintf("comparacion - es - OP_MENOR_IGUAL");
+        }
+	| OP_MAYOR {
+                pprintf("comparacion - es - OP_MAYOR");
+        }
+	| OP_MAYOR_IGUAL {
+                pprintf("comparacion - es - OP_MAYOR_IGUAL");
+        }
+	| OP_IGUAL {
+                pprintf("comparacion - es - OP_IGUAL");
+        }
+	| OP_DISTINTO {
+                pprintf("OP_DISTINTO - es - comparacion");
+        };
+
+expresion:
+        expresion OP_SUMA termino {
+                pprintf("\texpresion OP_SUMA termino - es - termino");
+        }
+        | termino {
+                pprintf("\ttermino - es - expresion");
         };
 		
 
@@ -163,57 +269,47 @@ expresion_logica:
 		| NOT termino_logico						{pprintf("expresion_logica -> NOT termino_logico");}
 		| termino_logico							{pprintf("expresion_logica -> termino_logico");}
 
-termino_logico:
-		expresion_aritmetica comparacion expresion_aritmetica 			{pprintf("termino_logico -> expresion_aritmetica comparacion expresion_aritmetica");}
-
-comparacion:
-		OP_MENOR 					{pprintf("comparacion -> OP_MENOR");}
-		| OP_MENOR_IGUAL 			{pprintf("comparacion -> OP_MENOR_IGUAL");}
-		| OP_MAYOR 					{pprintf("comparacion -> OP_MAYOR");}
-		| OP_MAYOR_IGUAL			{pprintf("comparacion -> OP_MAYOR_IGUAL");}
-		| OP_IGUAL 					{pprintf("comparacion -> OP_IGUAL");}
-		| OP_DISTINTO				{pprintf("comparacion -> OP_DISTINTO");}
-
-expresion_aritmetica:
-        expresion_aritmetica operacion factor {
-                pprintf("\t\ttermino operacion factor -> expresion_aritmetica");
+termino:
+        termino operacion factor {
+                pprintf("\t\ttermino operacion factor - es - termino");
         }
         | factor {
-                pprintf("\t\tfactor -> termino");
+                pprintf("\t\tfactor - es - termino");
         };
 
 operacion:
         OP_MULTIPLICACION {
-                pprintf("\tOP_MULTIPLICACION -> operacion");
+                pprintf("\tOP_MULTIPLICACION - es - operacion");
         }
         | OP_RESTA {
-                pprintf("\tOP_RESTA -> operacion");
+                pprintf("\tOP_RESTA - es - operacion");
         }
         | OP_SUMA {
-                pprintf("\tOP_SUMA -> operacion");
+                pprintf("\tOP_SUMA - es - operacion");
         }
         | OP_DIVISION{
-                pprintf("\tOP_DIVISION -> operacion");
+                pprintf("\tOP_DIVISION - es - operacion");
         };
 
 factor:
-        CONST_STRING {
-                pprintf("\tCTE STRING -> factor");
+        CONST_INT {
+                pprintf("\tCTE INT - es - factor");
         }
-        | CONST_INT {
-                pprintf("\tCTE INT -> factor");
+        | CONST_FLOAT {
+                pprintf("\tCTE FLOAT - es - factor");
         }
-
-		| CONST_FLOAT {
-                pprintf("\t\t\tCTE FLOAT -> factor");
+        | ID {
+                pprintf("\tID - es - factor");
         }
-        | ID{
-                pprintf("\t\t\tID -> factor");
+        | PARENTESIS_ABRE expresion PARENTESIS_CIERRA {
+                pprintf("\tPARENTESIS_ABRE expresion PARENTESIS_CIERRA - es - factor");
         }
-        | PARENTESIS_ABRE expresion_aritmetica PARENTESIS_CIERRA {
-                pprintf("\t\t\tParentesisA operacion parentesisC -> factor");
-
-        };
+        | expresion MOD expresion {
+                pprintf("\t expresion MOD expresion - es - factor");
+        }
+        | expresion DIV expresion {
+                pprintf("\t expresion DIV expresion - es - factor");
+        };;
 
 
 %%

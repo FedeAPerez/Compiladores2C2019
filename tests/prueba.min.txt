@@ -1,1 +1,3 @@
-[pepe1] := [3+3]
+VAR
+    [pepe1] : [3+3]
+ENDVAR

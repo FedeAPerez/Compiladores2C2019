@@ -18,7 +18,6 @@
 
 void printError(char *errorMessage, char *errorLex)
 {
-
     printf("\033[0;31m");
     printf("\t[LEXICAL ERROR] - %s: %s\n", errorMessage, errorLex);
     printf("\033[0m");
@@ -44,6 +43,7 @@ int validType(char *text, int type, void (*next)(char *, char *, char *, char *)
         }
         else
         {
+            // converts length into string
             sprintf(stringLength, "%d", length);
             next(text, "CONST_STRING", text, stringLength);
             return 1;
@@ -57,12 +57,10 @@ int validType(char *text, int type, void (*next)(char *, char *, char *, char *)
         }
         else
         {
-            sprintf(stringLength, "%d", length);
             next(text, "CONST_INT", text, "");
         }
         break;
     case TYPE_FLOAT:
-        sprintf(stringLength, "%d", length);
         next(text, "CONST_FLOAT", text, "");
         return 1;
         break;
@@ -70,4 +68,5 @@ int validType(char *text, int type, void (*next)(char *, char *, char *, char *)
         return 1;
         break;
     }
+    return 1;
 }

@@ -6,10 +6,9 @@ ENDVAR
 pepe := "32"
 pepe2 := "34"
 factor := 24 * 32
-IF
-REPEAT
 pepe3 := 3 * (3 * 3)
 pepe4 := (3 * 3)
 pepe_5 := (3 * 3) * 4
 pepe_pepe := 3 + (4 + 5 + 4)
 ppe := 3.3423
+IF

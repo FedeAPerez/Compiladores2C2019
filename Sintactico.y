@@ -1,10 +1,14 @@
 %{
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
  
 void yyerror(const char *str)
 {
-        fprintf(stderr,"error: %s\n",str);
+
+        printf("\033[0;31m");        
+        printf("\t[SYNTAX ERROR]: %s\n", str);
+        printf("\033[0m");
 }
 
 int yywrap()
@@ -15,7 +19,7 @@ int yywrap()
 int main()
 {
         yyparse();
-        exit();
+        exit(0);
 }
 
 void pprintf(const char *str) {
@@ -25,9 +29,9 @@ void pprintf(const char *str) {
 void pprints()
 {
     printf("\033[0;32m");
-    printf("\t[Successful Compilation]\n");
+    printf("\t[Compilacion Exitosa]\n");
     printf("\033[0m");
-    exit();
+    exit(0);
 }
 
 %}

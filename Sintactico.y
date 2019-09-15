@@ -29,7 +29,7 @@ void pprintf(const char *str) {
 void pprints()
 {
     printf("\033[0;32m");
-    printf("\t[Compilacion Exitosa]\n");
+    printf("\t[COMPILACION EXITOSA]\n");
     printf("\033[0m");
     exit(0);
 }
@@ -260,15 +260,6 @@ expresion:
                 pprintf("\ttermino - es - expresion");
         };
 		
-
-
-//Expresiones
-expresion_logica:
-		termino_logico AND termino_logico			{pprintf("expresion_logica -> termino_logico AND termino_logico");}
-		| termino_logico OR termino_logico			{pprintf("expresion_logica -> termino_logico OR termino_logico");}
-		| NOT termino_logico						{pprintf("expresion_logica -> NOT termino_logico");}
-		| termino_logico							{pprintf("expresion_logica -> termino_logico");}
-
 termino:
         termino operacion factor {
                 pprintf("\t\ttermino operacion factor - es - termino");
@@ -310,37 +301,4 @@ factor:
         | expresion DIV expresion {
                 pprintf("\t expresion DIV expresion - es - factor");
         };;
-
-
 %%
-
-
-  
-int main(int argc,char *argv[])
-{
-	if ((yyin = fopen(argv[1], "rt")) == NULL)
-	{
-		printf("\nNo se puede abrir el archivo: %s\n", argv[1]);
-	}
-	else
-	{
-		yyparse();
-		fclose(yyin);
-	}
-	return 0;
-}
-
-void pprintf(const char *str) {
-        printf("\t %s \n", str);
-}
-
-void yyerror(const char *str)
-{
-        fprintf(stderr,"error: %s\n",str);
-		exit(1);
-}
- 
-int yywrap()
-{
-        return 1;
-} 

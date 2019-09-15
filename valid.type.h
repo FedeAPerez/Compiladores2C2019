@@ -68,4 +68,5 @@ int validType(char *text, int type, void (*next)(char *, char *, char *, char *)
         return 1;
         break;
     }
+    return 1;
 }

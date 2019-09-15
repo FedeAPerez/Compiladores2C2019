@@ -43,8 +43,13 @@ void pprints()
 // Condiciones
 %token IF
 
+// Operadores de Comparación
+%token OP_MENOR OP_MENOR_IGUAL OP_MAYOR OP_MAYOR_IGUAL
+%token OP_IGUAL OP_DISTINTO
+%token AND NOT OR
+
 // Ciclos
-%token REPEAT
+%token REPEAT UNTIL
 
 // MOD / DIV
 %token MOD DIV
@@ -75,36 +80,36 @@ programa:
 // Declaraciones
 declaraciones:
         VAR linea_declaraciones ENDVAR {
-                pprintf("VAR ENDVAR -> declaraciones");
+                pprintf("VAR ENDVAR - es - declaraciones");
         };
 
 linea_declaraciones:
         CORCHETE_ABRE lista_tipo_datos CORCHETE_CIERRA DOS_PUNTOS CORCHETE_ABRE lista_variables CORCHETE_CIERRA {
-                pprintf("\tCA lista_tipo_datos CC DOS_PUNTOS CA lista_variables CC -> linea_declaraciones");
+                pprintf("\tCA lista_tipo_datos CC DOS_PUNTOS CA lista_variables CC - es - linea_declaraciones");
         };
 
 lista_tipo_datos:
         lista_tipo_datos COMA tipo_dato {
-                pprintf("\tlista_tipo_datos COMA tipo_dato -> lista_tipo_datos");
+                pprintf("\tlista_tipo_datos COMA tipo_dato - es - lista_tipo_datos");
         }
         | tipo_dato {
-                pprintf("\ttipo_dato -> lista_tipo_datos");
+                pprintf("\ttipo_dato - es - lista_tipo_datos");
         };
 
 lista_variables:
         lista_variables COMA ID {
-                pprintf("\t\tlista_variables COMA ID -> lista_variables");
+                pprintf("\t\tlista_variables COMA ID - es - lista_variables");
         }
         | ID {
-                pprintf("\tID -> lista_Variables");
+                pprintf("\tID - es - lista_Variables");
         };
 
 tipo_dato:
         TIPO_INTEGER {
-                pprintf("\t\tINTEGER -> tipo_dato");
+                pprintf("\t\tINTEGER - es - tipo_dato");
         }
         | TIPO_FLOAT{
-                pprintf("\t\tFLOAT -> tipo_dato");
+                pprintf("\t\tFLOAT - es - tipo_dato");
         };
 
 //Fin Declaraciones
@@ -121,93 +126,132 @@ sentencia:
 
 condicional:
         IF {
-                pprintf("IF -> condicional\n");
+                pprintf("IF - es - condicional\n");
         };
 
 ciclo_repeat:
-        REPEAT {
-                pprintf("REPEAT -> ciclo_repeat\n");
+        REPEAT cuerpo UNTIL expresion_logica {
+                pprintf("REPEAT cuerpo UNTIL expresion_logica - es - ciclo_repeat\n");
         };
 
 asignacion:
         ID OP_ASIG expresion {
-                pprintf("id OP_ASIG expresion -> asignacion\n");
+                pprintf("id OP_ASIG expresion - es - asignacion\n");
         };
 
 asignacion_multiple:
         asignacion_multiple_declare OP_ASIG asignacion_multiple_asign {
-                pprintf("asignacion_multiple_declare OP_ASIG asignacion_multiple_asign -> asignacion_multiple\n");
+                pprintf("asignacion_multiple_declare OP_ASIG asignacion_multiple_asign - es - asignacion_multiple\n");
         };
 
 asignacion_multiple_declare:
         CORCHETE_ABRE lista_variables CORCHETE_CIERRA {
-                pprintf("\t\tCA lista_variables CC -> asignacion_multiple_declare\n");
+                pprintf("\t\tCA lista_variables CC - es - asignacion_multiple_declare\n");
         };
 
 asignacion_multiple_asign: 
         CORCHETE_ABRE lista_datos CORCHETE_CIERRA {
-                pprintf("\t\tCA lista_datos CC -> asignacion_multiple_asign\n");
+                pprintf("\t\tCA lista_datos CC - es - asignacion_multiple_asign\n");
         };
 
 lista_datos:
         lista_datos COMA expresion  {
-                pprintf("\tlista_datos COMA termino -> lista_datos");
+                pprintf("\tlista_datos COMA termino - es - lista_datos");
         }
         | expresion {
-                pprintf("\t\ttermino -> lista_datos");
+                pprintf("\t\ttermino - es - lista_datos");
+        };
+
+expresion_logica:
+        termino_logico AND termino_logico {
+                pprintf(" termino_logico AND termino_logico es expresion_logica");
+        }
+        | termino_logico OR termino_logico {
+                pprintf("termino_logico OR termino_logico - es - expresion_logica");
+        }
+        | NOT termino_logico {
+                pprintf("NOT termino_logico - es - expresion_logica");
+        }
+        | termino_logico {
+                pprintf("termino_logico - es - expresion_logica");
+        };
+
+termino_logico: 
+        expresion comparacion expresion {
+                pprintf("\t\texpresion comparacion expresion  - es - expresion_logica");
+        };
+
+comparacion:
+        OP_MENOR {
+                pprintf("comparacion - es - OP_MENOR");
+        }
+        | OP_MENOR_IGUAL {
+                pprintf("comparacion - es - OP_MENOR_IGUAL");
+        }
+	| OP_MAYOR {
+                pprintf("comparacion - es - OP_MAYOR");
+        }
+	| OP_MAYOR_IGUAL {
+                pprintf("comparacion - es - OP_MAYOR_IGUAL");
+        }
+	| OP_IGUAL {
+                pprintf("comparacion - es - OP_IGUAL");
+        }
+	| OP_DISTINTO {
+                pprintf("OP_DISTINTO - es - comparacion");
         };
 
 expresion:
         expresion OP_SUMA termino {
-                pprintf("\texpresion OP_SUMA termino -> termino");
+                pprintf("\texpresion OP_SUMA termino - es - termino");
         }
         | termino {
-                pprintf("\ttermino -> expresion");
+                pprintf("\ttermino - es - expresion");
         };
 
 termino:
         termino operacion factor {
-                pprintf("\t\ttermino operacion factor -> termino");
+                pprintf("\t\ttermino operacion factor - es - termino");
         }
         | factor {
-                pprintf("\t\tfactor -> termino");
+                pprintf("\t\tfactor - es - termino");
         };
 
 operacion:
         OP_MULTIPLICACION {
-                pprintf("\tOP_MULTIPLICACION -> operacion");
+                pprintf("\tOP_MULTIPLICACION - es - operacion");
         }
         | OP_RESTA {
-                pprintf("\tOP_RESTA -> operacion");
+                pprintf("\tOP_RESTA - es - operacion");
         }
         | OP_SUMA {
-                pprintf("\tOP_SUMA -> operacion");
+                pprintf("\tOP_SUMA - es - operacion");
         }
         | OP_DIVISION{
-                pprintf("\tOP_DIVISION -> operacion");
+                pprintf("\tOP_DIVISION - es - operacion");
         };
 
 factor:
         CONST_STRING {
-                pprintf("\tCTE STRING -> factor");
+                pprintf("\tCTE STRING - es - factor");
         }
         | CONST_INT {
-                pprintf("\tCTE INT -> factor");
+                pprintf("\tCTE INT - es - factor");
         }
         | CONST_FLOAT {
-                pprintf("\tCTE FLOAT -> factor");
+                pprintf("\tCTE FLOAT - es - factor");
         }
         | ID {
-                pprintf("\tID -> factor");
+                pprintf("\tID - es - factor");
         }
         | PARENTESIS_ABRE expresion PARENTESIS_CIERRA {
-                pprintf("\tPARENTESIS_ABRE expresion PARENTESIS_CIERRA -> factor");
+                pprintf("\tPARENTESIS_ABRE expresion PARENTESIS_CIERRA - es - factor");
         }
         | expresion MOD expresion {
-                pprintf("\t expresion MOD expresion -> factor");
+                pprintf("\t expresion MOD expresion - es - factor");
         }
         | expresion DIV expresion {
-                pprintf("\t expresion DIV expresion -> factor");
+                pprintf("\t expresion DIV expresion - es - factor");
         };;
 
 %%

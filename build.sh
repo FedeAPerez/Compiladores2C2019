@@ -12,3 +12,5 @@ echo "PRUEBA ENTERO RECHAZADO - ERROR"
 cat tests/int.rejected.txt | ./build/Ejecutable
 echo "PRUEBA MOD/DIV - OK"
 cat tests/mod-div.txt | ./build/Ejecutable
+echo "PRUEBA REPEAT - OK"
+cat tests/repeat.txt | ./build/Ejecutable

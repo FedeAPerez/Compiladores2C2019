@@ -1,7 +1,4 @@
-rm lex.yy.c
-rm y.tab.c
-rm y.tab.h
-rm Ejecutable
+sh clean.sh
 bison -yd Sintactico.y
 flex Lexico.l
 gcc y.tab.c lex.yy.c -ll -o ./build/Ejecutable

@@ -1,5 +1,5 @@
 lex.yy.c
-ts.*
+ts.txt
 y.tab.*
 y.*
 /build/*

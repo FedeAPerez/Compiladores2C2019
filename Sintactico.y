@@ -215,7 +215,7 @@ lista_datos:
 
 expresion_logica:
         termino_logico AND termino_logico {
-                pprintf(" termino_logico AND termino_logico es expresion_logica");
+                pprintf("termino_logico AND termino_logico - es - expresion_logica");
         }
         | termino_logico OR termino_logico {
                 pprintf("termino_logico OR termino_logico - es - expresion_logica");
@@ -296,9 +296,9 @@ factor:
                 pprintf("\tPARENTESIS_ABRE expresion PARENTESIS_CIERRA - es - factor");
         }
         | expresion MOD expresion {
-                pprintf("\t expresion MOD expresion - es - factor");
+                pprintf("\texpresion MOD expresion - es - factor");
         }
         | expresion DIV expresion {
-                pprintf("\t expresion DIV expresion - es - factor");
+                pprintf("\texpresion DIV expresion - es - factor");
         };;
 %%

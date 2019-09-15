@@ -1,7 +1,9 @@
 VAR 
-  [INTEGER, FLOAT, INTEGER, FLOAT] : [pepe3, pepe4, pepe5, pepe6] 
+    [FLOAT, FLOAT, FLOAT, FLOAT] : [a, b, c, y]
 ENDVAR
+
 --/ pepe es la de string /--
+
 [pepe1, pepe2, pepe3, pepe4] := [pepe1, 2, (3 + pepe1) + 3, (3+3)]
 factor := 24 * 32
 pepe3 := 3 * (3 * 3)
@@ -9,3 +11,25 @@ pepe4 := (3 * 3)
 pepe_5 := (3 * 3) * 4
 pepe_pepe := 3 + (4 + 5 + 4)
 ppe := 3.3423
+
+IF pepe > 3
+THEN
+    pepe2 := 4
+ELSE
+    pepe4 := 5
+ENDIF
+
+IF pepe > 3
+THEN
+    pepe2 := 4
+ENDIF
+
+PRINT "Ingrese a:"
+READ a
+PRINT "Ingrese b"
+READ b
+PRINT "Ingrese c"
+READ c
+y := (a * x * x) + (b * x) + c
+PRINT "El resultado es"
+PRINT y

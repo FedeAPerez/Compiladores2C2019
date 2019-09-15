@@ -3,3 +3,4 @@ ts.txt
 y.tab.*
 y.*
 /build/*
+.DS_Store

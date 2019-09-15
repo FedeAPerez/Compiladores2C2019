@@ -1,3 +1,4 @@
+mkdir build
 bison -dy Sintactico.y
 pause
 flex Lexico.l

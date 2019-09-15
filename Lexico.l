@@ -45,4 +45,5 @@
 \-\-\/[a-zA-Z0-9_ ]*\/\-\-              { printf("\t comentario \n\n"); };
 \n                                      /* ignore end of line */;
 [ \t]+                                  /* ignore whitespace */;
+\n|.       		                        { printError("Caracter inesperado", yytext); exit(0); }
 %%

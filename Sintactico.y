@@ -73,9 +73,15 @@ programa_aumentado:
         };
 
 programa:
-        declaraciones cuerpo
-        | declaraciones
-        | cuerpo;
+        declaraciones cuerpo {
+                pprintf("\tdeclaraciones cuerpo - es -  programa\n");
+        }
+        | declaraciones {
+                pprintf("\tdeclaraciones - es -  programa");
+        }
+        | cuerpo {
+                pprintf("\tcuerpo - es -  programa");
+        };
 
 // Declaraciones
 declaraciones:
@@ -115,46 +121,58 @@ tipo_dato:
 //Fin Declaraciones
 
 cuerpo: 
-        cuerpo sentencia 
-        | sentencia;
+        cuerpo sentencia {
+                pprintf("\tcuerpo sentencia - es - cuerpo\n");
+        }
+        | sentencia {
+                pprintf("\tsentencia - es - cuerpo\n");
+        };
 
 sentencia:
-        ciclo_repeat
-        | asignacion
-        | asignacion_multiple
-        | condicional;
+        ciclo_repeat {
+                pprintf("\tciclo_repeat - es - sentencia");
+        }
+        | asignacion {
+                pprintf("\tasignacion - es - sentencia");
+        }
+        | asignacion_multiple {
+                pprintf("\tsignacion_multiple - es - sentencia");
+        }
+        | condicional {
+                pprintf("\tcondicional - es - sentencia");
+        };
 
 condicional:
         IF expresion_logica THEN cuerpo ELSE cuerpo ENDIF {
-                pprintf("IF expresion_logica THEN cuerpo ELSE cuerpo ENDIF - es - condicional\n");
+                pprintf("IF expresion_logica THEN cuerpo ELSE cuerpo ENDIF - es - condicional");
         }
         | IF expresion_logica THEN cuerpo ENDIF {
-                pprintf("IF expresion_logica THEN cuerpo ENDIF - es - condicional\n");
+                pprintf("IF expresion_logica THEN cuerpo ENDIF - es - condicional");
         };
 
 ciclo_repeat:
         REPEAT cuerpo UNTIL expresion_logica {
-                pprintf("REPEAT cuerpo UNTIL expresion_logica - es - ciclo_repeat\n");
+                pprintf("REPEAT cuerpo UNTIL expresion_logica - es - ciclo_repeat");
         };
 
 asignacion:
         ID OP_ASIG expresion {
-                pprintf("id OP_ASIG expresion - es - asignacion\n");
+                pprintf("id OP_ASIG expresion - es - asignacion");
         };
 
 asignacion_multiple:
         asignacion_multiple_declare OP_ASIG asignacion_multiple_asign {
-                pprintf("asignacion_multiple_declare OP_ASIG asignacion_multiple_asign - es - asignacion_multiple\n");
+                pprintf("asignacion_multiple_declare OP_ASIG asignacion_multiple_asign - es - asignacion_multiple");
         };
 
 asignacion_multiple_declare:
         CORCHETE_ABRE lista_variables CORCHETE_CIERRA {
-                pprintf("\t\tCA lista_variables CC - es - asignacion_multiple_declare\n");
+                pprintf("\t\tCA lista_variables CC - es - asignacion_multiple_declare");
         };
 
 asignacion_multiple_asign: 
         CORCHETE_ABRE lista_datos CORCHETE_CIERRA {
-                pprintf("\t\tCA lista_datos CC - es - asignacion_multiple_asign\n");
+                pprintf("\t\tCA lista_datos CC - es - asignacion_multiple_asign");
         };
 
 lista_datos:

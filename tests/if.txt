@@ -4,3 +4,8 @@ THEN
 ELSE
     pepe4 := 5
 ENDIF
+
+IF pepe > 3
+THEN
+    pepe2 := 4
+ENDIF

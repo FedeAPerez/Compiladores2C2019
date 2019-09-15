@@ -10,6 +10,8 @@ echo "PRUEBA STRING RECHAZADA - ERROR"
 cat tests/string.rejected.txt | ./build/Ejecutable
 echo "PRUEBA ENTERO RECHAZADO - ERROR"
 cat tests/int.rejected.txt | ./build/Ejecutable
+echo "PRUEBA CARACTER NO SOPORTADO - ERROR"
+cat tests/badchar.txt | ./build/Ejecutable
 echo "PRUEBA MOD/DIV - OK"
 cat tests/mod-div.txt | ./build/Ejecutable
 echo "PRUEBA REPEAT - OK"

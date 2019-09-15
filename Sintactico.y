@@ -15,6 +15,7 @@ int yywrap()
 int main()
 {
         yyparse();
+        exit();
 }
 
 void pprintf(const char *str) {
@@ -26,6 +27,7 @@ void pprints()
     printf("\033[0;32m");
     printf("\t[Successful Compilation]\n");
     printf("\033[0m");
+    exit();
 }
 
 %}
@@ -50,6 +52,9 @@ void pprints()
 
 // Ciclos
 %token REPEAT UNTIL
+
+// I/O
+%token PRINT READ
 
 // MOD / DIV
 %token MOD DIV
@@ -140,6 +145,26 @@ sentencia:
         }
         | condicional {
                 pprintf("\tcondicional - es - sentencia");
+        }
+        | io_lectura {
+                pprintf("\t io_lectura - es - sentencia");
+        }
+        | io_salida {
+                pprintf("\t io_salida - es - sentencia");
+        };
+
+io_lectura:
+        READ ID {
+                pprintf("READ ID - es - io_lectura");
+        };
+
+io_salida:
+        PRINT CONST_STRING {
+                pprintf("PRINT CONST_STRING - es - io_salida");
+        }
+        | PRINT ID
+        {
+                pprintf("PRINT ID - es - io_salida");
         };
 
 condicional:

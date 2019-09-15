@@ -1,0 +1,12 @@
+VAR
+    [FLOAT, FLOAT, FLOAT, FLOAT] : [a, b, c, y]
+ENDVAR
+PRINT "Ingrese a:"
+READ a
+PRINT "Ingrese b"
+READ b
+PRINT "Ingrese c"
+READ c
+y := (a * x * x) + (b * x) + c
+PRINT "El resultado es"
+PRINT y

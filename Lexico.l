@@ -4,21 +4,23 @@
 #include "valid.type.h"
 #include "ts.h"
 %}
+CARACTERES_ESPECIALES	[\@\%\#\$\&\_\~\(\)\[\]\^]
 %%
 "VAR"                                   return VAR;
 "ENDVAR"                                return ENDVAR;
 "REPEAT"                                return REPEAT;
+"UNTIL"                                 return UNTIL;
 "IF"                                    return IF;
 "THEN"                                  return THEN;
 "ELSE"                                  return ELSE;
 "ENDIF"                                 return ENDIF;
 "MOD"                                   return MOD;
 "DIV"                                   return DIV;
-"REPEAT"                                return REPEAT;
-"UNTIL"                                 return UNTIL;
 "AND"                                   return AND;
 "OR"                                    return OR;
 "NOT"                                   return NOT;
+"PRINT"                                 return PRINT;
+"READ"                                  return READ;
 ":="                                    return OP_ASIG;
 "*"                                     return OP_MULTIPLICACION;
 "+"                                     return OP_SUMA;
@@ -41,7 +43,7 @@
 [0-9]+                                  { validType(yytext, TYPE_INT, saveTs); yylval.intValue = atoi(yytext); return CONST_INT; }
 [0-9]+"."[0-9]+                         { validType(yytext, TYPE_FLOAT, saveTs); yylval.floatValue = atof(yytext); return CONST_FLOAT; }
 [a-zA-Z][a-zA-Z0-9_]*                   { validType(yytext, TYPE_ID, saveTs); yylval.stringValue = yytext; return ID; }
-\"[(a-zA-Z0-9_ )]*\"                    { validType(yytext, TYPE_STRING, saveTs); yylval.stringValue = yytext; return CONST_STRING; }
+\"[(a-zA-Z0-9_  {CARACTERES_ESPECIALES})]*\"                    { validType(yytext, TYPE_STRING, saveTs); yylval.stringValue = yytext; return CONST_STRING; }
 \-\-\/[a-zA-Z0-9_ ]*\/\-\-              { printf("\t comentario \n\n"); };
 \n                                      /* ignore end of line */;
 [ \t]+                                  /* ignore whitespace */;

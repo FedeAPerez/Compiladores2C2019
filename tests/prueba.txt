@@ -3,12 +3,9 @@ VAR
 ENDVAR
 --/ pepe es la de string /--
 [pepe1, pepe2, pepe3, pepe4] := [pepe1, 2, (3 + pepe1) + 3, (3+3)]
-pepe := "32"
-pepe2 := "34"
 factor := 24 * 32
 pepe3 := 3 * (3 * 3)
 pepe4 := (3 * 3)
 pepe_5 := (3 * 3) * 4
 pepe_pepe := 3 + (4 + 5 + 4)
 ppe := 3.3423
-IF

@@ -282,10 +282,7 @@ operacion:
         };
 
 factor:
-        CONST_STRING {
-                pprintf("\tCTE STRING - es - factor");
-        }
-        | CONST_INT {
+        CONST_INT {
                 pprintf("\tCTE INT - es - factor");
         }
         | CONST_FLOAT {

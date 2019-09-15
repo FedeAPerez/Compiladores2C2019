@@ -9,6 +9,9 @@
 "ENDVAR"                                return ENDVAR;
 "REPEAT"                                return REPEAT;
 "IF"                                    return IF;
+"THEN"                                  return THEN;
+"ELSE"                                  return ELSE;
+"ENDIF"                                 return ENDIF;
 "MOD"                                   return MOD;
 "DIV"                                   return DIV;
 "REPEAT"                                return REPEAT;

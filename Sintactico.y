@@ -41,7 +41,7 @@ void pprints()
 %token VAR ENDVAR TIPO_INTEGER TIPO_FLOAT
 
 // Condiciones
-%token IF
+%token IF THEN ELSE ENDIF
 
 // Operadores de Comparación
 %token OP_MENOR OP_MENOR_IGUAL OP_MAYOR OP_MAYOR_IGUAL
@@ -125,8 +125,11 @@ sentencia:
         | condicional;
 
 condicional:
-        IF {
-                pprintf("IF - es - condicional\n");
+        IF expresion_logica THEN cuerpo ELSE cuerpo ENDIF {
+                pprintf("IF expresion_logica THEN cuerpo ELSE cuerpo ENDIF - es - condicional\n");
+        }
+        | IF expresion_logica THEN cuerpo ENDIF {
+                pprintf("IF expresion_logica THEN cuerpo ENDIF - es - condicional\n");
         };
 
 ciclo_repeat:

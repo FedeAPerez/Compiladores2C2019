@@ -1,5 +1,4 @@
 lex.yy.c
 ts.*
-!ts.h
 y.tab.*
 y.*

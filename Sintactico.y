@@ -47,7 +47,7 @@ void pprints()
 %token REPEAT
 
 // MOD / DIV
-%token MOD
+%token MOD DIV
 
 // Asignacion
 %token ID OP_ASIG
@@ -205,6 +205,9 @@ factor:
         }
         | expresion MOD expresion {
                 pprintf("\t expresion MOD expresion -> factor");
-        };
+        }
+        | expresion DIV expresion {
+                pprintf("\t expresion DIV expresion -> factor");
+        };;
 
 %%

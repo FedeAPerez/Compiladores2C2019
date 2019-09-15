@@ -10,6 +10,7 @@
 "REPEAT"                                return REPEAT;
 "IF"                                    return IF;
 "MOD"                                   return MOD;
+"DIV"                                   return DIV;
 ":="                                    return OP_ASIG;
 "*"                                     return OP_MULTIPLICACION;
 "+"                                     return OP_SUMA;

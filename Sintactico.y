@@ -44,7 +44,12 @@ void pprints()
         char *stringValue;
 }
 
+%{
+        int numeracionTercetos = 0;
+%}
+
 %type <intValue> factor CONST_INT
+%type <floatValue> CONST_FLOAT
 
 // Sector declaraciones
 %token VAR ENDVAR TIPO_INTEGER TIPO_FLOAT
@@ -288,10 +293,12 @@ operacion:
 factor:
         CONST_INT {
                 $$ = $1;
-                crearTercetoInt($1, "_", "_");
+                numeracionTercetos = crearTercetoInt($1, "_", "_", numeracionTercetos);
         }
         | CONST_FLOAT {
                 pprintf("\tCTE FLOAT - es - factor");
+                $$ = $1;
+                numeracionTercetos = crearTercetoFloat($1, "_", "_", numeracionTercetos);
         }
         | ID {
                 pprintf("\tID - es - factor");

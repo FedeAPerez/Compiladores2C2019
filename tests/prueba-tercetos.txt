@@ -1,1 +1,1 @@
-varMod := (3+3) MOD ((3+4) DIV 7)
+varMod := (3+3.253) MOD ((3+4) DIV 7.42)

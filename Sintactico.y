@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "tercetos.h"
  
 void yyerror(const char *str)
 {
@@ -42,6 +43,8 @@ void pprints()
         float floatValue;
         char *stringValue;
 }
+
+%type <intValue> factor CONST_INT
 
 // Sector declaraciones
 %token VAR ENDVAR TIPO_INTEGER TIPO_FLOAT
@@ -284,7 +287,8 @@ operacion:
 
 factor:
         CONST_INT {
-                pprintf("\tCTE INT - es - factor");
+                $$ = $1;
+                crearTercetoInt($1, "_", "_");
         }
         | CONST_FLOAT {
                 pprintf("\tCTE FLOAT - es - factor");

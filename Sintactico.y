@@ -45,10 +45,14 @@ void pprints()
 }
 
 %{
+        // Aux
         int numeracionTercetos = 0;
+        // Índices
+        int Tind;
+        int Find;
 %}
 
-%type <intValue> factor CONST_INT
+%type <intValue> factor termino CONST_INT
 %type <floatValue> CONST_FLOAT
 
 // Sector declaraciones
@@ -270,10 +274,12 @@ expresion:
 		
 termino:
         termino operacion factor {
-                pprintf("\t\ttermino operacion factor - es - termino");
+                Tind = numeracionTercetos;
+                numeracionTercetos = crearTercetoOperacion("operacion", Tind, Find, numeracionTercetos);
         }
         | factor {
-                pprintf("\t\tfactor - es - termino");
+                $$ = $1;
+                Tind = Find;
         };
 
 operacion:
@@ -293,11 +299,12 @@ operacion:
 factor:
         CONST_INT {
                 $$ = $1;
+                Find = numeracionTercetos;
                 numeracionTercetos = crearTercetoInt($1, "_", "_", numeracionTercetos);
         }
         | CONST_FLOAT {
-                pprintf("\tCTE FLOAT - es - factor");
                 $$ = $1;
+                Find = numeracionTercetos;
                 numeracionTercetos = crearTercetoFloat($1, "_", "_", numeracionTercetos);
         }
         | ID {

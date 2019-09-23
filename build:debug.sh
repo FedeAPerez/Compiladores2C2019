@@ -1,5 +1,5 @@
 sh clean.sh
-bison --verbose -yd Sintactico.y
+bison --verbose -ygd Sintactico.y
 flex Lexico.l
 gcc y.tab.c lex.yy.c -ll -o ./build/Ejecutable
 echo "PRUEBA"

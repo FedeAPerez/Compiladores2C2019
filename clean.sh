@@ -4,5 +4,6 @@ rm y.tab.c
 rm y.tab.h
 rm ts.txt
 rm tercetos.txt
+rm status.txt
 rm y.output
 mkdir build

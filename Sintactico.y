@@ -3,7 +3,13 @@
 #include <string.h>
 #include <stdlib.h>
 #include "tercetos.h"
+#include "status.h"
  
+int yylex();
+int yyparse();
+void yyerror(const char *str);
+void status();
+
 void yyerror(const char *str)
 {
 
@@ -23,8 +29,16 @@ int main()
         exit(0);
 }
 
-void pprintf(const char *str) {
+void pprintf(char *str) {
         printf("\t %s \n", str);
+}
+
+void pprintfd(int str) {
+        printf("\t %d \n", str);
+}
+
+void pprintff(float str) {
+        printf("\t %f \n", str);
 }
 
 void pprints()
@@ -48,8 +62,9 @@ void pprints()
         // Aux
         int numeracionTercetos = 0;
         // Índices
-        int Tind;
-        int Find;
+        int Tind = -1;
+        int Find = -1;
+        int Eind = -1;
 %}
 
 %type <intValue> factor termino CONST_INT
@@ -143,12 +158,19 @@ tipo_dato:
 
 //Seccion codigo
 cuerpo: 
-        cuerpo sentencia {
+        cuerpo sentencias {
                 pprintf("\tcuerpo sentencia - es - cuerpo\n");
         }
-        | sentencia {
+        | sentencias {
                 pprintf("\tsentencia - es - cuerpo\n");
         };
+
+sentencias: 
+        sentencia1;
+
+sentencia1: 
+        sentencia sentencia1
+        | sentencia;       
 
 sentencia:
         ciclo_repeat {
@@ -199,7 +221,7 @@ ciclo_repeat:
 
 asignacion:
         ID OP_ASIG expresion {
-                pprintf("id OP_ASIG expresion - es - asignacion");
+                crearTercetoOperacion(":=", 1, Eind, numeracionTercetos);
         };
 
 asignacion_multiple:
@@ -246,54 +268,49 @@ termino_logico:
 
 comparacion:
         OP_MENOR {
-                pprintf("comparacion - es - OP_MENOR");
         }
         | OP_MENOR_IGUAL {
-                pprintf("comparacion - es - OP_MENOR_IGUAL");
         }
 	| OP_MAYOR {
-                pprintf("comparacion - es - OP_MAYOR");
         }
 	| OP_MAYOR_IGUAL {
-                pprintf("comparacion - es - OP_MAYOR_IGUAL");
         }
 	| OP_IGUAL {
-                pprintf("comparacion - es - OP_IGUAL");
         }
 	| OP_DISTINTO {
-                pprintf("OP_DISTINTO - es - comparacion");
         };
 
 expresion:
         expresion OP_SUMA termino {
-                pprintf("\texpresion OP_SUMA termino - es - termino");
+                numeracionTercetos = crearTercetoOperacion("OP_SUMA", Eind, Tind, numeracionTercetos);
+                Eind = numeracionTercetos - 1;
+                status("suma");
+        }
+        | expresion OP_RESTA termino {      
+                numeracionTercetos = crearTercetoOperacion("OP_RESTA", Eind, Tind, numeracionTercetos);
+                Eind = numeracionTercetos - 1;
+                status("resta");
         }
         | termino {
-                pprintf("\ttermino - es - expresion");
+                Eind = Tind;
+                status("termino a exp");
         };
 		
 termino:
-        termino operacion factor {
-                Tind = numeracionTercetos;
-                numeracionTercetos = crearTercetoOperacion("operacion", Tind, Find, numeracionTercetos);
+        termino OP_MULTIPLICACION factor {
+                numeracionTercetos = crearTercetoOperacion("OP_MULTIPLICACION", Tind, Find, numeracionTercetos);
+                Tind = numeracionTercetos - 1;
+                status("multiplicar");
+        }
+        | termino OP_DIVISION factor {
+                numeracionTercetos = crearTercetoOperacion("OP_DIVISION", Tind, Find, numeracionTercetos);
+                Tind = numeracionTercetos - 1;
+                status("dividir");
         }
         | factor {
                 $$ = $1;
-                Tind = Find;
-        };
-
-operacion:
-        OP_MULTIPLICACION {
-                pprintf("\tOP_MULTIPLICACION - es - operacion");
-        }
-        | OP_RESTA {
-                pprintf("\tOP_RESTA - es - operacion");
-        }
-        | OP_SUMA {
-                pprintf("\tOP_SUMA - es - operacion");
-        }
-        | OP_DIVISION{
-                pprintf("\tOP_DIVISION - es - operacion");
+                Tind = Find;                
+                status("factor a termino");
         };
 
 factor:
@@ -301,22 +318,30 @@ factor:
                 $$ = $1;
                 Find = numeracionTercetos;
                 numeracionTercetos = crearTercetoInt($1, "_", "_", numeracionTercetos);
+                status("crear int");
         }
         | CONST_FLOAT {
                 $$ = $1;
                 Find = numeracionTercetos;
                 numeracionTercetos = crearTercetoFloat($1, "_", "_", numeracionTercetos);
+                status("crear float");
         }
         | ID {
-                pprintf("\tID - es - factor");
         }
         | PARENTESIS_ABRE expresion PARENTESIS_CIERRA {
-                pprintf("\tPARENTESIS_ABRE expresion PARENTESIS_CIERRA - es - factor");
+                Find = Eind;
+                status("exp a find - parentesis");
         }
         | expresion MOD expresion {
-                pprintf("\texpresion MOD expresion - es - factor");
+                numeracionTercetos = crearTercetoOperacion("OP_MOD", Eind, Find, numeracionTercetos);
+                Find = numeracionTercetos;
+                status("crear MOD");
         }
         | expresion DIV expresion {
-                pprintf("\texpresion DIV expresion - es - factor");
         };;
 %%
+
+void status(char *str)
+{
+        crearStatus(str, Eind, Tind, Find, numeracionTercetos);
+}

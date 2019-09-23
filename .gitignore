@@ -1,6 +1,7 @@
 lex.yy.c
 ts.txt
 tercetos.txt
+status.txt
 y.tab.*
 y.*
 /build/*

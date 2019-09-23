@@ -8,6 +8,8 @@
 void initTercetos(FILE *);
 int crearTerceto(char *, char *, char *, int);
 int crearTercetoInt(int, char *, char *, int);
+int crearTercetoFloat(float, char *, char *, int);
+int crearTercetoOperacion(char *, int, int, int);
 
 int crearTerceto(char *arg1, char *arg2, char *arg3, int numeracion)
 {

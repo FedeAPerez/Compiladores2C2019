@@ -5,11 +5,11 @@
 #define READ_FILE_TERCETOS "r"
 #define APPEND_FILE_TERCETOS "a"
 
-void initTercetos(FILE *);
 int crearTerceto(char *, char *, char *, int);
 int crearTercetoInt(int, char *, char *, int);
 int crearTercetoFloat(float, char *, char *, int);
 int crearTercetoOperacion(char *, int, int, int);
+int avanzarTerceto(int);
 
 int crearTerceto(char *arg1, char *arg2, char *arg3, int numeracion)
 {
@@ -17,6 +17,11 @@ int crearTerceto(char *arg1, char *arg2, char *arg3, int numeracion)
     fp = fopen(FILE_NAME_TERCETOS, APPEND_FILE_TERCETOS);
     fprintf(fp, "[%d](%s, %s, %s)\n", numeracion, arg1, arg2, arg3);
     fclose(fp);
+    return numeracion;
+};
+
+int avanzarTerceto(int numeracion)
+{
     return numeracion + 1;
 };
 

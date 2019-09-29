@@ -65,6 +65,7 @@ void pprints()
         int Tind = -1;
         int Find = -1;
         int Eind = -1;
+        int Aind = -1;
 %}
 
 %type <intValue> factor termino CONST_INT
@@ -221,7 +222,8 @@ ciclo_repeat:
 
 asignacion:
         ID OP_ASIG expresion {
-                crearTercetoOperacion(":=", 1, Eind, numeracionTercetos);
+                Aind = crearTercetoOperacion(":=", 1, Eind, numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
 
 asignacion_multiple:
@@ -282,13 +284,13 @@ comparacion:
 
 expresion:
         expresion OP_SUMA termino {
-                numeracionTercetos = crearTercetoOperacion("OP_SUMA", Eind, Tind, numeracionTercetos);
-                Eind = numeracionTercetos - 1;
+                Eind = crearTercetoOperacion("OP_SUMA", Eind, Tind, numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("suma");
         }
         | expresion OP_RESTA termino {      
-                numeracionTercetos = crearTercetoOperacion("OP_RESTA", Eind, Tind, numeracionTercetos);
-                Eind = numeracionTercetos - 1;
+                Eind = crearTercetoOperacion("OP_RESTA", Eind, Tind, numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("resta");
         }
         | termino {
@@ -298,13 +300,13 @@ expresion:
 		
 termino:
         termino OP_MULTIPLICACION factor {
-                numeracionTercetos = crearTercetoOperacion("OP_MULTIPLICACION", Tind, Find, numeracionTercetos);
-                Tind = numeracionTercetos - 1;
+                Tind = crearTercetoOperacion("OP_MULTIPLICACION", Tind, Find, numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("multiplicar");
         }
         | termino OP_DIVISION factor {
-                numeracionTercetos = crearTercetoOperacion("OP_DIVISION", Tind, Find, numeracionTercetos);
-                Tind = numeracionTercetos - 1;
+                Tind = crearTercetoOperacion("OP_DIVISION", Tind, Find, numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("dividir");
         }
         | factor {
@@ -316,14 +318,14 @@ termino:
 factor:
         CONST_INT {
                 $$ = $1;
-                Find = numeracionTercetos;
-                numeracionTercetos = crearTercetoInt($1, "_", "_", numeracionTercetos);
+                Find = crearTercetoInt($1, "_", "_", numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("crear int");
         }
         | CONST_FLOAT {
                 $$ = $1;
-                Find = numeracionTercetos;
-                numeracionTercetos = crearTercetoFloat($1, "_", "_", numeracionTercetos);
+                Find = crearTercetoFloat($1, "_", "_", numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("crear float");
         }
         | ID {
@@ -333,8 +335,8 @@ factor:
                 status("exp a find - parentesis");
         }
         | expresion MOD expresion {
-                numeracionTercetos = crearTercetoOperacion("OP_MOD", Eind, Find, numeracionTercetos);
-                Find = numeracionTercetos;
+                Find = crearTercetoOperacion("OP_MOD", Eind, Find, numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("crear MOD");
         }
         | expresion DIV expresion {

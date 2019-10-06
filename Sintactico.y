@@ -70,6 +70,7 @@ void pprints()
 
 %type <intValue> factor termino CONST_INT
 %type <floatValue> CONST_FLOAT
+%type <stringValue> ID
 
 // Sector declaraciones
 %token VAR ENDVAR TIPO_INTEGER TIPO_FLOAT
@@ -225,7 +226,7 @@ ciclo_repeat:
 
 asignacion:
         ID OP_ASIG expresion {
-                Aind = crearTercetoOperacion(":=", 1, Eind, numeracionTercetos);
+                Aind = crearTercetoID(":=", $2, Eind, numeracionTercetos);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
 
@@ -294,12 +295,12 @@ expresion:
 
 operacion_expresion:
         OP_SUMA termino {
-                Eind = crearTercetoOperacion("OP_SUMA", Eind, Tind, numeracionTercetos);
+                Eind = crearTercetoOperacion("+", Eind, Tind, numeracionTercetos);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("suma");
         }
         | OP_RESTA termino {      
-                Eind = crearTercetoOperacion("OP_RESTA", Eind, Tind, numeracionTercetos);
+                Eind = crearTercetoOperacion("-", Eind, Tind, numeracionTercetos);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("resta");
         };
@@ -314,12 +315,12 @@ termino:
 
 operacion_termino: 
         OP_MULTIPLICACION factor {
-                Tind = crearTercetoOperacion("OP_MULTIPLICACION", Tind, Find, numeracionTercetos);
+                Tind = crearTercetoOperacion("*", Tind, Find, numeracionTercetos);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("multiplicar");
         }
         | OP_DIVISION factor {
-                Tind = crearTercetoOperacion("OP_DIVISION", Tind, Find, numeracionTercetos);
+                Tind = crearTercetoOperacion("/", Tind, Find, numeracionTercetos);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("dividir");
         };

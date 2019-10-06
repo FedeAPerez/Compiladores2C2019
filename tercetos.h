@@ -9,6 +9,7 @@ int crearTerceto(char *, char *, char *, int);
 int crearTercetoInt(int, char *, char *, int);
 int crearTercetoFloat(float, char *, char *, int);
 int crearTercetoOperacion(char *, int, int, int);
+int crearTercetoID(char *, char *, int, int);
 int avanzarTerceto(int);
 
 int crearTerceto(char *arg1, char *arg2, char *arg3, int numeracion)
@@ -34,8 +35,8 @@ int crearTercetoInt(int int1, char *str1, char *str2, int numeracion)
 
 int crearTercetoFloat(float flo1, char *str1, char *str2, int numeracion)
 {
-    char aux[50];
-    snprintf(aux, 50, "%f", flo1);
+    char aux[10];
+    snprintf(aux, 10, "%f", flo1);
     return crearTerceto(aux, str1, str2, numeracion);
 };
 
@@ -46,4 +47,12 @@ int crearTercetoOperacion(char *op, int ind1, int ind2, int numeracion)
     char aux2[5];
     sprintf(aux2, "[%d]", ind2);
     return crearTerceto(op, aux1, aux2, numeracion);
+};
+
+int crearTercetoID(char *op, char *str1, int ind1, int numeracion)
+{
+    char aux1[5];
+    sprintf(aux1, "[%d]", ind1);
+
+    return crearTerceto(op, str1, aux1, numeracion);
 };

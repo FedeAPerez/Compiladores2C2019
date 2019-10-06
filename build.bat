@@ -28,7 +28,7 @@ type .\tests\mod-div.txt | .\build\Primera.exe
 pause
 echo "PRUEBA REPEAT - OK"
 type .\tests\repeat.txt | .\build\Primera.exe
-type .\tests\prueba-tercetos-if.txt | .\build\Primera.exe
+pause
 del y.tab.c
 del y.tab.h
 del y.output

@@ -85,7 +85,7 @@ void pprints()
 %type <stringValue>CONST_STRING
 
 // Sector declaraciones
-%token VAR ENDVAR TIPO_INTEGER TIPO_FLOAT TIPO_STRING
+%token VAR ENDVAR TIPO_INTEGER TIPO_FLOAT
 
 // Condiciones
 %token IF THEN ELSE ENDIF

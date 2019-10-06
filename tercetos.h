@@ -49,6 +49,7 @@ int crearTercetoOperacion(char *op, int ind1, int ind2, int numeracion)
     return crearTerceto(op, aux1, aux2, numeracion);
 };
 
+<<<<<<< HEAD
 int crearTercetoID(char *op, char *str1, int ind1, int numeracion)
 {
     char aux1[5];
@@ -56,3 +57,9 @@ int crearTercetoID(char *op, char *str1, int ind1, int numeracion)
 
     return crearTerceto(op, str1, aux1, numeracion);
 };
+=======
+int crearTercetoString(char *str1, char *str2, char *str3, int numeracion)
+{
+	return crearTerceto(str1, str2, str3, numeracion);
+}
+>>>>>>> c0f1b9eb2640ef059745abaa4bc9e84dfc39ae7f

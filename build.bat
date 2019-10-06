@@ -1,9 +1,15 @@
 mkdir build
-bison -dy Sintactico.y
+C:\GnuWin32\bin\bison -dy Sintactico.y
 pause
-flex Lexico.l
+C:\GnuWin32\bin\flex Lexico.l
 pause
-c:\MinGW\bin\gcc.exe lex.yy.c y.tab.c -o .\build\Primera.exe
+C:\TDM-GCC-64\bin\gcc.exe lex.yy.c y.tab.c -o .\build\Primera.exe
+pause
+del ts.txt
+del intermedia.txt
+del status.txt
+echo "PRUEBA - OK TERCETOS ASIG MULT"
+type .\tests\prueba-tercetos-if.txt | .\build\Primera.exe
 pause
 echo "PRUEBA - OK"
 type .\tests\prueba.txt | .\build\Primera.exe
@@ -23,8 +29,9 @@ pause
 echo "PRUEBA REPEAT - OK"
 type .\tests\repeat.txt | .\build\Primera.exe
 pause
+echo "PRUEBA REPEAT - OK"
+type .\tests\prueba-tercetos-amulti.txt | .\build\Primera.exe
 del y.tab.c
 del y.tab.h
 del y.output
-del ts.txt
 del Primera.exe

@@ -2,8 +2,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "PilaDinamica.h" 
 #include "tercetos.h"
 #include "status.h"
+
  
 int yylex();
 int yyparse();
@@ -22,9 +24,15 @@ int yywrap()
 {
         return 1;
 } 
-  
+
+pila pilaFactor;
+pila pilaID;
+ 
 int main()
 {
+	
+	crearPila(&pilaFactor);
+    crearPila(&pilaID);
         yyparse();
         exit(0);
 }
@@ -66,10 +74,13 @@ void pprints()
         int Find = -1;
         int Eind = -1;
         int Aind = -1;
+		int LVind = -1;
 %}
 
 %type <intValue> factor termino CONST_INT
 %type <floatValue> CONST_FLOAT
+%type <stringValue>ID
+%type <stringValue>CONST_STRING
 
 // Sector declaraciones
 %token VAR ENDVAR TIPO_INTEGER TIPO_FLOAT
@@ -127,8 +138,8 @@ declaraciones:
         };
 
 linea_declaraciones:
-        CORCHETE_ABRE lista_tipo_datos CORCHETE_CIERRA DOS_PUNTOS CORCHETE_ABRE lista_variables CORCHETE_CIERRA {
-                pprintf("\tCA lista_tipo_datos CC DOS_PUNTOS CA lista_variables CC - es - linea_declaraciones");
+        CORCHETE_ABRE lista_tipo_datos CORCHETE_CIERRA DOS_PUNTOS CORCHETE_ABRE lista_id CORCHETE_CIERRA {
+                pprintf("\tCA lista_tipo_datos CC DOS_PUNTOS CA lista_id CC - es - linea_declaraciones");
         };
 
 lista_tipo_datos:
@@ -139,12 +150,12 @@ lista_tipo_datos:
                 pprintf("\ttipo_dato - es - lista_tipo_datos");
         };
 
-lista_variables:
-        lista_variables COMA ID {
-                pprintf("\t\tlista_variables COMA ID - es - lista_variables");
+lista_id:
+        lista_id COMA ID {
+                pprintf("\t\lista_id COMA ID - es - lista_id");
         }
-        | ID {
-                pprintf("\tID - es - lista_Variables");
+        | ID { 
+                pprintf("\tID - es - lista_id");
         };
 
 tipo_dato:
@@ -231,14 +242,36 @@ asignacion:
 
 asignacion_multiple:
         asignacion_multiple_declare OP_ASIG asignacion_multiple_asign {
-                pprintf("asignacion_multiple_declare OP_ASIG asignacion_multiple_asign - es - asignacion_multiple");
+				while(!pilaVacia(&pilaID) && !pilaVacia(&pilaFactor))
+				{
+					status("Pila no vacia ");
+					Aind = crearTercetoOperacion(":=", sacarDePila(&pilaID), sacarDePila( &pilaFactor), numeracionTercetos);
+					numeracionTercetos = avanzarTerceto(numeracionTercetos);
+                }
+				pprintf("asignacion_multiple_declare OP_ASIG asignacion_multiple_asign - es - asignacion_multiple");
         };
 
 asignacion_multiple_declare:
         CORCHETE_ABRE lista_variables CORCHETE_CIERRA {
                 pprintf("\t\tCA lista_variables CC - es - asignacion_multiple_declare");
         };
-
+		
+lista_variables:
+        lista_variables COMA ID {
+				LVind = crearTercetoString($3, "_", "_", numeracionTercetos);
+				ponerEnPila(&pilaID, LVind);
+				numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				status("crear id en lista de variable");
+                pprintf("\t tlista_variables COMA ID - es - lista_variables");
+        }
+        | ID { 
+				LVind = crearTercetoString($1, "_", "_", numeracionTercetos);
+				ponerEnPila(&pilaID, LVind);
+				numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				status("crear id en lista de variable");
+                pprintf("\tID - es - lista_Variables");
+        };
+		
 asignacion_multiple_asign: 
         CORCHETE_ABRE lista_datos CORCHETE_CIERRA {
                 pprintf("\t\tCA lista_datos CC - es - asignacion_multiple_asign");
@@ -328,16 +361,24 @@ factor:
         CONST_INT {
                 $$ = $1;
                 Find = crearTercetoInt($1, "_", "_", numeracionTercetos);
+				ponerEnPila(&pilaFactor, Find);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("crear int");
         }
         | CONST_FLOAT {
                 $$ = $1;
                 Find = crearTercetoFloat($1, "_", "_", numeracionTercetos);
+				ponerEnPila(&pilaFactor, Find);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("crear float");
         }
         | ID {
+		
+			$$ = $1;
+			Find = crearTercetoString($1, "_", "_", numeracionTercetos);
+			ponerEnPila(&pilaFactor, Find);
+			numeracionTercetos = avanzarTerceto(numeracionTercetos);
+			status("crear id");
         }
         | PARENTESIS_ABRE expresion PARENTESIS_CIERRA {
                 Find = Eind;

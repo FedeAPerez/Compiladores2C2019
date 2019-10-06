@@ -47,3 +47,8 @@ int crearTercetoOperacion(char *op, int ind1, int ind2, int numeracion)
     sprintf(aux2, "[%d]", ind2);
     return crearTerceto(op, aux1, aux2, numeracion);
 };
+
+int crearTercetoString(char *str1, char *str2, char *str3, int numeracion)
+{
+	return crearTerceto(str1, str2, str3, numeracion);
+}

@@ -30,9 +30,8 @@ pila pilaID;
  
 int main()
 {
-	
-	crearPila(&pilaFactor);
-    crearPila(&pilaID);
+        crearPila(&pilaFactor);
+        crearPila(&pilaID);
         yyparse();
         exit(0);
 }
@@ -74,17 +73,13 @@ void pprints()
         int Find = -1;
         int Eind = -1;
         int Aind = -1;
-		int LVind = -1;
+	int LVind = -1;
 %}
 
 %type <intValue> factor termino CONST_INT
 %type <floatValue> CONST_FLOAT
-<<<<<<< HEAD
 %type <stringValue> ID
-=======
-%type <stringValue>ID
-%type <stringValue>CONST_STRING
->>>>>>> c0f1b9eb2640ef059745abaa4bc9e84dfc39ae7f
+%type <stringValue> CONST_STRING
 
 // Sector declaraciones
 %token VAR ENDVAR TIPO_INTEGER TIPO_FLOAT
@@ -156,7 +151,7 @@ lista_tipo_datos:
 
 lista_id:
         lista_id COMA ID {
-                pprintf("\t\lista_id COMA ID - es - lista_id");
+                pprintf("\tlista_id COMA ID - es - lista_id");
         }
         | ID { 
                 pprintf("\tID - es - lista_id");
@@ -217,13 +212,8 @@ io_salida:
         PRINT io_salida_imprimibles;
 
 io_salida_imprimibles: 
-        CONST_STRING {
-                pprintf("PRINT CONST_STRING - es - io_salida");
-        }
-        | ID
-        {
-                pprintf("PRINT ID - es - io_salida");
-        };
+        CONST_STRING
+        | ID;
 
 condicional:
         IF expresion_logica THEN cuerpo ELSE cuerpo ENDIF {
@@ -240,46 +230,36 @@ ciclo_repeat:
 
 asignacion:
         ID OP_ASIG expresion {
-                Aind = crearTercetoID(":=", $2, Eind, numeracionTercetos);
+                Aind = crearTercetoID(":=", $1, Eind, numeracionTercetos);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
 
 asignacion_multiple:
         asignacion_multiple_declare OP_ASIG asignacion_multiple_asign {
-				while(!pilaVacia(&pilaID) && !pilaVacia(&pilaFactor))
-				{
-					status("Pila no vacia ");
-					Aind = crearTercetoOperacion(":=", sacarDePila(&pilaID), sacarDePila( &pilaFactor), numeracionTercetos);
-					numeracionTercetos = avanzarTerceto(numeracionTercetos);
+                while(!pilaVacia(&pilaID) && !pilaVacia(&pilaFactor))
+		{
+                        Aind = crearTercetoOperacion(":=", sacarDePila(&pilaID), sacarDePila( &pilaFactor), numeracionTercetos);
+                        numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 }
-				pprintf("asignacion_multiple_declare OP_ASIG asignacion_multiple_asign - es - asignacion_multiple");
         };
 
 asignacion_multiple_declare:
-        CORCHETE_ABRE lista_variables CORCHETE_CIERRA {
-                pprintf("\t\tCA lista_variables CC - es - asignacion_multiple_declare");
-        };
+        CORCHETE_ABRE lista_variables CORCHETE_CIERRA;
 		
 lista_variables:
         lista_variables COMA ID {
-				LVind = crearTercetoString($3, "_", "_", numeracionTercetos);
-				ponerEnPila(&pilaID, LVind);
-				numeracionTercetos = avanzarTerceto(numeracionTercetos);
-				status("crear id en lista de variable");
-                pprintf("\t tlista_variables COMA ID - es - lista_variables");
+                LVind = crearTerceto($3, "_", "_", numeracionTercetos);
+                ponerEnPila(&pilaID, LVind);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
         }
         | ID { 
-				LVind = crearTercetoString($1, "_", "_", numeracionTercetos);
-				ponerEnPila(&pilaID, LVind);
-				numeracionTercetos = avanzarTerceto(numeracionTercetos);
-				status("crear id en lista de variable");
-                pprintf("\tID - es - lista_Variables");
+                LVind = crearTerceto($1, "_", "_", numeracionTercetos);
+                ponerEnPila(&pilaID, LVind);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
 		
 asignacion_multiple_asign: 
-        CORCHETE_ABRE lista_datos CORCHETE_CIERRA {
-                pprintf("\t\tCA lista_datos CC - es - asignacion_multiple_asign");
-        };
+        CORCHETE_ABRE lista_datos CORCHETE_CIERRA;
 
 lista_datos:
         lista_datos COMA expresion  {
@@ -365,24 +345,24 @@ factor:
         CONST_INT {
                 $$ = $1;
                 Find = crearTercetoInt($1, "_", "_", numeracionTercetos);
-				ponerEnPila(&pilaFactor, Find);
+                ponerEnPila(&pilaFactor, Find);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("crear int");
         }
         | CONST_FLOAT {
                 $$ = $1;
                 Find = crearTercetoFloat($1, "_", "_", numeracionTercetos);
-				ponerEnPila(&pilaFactor, Find);
+                ponerEnPila(&pilaFactor, Find);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("crear float");
         }
         | ID {
 		
-			$$ = $1;
-			Find = crearTercetoString($1, "_", "_", numeracionTercetos);
-			ponerEnPila(&pilaFactor, Find);
-			numeracionTercetos = avanzarTerceto(numeracionTercetos);
-			status("crear id");
+                $$ = $1;
+                Find = crearTerceto($1, "_", "_", numeracionTercetos);
+                ponerEnPila(&pilaFactor, Find);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+                status("crear id");
         }
         | PARENTESIS_ABRE expresion PARENTESIS_CIERRA {
                 Find = Eind;

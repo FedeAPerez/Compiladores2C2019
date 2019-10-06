@@ -4,3 +4,9 @@ ENDVAR
 
 --/ pepe es la de string /--
 [pepe1, pepe2, pepe3, pepe4] := [10*2, 2, 3.12+1.14, pepe1]
+
+IF pepe1 > 3 THEN
+	pepe2 := pepe1;
+ELSE
+	pepe4 := 10;
+ENDIF

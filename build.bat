@@ -29,7 +29,7 @@ pause
 echo "PRUEBA REPEAT - OK"
 type .\tests\repeat.txt | .\build\Primera.exe
 pause
-echo "PRUEBA REPEAT - OK"
+echo "PRUEBA TERCETOS A-MULTI - OK"
 type .\tests\prueba-tercetos-amulti.txt | .\build\Primera.exe
 del y.tab.c
 del y.tab.h

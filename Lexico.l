@@ -52,7 +52,7 @@ CARACTERES_ESPECIALES	[\@\%\#\$\&\_\~\(\)\[\]\^]
 [0-9]+                                  { validType(yytext, TYPE_INT, saveTs); yylval.intValue = atoi(yytext); return CONST_INT; }
 [0-9]+"."[0-9]+                         { validType(yytext, TYPE_FLOAT, saveTs); yylval.floatValue = atof(yytext); return CONST_FLOAT; }
 [a-zA-Z][a-zA-Z0-9_]*                   { validType(yytext, TYPE_ID, saveTs); yylval.stringValue = strdup(yytext); return ID; }
-\"(\\.|[^"\\])*\"                       { validType(yytext, TYPE_STRING, saveTs); yylval.stringValue = yytext; return CONST_STRING; }
+\"(\\.|[^"\\])*\"                       { validType(yytext, TYPE_STRING, saveTs); yylval.stringValue = strdup(yytext); return CONST_STRING; }
 \-\-\/[a-zA-Z0-9_ ]*\/\-\-              { printf("\t comentario \n\n"); };
 \n                                      /* ignore end of line */;
 [ \t]+                                  /* ignore whitespace */;

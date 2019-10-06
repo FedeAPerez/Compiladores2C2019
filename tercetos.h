@@ -1,7 +1,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 
-#define FILE_NAME_TERCETOS "tercetos.txt"
+#define FILE_NAME_TERCETOS "intermedia.txt"
 #define READ_FILE_TERCETOS "r"
 #define APPEND_FILE_TERCETOS "a"
 

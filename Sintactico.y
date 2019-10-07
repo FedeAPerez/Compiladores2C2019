@@ -143,58 +143,35 @@ programa_aumentado:
         };
 
 programa:
-        declaraciones cuerpo {
-                pprintf("\tdeclaraciones cuerpo - es -  programa\n");
-        }
-        | declaraciones {
-                pprintf("\tdeclaraciones - es -  programa");
-        }
-        | cuerpo {
-                pprintf("\tcuerpo - es -  programa");
-        };
+        declaraciones cuerpo
+        | declaraciones
+        | cuerpo;
 
 // Declaraciones
 declaraciones:
-        VAR linea_declaraciones ENDVAR {
-                pprintf("VAR ENDVAR - es - declaraciones");
-        };
+        VAR linea_declaraciones ENDVAR;
 
 linea_declaraciones:
-        CORCHETE_ABRE lista_tipo_datos CORCHETE_CIERRA DOS_PUNTOS CORCHETE_ABRE lista_id CORCHETE_CIERRA {
-                pprintf("\tCA lista_tipo_datos CC DOS_PUNTOS CA lista_id CC - es - linea_declaraciones");
-        };
+        CORCHETE_ABRE lista_tipo_datos CORCHETE_CIERRA DOS_PUNTOS CORCHETE_ABRE lista_id CORCHETE_CIERRA;
 
 lista_tipo_datos:
-        lista_tipo_datos COMA tipo_dato {
-                pprintf("\tlista_tipo_datos COMA tipo_dato - es - lista_tipo_datos");
-        }
-        | tipo_dato {
-                pprintf("\ttipo_dato - es - lista_tipo_datos");
-        };
+        lista_tipo_datos COMA tipo_dato
+        | tipo_dato;
 
 lista_id:
         lista_id COMA ID
         | ID;
 
 tipo_dato:
-        TIPO_INTEGER {
-                pprintf("\t\tINTEGER - es - tipo_dato");
-        }
-        | TIPO_FLOAT{
-                pprintf("\t\tFLOAT - es - tipo_dato");
-        };
+        TIPO_INTEGER
+        | TIPO_FLOAT;
 
 //Fin Declaraciones
 
 //Seccion codigo
 cuerpo: 
-        cuerpo sentencia {
-                
-                pprintf("\tcuerpo sentencia - es - cuerpo\n");
-        }
-        | sentencia {
-                pprintf("\tsentencia - es - cuerpo\n");
-        };   
+        cuerpo sentencia
+        | sentencia;
 
 sentencia:
         ciclo_repeat
@@ -356,22 +333,19 @@ comparacion:
         };
 
 expresion:
-        expresion operacion_expresion
+        expresion OP_SUMA termino {
+                Eind = crearTercetoOperacion("+", Eind, Tind, numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+                status("expresion suma termino a expresion");
+        }
+        | expresion OP_RESTA termino {      
+                Eind = crearTercetoOperacion("-", Eind, Tind, numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+                status("expresion resta termino a expresion");
+        }
         | termino {
                 Eind = Tind;
                 status("termino a exp");
-        };
-
-operacion_expresion:
-        OP_SUMA termino {
-                Eind = crearTercetoOperacion("+", Eind, Tind, numeracionTercetos);
-                numeracionTercetos = avanzarTerceto(numeracionTercetos);
-                status("suma a operacion_expresion");
-        }
-        | OP_RESTA termino {      
-                Eind = crearTercetoOperacion("-", Eind, Tind, numeracionTercetos);
-                numeracionTercetos = avanzarTerceto(numeracionTercetos);
-                status("resta a operacion_expresion");
         };
 		
 termino:

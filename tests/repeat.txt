@@ -1,4 +1,4 @@
 REPEAT
-pepe := 3
-pepe2 := pepe2 - 1
-UNTIL pepe2 > 3
+varMod := 1
+varMod := varMod + 1
+UNTIL varMod > 3

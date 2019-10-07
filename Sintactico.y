@@ -28,10 +28,15 @@ int yywrap()
 pila pilaFactor;
 pila pilaID;
 pila pilaExpresion;
+<<<<<<< HEAD
 pila pilaTermino;
+=======
+pila pilaRepeat;
+>>>>>>> release/2.0
  
 int main()
 {
+        crearPila(&pilaRepeat);
         crearPila(&pilaFactor);
         crearPila(&pilaID);
 		crearPila(&pilaExpresion);
@@ -76,15 +81,26 @@ void pprints()
         int Tind = -1;
         int Find = -1;
         int Eind = -1;
+        int Eizqind = -1;
         int Aind = -1;
         int LVind = -1;
         int LDind = -1;
+<<<<<<< HEAD
 		int Tind1 = -1;
 		int Tind2 = -1;
 		int ELind = -1;
 		int Cind = -1;
 		
 		char valor_comparacion[3] = "";
+=======
+
+        int Cind = -1;
+        int ELind = -1;
+        int TLind = -1;
+        int TLSalto = -1;
+
+        char *comparacionActual = "";
+>>>>>>> release/2.0
 %}
 
 %type <intValue> factor termino CONST_INT
@@ -177,6 +193,7 @@ tipo_dato:
 //Seccion codigo
 cuerpo: 
         cuerpo sentencias {
+                
                 pprintf("\tcuerpo sentencia - es - cuerpo\n");
         }
         | sentencias {
@@ -253,7 +270,17 @@ condicional:
         };
 
 ciclo_repeat:
-        REPEAT cuerpo UNTIL expresion_logica {
+        REPEAT {
+                // ACA SE GUARDO EL COMIENZO EL DEL CUERPO
+                ponerEnPila(&pilaRepeat, numeracionTercetos );
+                avanzarTerceto(numeracionTercetos);
+        } 
+        
+        cuerpo UNTIL expresion_logica {
+                 // ACA SE SALTARIA COMPARANDO EL RESULTADO DE LA EXPRESION LOGICA, POR LO QUE NO SERIA JMP, LO DEJE PARA QUE SE ENTIENDA
+                Cind = crearTercetoID("JMP","_", sacarDePila(&pilaRepeat),numeracionTercetos);
+                avanzarTerceto(numeracionTercetos);
+        
                 pprintf("REPEAT cuerpo UNTIL expresion_logica - es - ciclo_repeat");
         };
 
@@ -349,15 +376,17 @@ expresion_logica:
         };
 
 termino_logico: 
+
         expresion {Tind1 = Eind;} comparacion expresion {Tind2 = Eind;} {
 				Tind = crearTercetoOperacion("CMP", Tind1, Tind2, numeracionTercetos);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("comparacion");
-                pprintf("\t\texpresion comparacion expresion  - es - expresion_logica");
+
         };
 
 comparacion:
         OP_MENOR {
+
 			strcpy(valor_comparacion, "JB");
         }
         | OP_MENOR_IGUAL {
@@ -374,6 +403,7 @@ comparacion:
         }
 	| OP_DISTINTO {
 		strcpy(valor_comparacion, "JNE");
+
         };
 
 expresion:

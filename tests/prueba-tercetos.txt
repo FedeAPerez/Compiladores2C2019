@@ -1,1 +1,8 @@
-varMod := (1+2) / 3.42
+VAR 
+    [INTEGER] : [varMod]
+ENDVAR
+
+REPEAT
+varMod := 1
+varMod := varMod + 2
+UNTIL varMod > 3

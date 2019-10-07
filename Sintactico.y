@@ -396,18 +396,18 @@ factor:
         CONST_INT {
                 Find = crearTercetoInt($1, "_", "_", numeracionTercetos);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
-                status("crear int a factor");
+                status("int a factor");
         }
         | CONST_FLOAT {
                 Find = crearTercetoFloat($1, "_", "_", numeracionTercetos);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
-                status("crear float a factor");
+                status("float a factor");
         }
         | ID {
                 Find = crearTerceto($1, "_", "_", numeracionTercetos);
                 ponerEnPila(&pilaFactor, Find);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
-                status("crear id a factor");
+                status("id a factor");
         }
         | PARENTESIS_ABRE expresion PARENTESIS_CIERRA {
                 Find = Eind;
@@ -419,7 +419,7 @@ expresion_algebraica:
         MOD expresion {
                 Find = crearTercetoOperacion("OP_MOD", Eind, Find, numeracionTercetos);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
-                status("crear MOD");
+                status("MOD a Factor");
         }
         | DIV expresion {
         };

@@ -28,11 +28,11 @@ int yywrap()
 pila pilaFactor;
 pila pilaID;
 pila pilaExpresion;
-<<<<<<< HEAD
+
 pila pilaTermino;
-=======
+
 pila pilaRepeat;
->>>>>>> release/2.0
+
  
 int main()
 {
@@ -85,22 +85,19 @@ void pprints()
         int Aind = -1;
         int LVind = -1;
         int LDind = -1;
-<<<<<<< HEAD
+
 		int Tind1 = -1;
 		int Tind2 = -1;
 		int ELind = -1;
 		int Cind = -1;
 		
 		char valor_comparacion[3] = "";
-=======
 
-        int Cind = -1;
-        int ELind = -1;
         int TLind = -1;
         int TLSalto = -1;
 
         char *comparacionActual = "";
->>>>>>> release/2.0
+
 %}
 
 %type <intValue> factor termino CONST_INT

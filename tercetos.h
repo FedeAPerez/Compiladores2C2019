@@ -6,6 +6,12 @@
 #define READ_FILE_TERCETOS "r"
 #define APPEND_FILE_TERCETOS "a"
 
+struct terceto {
+	char *uno;
+	char *dos;
+	char *tres;
+};
+
 int crearTerceto(char *, char *, char *, int);
 int crearTercetoInt(int, char *, char *, int);
 int crearTercetoFloat(float, char *, char *, int);
@@ -56,4 +62,12 @@ int crearTercetoID(char *op, char *str1, int ind1, int numeracion)
     sprintf(aux1, "[%d]", ind1);
 
     return crearTerceto(op, str1, aux1, numeracion);
+};
+
+int crearTercetoSalto(char *op, int ind1, char *a, int numeracion)
+{
+    char aux1[5];
+    sprintf(aux1, "[%d]", ind1);
+
+    return crearTerceto(op, aux1, a, numeracion);
 };

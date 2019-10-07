@@ -5,7 +5,7 @@
 #include "PilaDinamica.h" 
 #include "tercetos.h"
 #include "status.h"
-
+#include "Archivos.h"
  
 int yylex();
 int yyparse();
@@ -28,13 +28,19 @@ int yywrap()
 pila pilaFactor;
 pila pilaID;
 pila pilaExpresion;
+
+pila pilaTermino;
+
 pila pilaRepeat;
+
  
 int main()
 {
         crearPila(&pilaRepeat);
         crearPila(&pilaFactor);
         crearPila(&pilaID);
+		crearPila(&pilaExpresion);
+		crearPila(&pilaTermino);
         yyparse();
         exit(0);
 }
@@ -80,12 +86,18 @@ void pprints()
         int LVind = -1;
         int LDind = -1;
 
-        int Cind = -1;
-        int ELind = -1;
+		int Tind1 = -1;
+		int Tind2 = -1;
+		int ELind = -1;
+		int Cind = -1;
+		
+		char valor_comparacion[3] = "";
+
         int TLind = -1;
         int TLSalto = -1;
 
         char *comparacionActual = "";
+
 %}
 
 %type <intValue> factor termino CONST_INT
@@ -225,10 +237,32 @@ io_salida_imprimibles:
         | ID;
 
 condicional:
-        IF expresion_logica THEN cuerpo ELSE cuerpo ENDIF {
+        IF expresion_logica THEN cuerpo {
+				Cind = crearTerceto("JI","#", "_", numeracionTercetos);
+				while(!pilaVacia(&pilaExpresion)){
+					ActualizarArchivo(sacarDePila(&pilaExpresion), Cind + 1);
+				}
+				ponerEnPila(&pilaExpresion,Cind);
+				numeracionTercetos = avanzarTerceto(numeracionTercetos);
+		}  ELSE cuerpo 
+		ENDIF {
+				
+				ActualizarArchivo(sacarDePila(&pilaExpresion), numeracionTercetos);
+				numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 pprintf("IF expresion_logica THEN cuerpo ELSE cuerpo ENDIF - es - condicional");
         }
-        | IF expresion_logica THEN cuerpo ENDIF {
+        | IF expresion_logica THEN cuerpo
+		{
+				Cind = crearTerceto("JI","#", "_", numeracionTercetos);
+				while(!pilaVacia(&pilaExpresion)){
+					ActualizarArchivo(sacarDePila(&pilaExpresion), Cind + 1);
+				}
+				ponerEnPila(&pilaExpresion,Cind);
+				numeracionTercetos = avanzarTerceto(numeracionTercetos);
+		}
+		ENDIF {
+				ActualizarArchivo(sacarDePila(&pilaExpresion), numeracionTercetos);
+				numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 pprintf("IF expresion_logica THEN cuerpo ENDIF - es - condicional");
         };
 
@@ -293,46 +327,80 @@ lista_datos:
         };
 
 expresion_logica:
-        termino_logico AND termino_logico {
+        termino_logico {
+				ELind = Tind;
+				ELind = crearTerceto(valor_comparacion,"#", "_", numeracionTercetos);
+				ponerEnPila(&pilaExpresion,ELind);
+				numeracionTercetos = avanzarTerceto(numeracionTercetos);
+		}
+		AND termino_logico {
+				ELind = Tind;
+				ELind = crearTerceto(valor_comparacion,"#", "_", numeracionTercetos);
+				ponerEnPila(&pilaExpresion,ELind);
+				numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 pprintf("termino_logico AND termino_logico - es - expresion_logica");
         }
-        | termino_logico OR termino_logico {
+        | termino_logico
+		{
+				ELind = Tind;
+				ELind = crearTercetoSalto(valor_comparacion,numeracionTercetos + 1, "_", numeracionTercetos);
+				numeracionTercetos = avanzarTerceto(numeracionTercetos);
+                pprintf("termino_logico AND termino_logico - es - expresion_logica");
+        }	
+		OR termino_logico {
+				ELind = Tind;
+				ELind = crearTerceto(valor_comparacion,"#", "_", numeracionTercetos);
+				ponerEnPila(&pilaExpresion,ELind);
+				numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 pprintf("termino_logico OR termino_logico - es - expresion_logica");
         }
         | NOT termino_logico {
+				ELind = Tind;
+				ELind = crearTerceto(valor_comparacion,"#", "_", numeracionTercetos);
+				ponerEnPila(&pilaExpresion,ELind);
+				numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 pprintf("NOT termino_logico - es - expresion_logica");
         }
         | termino_logico {
+				ELind = Tind;
+				ELind = crearTerceto(valor_comparacion,"#", "_", numeracionTercetos);
+				ponerEnPila(&pilaExpresion,ELind);
+				numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				
+				status("Parte Termino Logico");
+								
                 pprintf("termino_logico - es - expresion_logica");
         };
 
 termino_logico: 
-        expresion {Eizqind = Eind;} comparacion expresion {
-                pprintf("\t\texpresion comparacion expresion  - es - expresion_logica");
-                TLind = crearTercetoOperacion("CMP",Eizqind , Eind , numeracionTercetos);
-                avanzarTerceto(numeracionTercetos);
-                //SEGUIR
-                TLSalto = crearTercetoOperacion(comparacionActual, ,  , numeracionTercetos); // ACA FALTA COMPLETAR 
+
+        expresion {Tind1 = Eind;} comparacion expresion {Tind2 = Eind;} {
+				Tind = crearTercetoOperacion("CMP", Tind1, Tind2, numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+                status("comparacion");
+
         };
 
 comparacion:
         OP_MENOR {
-                comparacionActual = "JNAE";
+
+			strcpy(valor_comparacion, "JB");
         }
         | OP_MENOR_IGUAL {
-                comparacionActual = "JNA";
+			strcpy(valor_comparacion, "JBE");
         }
 	| OP_MAYOR {
-                comparacionActual = "JNBE";
+			strcpy(valor_comparacion, "JA");
         }
 	| OP_MAYOR_IGUAL {
-                comparacionActual = "JNB";
+		strcpy(valor_comparacion, "JAE");
         }
 	| OP_IGUAL {
-                comparacionActual = "JE";
+		strcpy(valor_comparacion, "JE");
         }
 	| OP_DISTINTO {
-                comparacionActual = "JNE";
+		strcpy(valor_comparacion, "JNE");
+
         };
 
 expresion:
@@ -378,19 +446,16 @@ factor:
         CONST_INT {
                 $$ = $1;
                 Find = crearTercetoInt($1, "_", "_", numeracionTercetos);
-		//ponerEnPila(&pilaFactor, Find);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("crear int");
         }
         | CONST_FLOAT {
                 $$ = $1;
                 Find = crearTercetoFloat($1, "_", "_", numeracionTercetos);
-		//ponerEnPila(&pilaFactor, Find);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("crear float");
         }
         | ID {
-		
                 $$ = $1;
                 Find = crearTerceto($1, "_", "_", numeracionTercetos);
                 ponerEnPila(&pilaFactor, Find);

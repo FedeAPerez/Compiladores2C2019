@@ -27,6 +27,6 @@ PRINT "Ingrese b"
 READ b
 PRINT "Ingrese c"
 READ c
-y := (a * c * b) + (b * a) + c
+y := ((a * c) * b) + (b * a) + c
 PRINT "El resultado es"
 PRINT y

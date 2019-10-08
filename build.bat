@@ -1,3 +1,7 @@
+del y.tab.c
+del y.tab.h
+del y.output
+del Segunda.exe
 mkdir build
 C:\GnuWin32\bin\bison -dy Sintactico.y
 pause
@@ -29,7 +33,3 @@ pause
 echo "PRUEBA REPEAT - OK"
 type .\tests\repeat.txt | .\build\Segunda.exe
 pause
-del y.tab.c
-del y.tab.h
-del y.output
-del Primera.exe

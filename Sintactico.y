@@ -28,9 +28,7 @@ int yywrap()
 pila pilaFactor;
 pila pilaID;
 pila pilaExpresion;
-
 pila pilaTermino;
-
 pila pilaRepeat;
 
  
@@ -39,8 +37,8 @@ int main()
         crearPila(&pilaRepeat);
         crearPila(&pilaFactor);
         crearPila(&pilaID);
-		crearPila(&pilaExpresion);
-		crearPila(&pilaTermino);
+        crearPila(&pilaExpresion);
+        crearPila(&pilaTermino);
         yyparse();
         exit(0);
 }
@@ -363,8 +361,6 @@ termino:
                 Tind = Find;                
                 status("factor a termino");
         };
-
-
 
 factor:
         CONST_INT {

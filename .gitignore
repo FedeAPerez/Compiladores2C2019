@@ -5,6 +5,7 @@ intermedia.txt
 status.txt
 y.tab.*
 y.*
+*.exe
 /build/*
 .DS_Store
 /min-comp/*

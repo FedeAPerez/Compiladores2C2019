@@ -3,11 +3,11 @@ del y.tab.h
 del y.output
 del Segunda.exe
 mkdir build
-C:\GnuWin32\bin\bison -dy Sintactico.y
+bison -dy Sintactico.y
 pause
-C:\GnuWin32\bin\flex Lexico.l
+flex Lexico.l
 pause
-C:\TDM-GCC-64\bin\gcc.exe lex.yy.c y.tab.c -o .\build\Segunda.exe
+c:\MinGW\bin\gcc.exe lex.yy.c y.tab.c -o .\build\Segunda.exe
 pause
 del ts.txt
 

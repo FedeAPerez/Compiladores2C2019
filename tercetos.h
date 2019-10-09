@@ -1,16 +1,9 @@
 #include "stdio.h"
 #include "stdlib.h"
 
-
 #define FILE_NAME_TERCETOS "intermedia.txt"
 #define READ_FILE_TERCETOS "r"
 #define APPEND_FILE_TERCETOS "a"
-
-struct terceto {
-	char *uno;
-	char *dos;
-	char *tres;
-};
 
 int crearTerceto(char *, char *, char *, int);
 int crearTercetoInt(int, char *, char *, int);
@@ -42,8 +35,8 @@ int crearTercetoInt(int int1, char *str1, char *str2, int numeracion)
 
 int crearTercetoFloat(float flo1, char *str1, char *str2, int numeracion)
 {
-    char aux[10];
-    snprintf(aux, 10, "%f", flo1);
+    char aux[100];
+    snprintf(aux, 100, "%f", flo1);
     return crearTerceto(aux, str1, str2, numeracion);
 };
 

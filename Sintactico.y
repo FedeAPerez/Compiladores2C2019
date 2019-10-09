@@ -98,7 +98,7 @@ void pprints()
 
 %}
 
-%type <intValue> factor termino CONST_INT
+%type <intValue> CONST_INT
 %type <floatValue> CONST_FLOAT
 %type <stringValue> ID CONST_STRING
 
@@ -183,11 +183,7 @@ io_lectura:
         READ ID;
 
 io_salida:
-        PRINT io_salida_imprimibles;
-
-io_salida_imprimibles: 
-        CONST_STRING
-        | ID;
+        PRINT CONST_STRING | PRINT ID;
 
 condicional:
         IF expresion_logica THEN cuerpo {

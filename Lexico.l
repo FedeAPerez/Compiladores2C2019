@@ -45,7 +45,7 @@
 "INTEGER"                               return TIPO_INTEGER;
 "FLOAT"                                 return TIPO_FLOAT;
 [0-9]+                                  { validType(yytext, TYPE_INT, saveTs); yylval.intValue = atoi(yytext); return CONST_INT; }
-[0-9]+"."[0-9]+                         { validType(yytext, TYPE_FLOAT, saveTs); yylval.floatValue = atof(yytext); return CONST_FLOAT; }
+[0-9]+"."[0-9\+\-\e]+                   { validType(yytext, TYPE_FLOAT, saveTs); yylval.floatValue = atof(yytext); return CONST_FLOAT; }
 [a-zA-Z][a-zA-Z0-9_]*                   { validType(yytext, TYPE_ID, saveTs); yylval.stringValue = strdup(yytext); return ID; }
 \"(\\.|[^"\\])*\"                       { validType(yytext, TYPE_STRING, saveTs); yylval.stringValue = strdup(yytext); return CONST_STRING; }
 \-\-\/[a-zA-Z0-9_ ]*\/\-\-              { };

@@ -8,9 +8,11 @@
 #include "stdio.h"
 #include "string.h"
 #include "stdlib.h"
+#include "float.h"
 
 #define ERR_STRING_LENGTH "Cadena de caracteres mayor a 30"
 #define ERR_INT_MAX "Entero fuera de rango de los 16 bits (sin signo)"
+#define ERR_FLT_MAX "Float fuera de rango de los 32 bits"
 #define TYPE_ID 1
 #define TYPE_FLOAT 2
 #define TYPE_STRING 3
@@ -61,7 +63,17 @@ int validType(char *text, int type, void (*next)(char *, char *, char *, char *)
         }
         break;
     case TYPE_FLOAT:
-        next(text, "CONST_FLOAT", text, "");
+        printf("validating float");
+        if (atof(text) > FLT_MAX)
+        {
+
+            printError(ERR_FLT_MAX, text);
+            exit(0);
+        }
+        else
+        {
+            next(text, "CONST_FLOAT", text, "");
+        }
         return 1;
         break;
     default:

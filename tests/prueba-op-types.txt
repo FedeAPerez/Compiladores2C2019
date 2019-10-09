@@ -1,0 +1,11 @@
+VAR 
+    [FLOAT, FLOAT, FLOAT, FLOAT] : [a, b, c, y]
+ENDVAR
+
+a:=32.232442323
+b:=4
+c:=12
+
+y := ((a * c * b) + (b * a)) + c
+PRINT "El resultado es"
+PRINT y

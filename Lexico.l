@@ -31,11 +31,11 @@
 "/"                                     return OP_DIVISION;
 "-"                                     return OP_RESTA;
 "<"			                            return OP_MENOR;
-"<="		                                return OP_MENOR_IGUAL;
-">"			                                return OP_MAYOR;
-">="		                                return OP_MAYOR_IGUAL;
-"=="		                                return OP_IGUAL;
-"!="		                                return OP_DISTINTO;
+"<="		                            return OP_MENOR_IGUAL;
+">"			                            return OP_MAYOR;
+">="		                            return OP_MAYOR_IGUAL;
+"=="		                            return OP_IGUAL;
+"!="		                            return OP_DISTINTO;
 "("                                     return PARENTESIS_ABRE;
 ")"                                     return PARENTESIS_CIERRA;
 "["                                     return CORCHETE_ABRE;

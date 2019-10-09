@@ -63,7 +63,6 @@ int validType(char *text, int type, void (*next)(char *, char *, char *, char *)
         }
         break;
     case TYPE_FLOAT:
-        printf("validating float");
         if (atof(text) > FLT_MAX)
         {
 

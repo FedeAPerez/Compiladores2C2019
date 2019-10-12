@@ -76,6 +76,8 @@ void pprints()
         // Aux
         int numeracionTercetos = 0;
         // Índices
+
+        // Separen los punteros por comentarios que los agrupen
         int Tind = -1;
         int Find = -1;
         int Eind = -1;
@@ -83,14 +85,11 @@ void pprints()
         int Aind = -1;
         int LVind = -1;
         int LDind = -1;
-
-		int Tind1 = -1;
-		int Tind2 = -1;
-		int ELind = -1;
-		int Cind = -1;
-		
-		char valor_comparacion[3] = "";
-
+        int Tind1 = -1;
+        int Tind2 = -1;
+        int ELind = -1;
+        int Cind = -1;
+        char valor_comparacion[3] = "";
         int TLind = -1;
         int TLSalto = -1;
 
@@ -134,6 +133,7 @@ void pprints()
 // Parentesis, corchetes, otros caracteres
 %token PARENTESIS_ABRE PARENTESIS_CIERRA CORCHETE_ABRE CORCHETE_CIERRA COMA DOS_PUNTOS
 
+%start programa_aumentado
 %%
 programa_aumentado: 
         programa {
@@ -223,7 +223,7 @@ ciclo_repeat:
         };
 
 asignacion:
-        ID OP_ASIG expresion {
+        ID OP_ASIG expresion_algebraica {
                 Aind = crearTercetoID(":=", $1, Eind, numeracionTercetos);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
@@ -256,11 +256,11 @@ asignacion_multiple_asign:
         CORCHETE_ABRE lista_datos CORCHETE_CIERRA;
 
 lista_datos:
-        lista_datos COMA expresion  {
+        lista_datos COMA expresion_algebraica  {
                 LDind = Eind;
                 ponerEnPila(&pilaExpresion, LDind);
         }
-        | expresion {
+        | expresion_algebraica {
                 LDind = Eind;
                 ponerEnPila(&pilaExpresion, LDind);
         };
@@ -301,7 +301,7 @@ expresion_logica:
         };
 
 termino_logico: 
-        expresion {Tind1 = Eind;} comparacion expresion {Tind2 = Eind;} {
+        expresion_algebraica {Tind1 = Eind;} comparacion expresion_algebraica {Tind2 = Eind;} {
                 Tind = crearTercetoOperacion("CMP", Tind1, Tind2, numeracionTercetos);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
@@ -325,6 +325,8 @@ comparacion:
 	| OP_DISTINTO {
 		strcpy(valor_comparacion, "JNE");
         };
+
+expresion_algebraica: expresion;
 
 expresion:
         expresion OP_SUMA termino {
@@ -379,16 +381,14 @@ factor:
                 Find = Eind;
                 status("pa expresion pc a factor");
         }
-        | expresion expresion_algebraica;
-
-expresion_algebraica:
-        MOD expresion {
+        | PARENTESIS_ABRE expresion MOD expresion PARENTESIS_CIERRA {
                 Find = crearTercetoOperacion("OP_MOD", Eind, Find, numeracionTercetos);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("MOD a Factor");
         }
-        | DIV expresion {
+        | PARENTESIS_ABRE expresion DIV expresion PARENTESIS_CIERRA {
         };
+
 %%
 
 void status(char *str)

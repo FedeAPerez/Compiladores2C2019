@@ -33,6 +33,8 @@ int ActualizarArchivo(int posicion, int dato)
 
 	while (fgets(linea, sizeof(linea), fp))
 	{
+		// esto es medio peligroso, quizás deberíamos hacerlo por el [] que se marca
+		// al inicio del terceto
 		if (cont == posicion)
 		{
 

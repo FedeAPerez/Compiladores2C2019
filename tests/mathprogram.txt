@@ -7,6 +7,6 @@ PRINT "Ingrese b"
 READ b
 PRINT "Ingrese c"
 READ c
-y := (a * x * x) + (b * x) + c
+y := (a * a * x) + (b * x) + c
 PRINT "El resultado es"
 PRINT y

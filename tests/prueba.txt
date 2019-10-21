@@ -2,31 +2,6 @@ VAR
     [FLOAT, FLOAT, FLOAT, FLOAT] : [a, b, c, y]
 ENDVAR
 
---/ pepe es la de string /--
-
-[pepe1, pepe2, pepe3, pepe4] := [pepe1, 2, (3 + pepe1) + 3, (3+3)]
-
-pepe3 := 3 * (3 * 3)
-pepe4 := (3 * 3)
-
-IF pepe1 > 3
-THEN
-    pepe2 := 4
-ELSE
-    pepe4 := 5
-ENDIF
-
-IF pepe1 > 3
-THEN
-    pepe2 := 4
-ENDIF
-
-PRINT "Ingrese a:"
-READ a
-PRINT "Ingrese b"
-READ b
-PRINT "Ingrese c"
-READ c
 y := ((a * c) * b) + (b * a) + c
 PRINT "El resultado es"
 PRINT y

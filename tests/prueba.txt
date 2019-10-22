@@ -1,7 +1,29 @@
 VAR 
-    [FLOAT, FLOAT, FLOAT, FLOAT] : [a, b, c, y]
+    [INTEGER, INTEGER, INTEGER, INTEGER] : [pepe1, pepe2, pepe3, pepe4]
 ENDVAR
 
-y := ((a * c) * b) + (b * a) + c
-PRINT "El resultado es"
-PRINT y
+
+IF pepe1 > 3 OR pepe2 < 3
+THEN
+	pepe2 := 1
+ELSE
+	pepe4 := 10
+ENDIF
+
+IF pepe3 > 3 AND pepe2 < 3
+THEN
+	pepe2 := 1
+ELSE
+	pepe4 := 10
+ENDIF
+
+IF NOT pepe3 < 4
+THEN
+	pepe2 := (1 DIV 3)
+ELSE
+	pepe4 := (10 MOD 3)
+ENDIF
+pepe2 := 6
+REPEAT
+    pepe2 := pepe2 - 1
+UNTIL   pepe2 == 3

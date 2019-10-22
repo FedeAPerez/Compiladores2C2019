@@ -387,6 +387,9 @@ factor:
                 status("MOD a Factor");
         }
         | PARENTESIS_ABRE expresion DIV expresion PARENTESIS_CIERRA {
+                Find = crearTercetoOperacion("OP_DIV", Eind, Find, numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+                status("DIV a Factor");
         };
 
 %%

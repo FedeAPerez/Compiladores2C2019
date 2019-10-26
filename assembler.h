@@ -1,10 +1,6 @@
 #include "stdio.h"
 #include "stdlib.h"
 
-#define FILE_NAME_ASS "Final.asm"
-#define FILE_MODE_READ "r"
-#define FILE_MODE_APPEND "a"
-
 void generarAssembler(void);
 
 void generarAssembler(void)

@@ -2,9 +2,14 @@
 #include "stdlib.h"
 #include <string.h>
 #define FILE_NAME_TERCETOS "intermedia.txt"
+#define FILE_NAME_ASS "Final.asm"
 #define FILE_NAME_TERCETOS_COPIA "intermedia_copia.txt"
+
 #define READ_FILE_TERCETOS_PLUS "r+"
 #define WRITE_FILE_TERCETOS "w+"
+
+#define FILE_MODE_READ "r"
+#define FILE_MODE_APPEND "a"
 
 char *replace_str(char *str, char *orig, char *rep);
 int ActualizarArchivo(int posicion, int dato);
@@ -13,6 +18,7 @@ void clean(void);
 void clean(void)
 {
 	remove(FILE_NAME_TERCETOS);
+	remove(FILE_NAME_ASS);
 }
 
 int ActualizarArchivo(int posicion, int dato)

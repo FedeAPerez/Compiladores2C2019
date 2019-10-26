@@ -8,6 +8,12 @@
 
 char *replace_str(char *str, char *orig, char *rep);
 int ActualizarArchivo(int posicion, int dato);
+void clean(void);
+
+void clean(void)
+{
+	remove("intermedia.txt");
+}
 
 int ActualizarArchivo(int posicion, int dato)
 {

@@ -34,6 +34,7 @@ pila pilaRepeat;
  
 int main()
 {
+        clean();
         crearPila(&pilaRepeat);
         crearPila(&pilaFactor);
         crearPila(&pilaID);
@@ -138,6 +139,7 @@ void pprints()
 programa_aumentado: 
         programa {
                 pprints();
+                printf("Generando assembler...");
         };
 
 programa:

@@ -5,7 +5,8 @@
 #include "PilaDinamica.h" 
 #include "tercetos.h"
 #include "status.h"
-#include "Archivos.h"
+#include "archivos.h"
+#include "assembler.h"
  
 int yylex();
 int yyparse();
@@ -41,6 +42,7 @@ int main()
         crearPila(&pilaExpresion);
         crearPila(&pilaTermino);
         yyparse();
+        generarAssembler();
         exit(0);
 }
 
@@ -61,7 +63,6 @@ void pprints()
     printf("\033[0;32m");
     printf("\t[COMPILACION EXITOSA]\n");
     printf("\033[0m");
-    exit(0);
 }
 
 %}

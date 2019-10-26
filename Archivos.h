@@ -12,7 +12,7 @@ void clean(void);
 
 void clean(void)
 {
-	remove("intermedia.txt");
+	remove(FILE_NAME_TERCETOS);
 }
 
 int ActualizarArchivo(int posicion, int dato)

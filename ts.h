@@ -44,22 +44,17 @@ void saveTs(char *text, char *type, char *value, char *length)
 int searchTs(char *text){
 	
 	char linea[1000],word[100];
-	int i=0;
 	
 	FILE *fp = fopen(FILE_NAME, READ_FILE);
     if(fp!= NULL) 
 	{	
 		while(fgets(linea,sizeof(linea),fp))
 		{
-			printf("LINEA %d: %s\n",i, linea);
-			 sscanf(linea, "%s", word);
-			 printf("primer palabra : %s\n", word);
-			printf("palabra buscada: %s\n", text);
+			sscanf(linea, "%s", word);
 			if(strcmp(word,text)==0){
 				fclose(fp);
 				return 1;
 			}
-			i++;
 		}
 	}
 	fclose(fp);

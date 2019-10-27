@@ -6,17 +6,21 @@
 #define FILE_LINE 120
 
 void initTs(FILE *);
-int searchTs(char *, char *);
+int searchTs(char *);
 void saveTs(char *, char *, char *, char *);
+void insertInTs(char *text, char *type, char *value, char *length);
 
 void initTs(FILE *fp)
 {
     fprintf(fp, "%-35s %-20s %-45s %-20s", "NAME", "TYPE", "VALUE", "LENGTH");
 }
 
-int searchTs(char *word, char *column)
+void insertInTs(char *text, char *type, char *value, char *length)
 {
-    return 0;
+	if (searchTs(text) == 0)
+	{
+		saveTs(text,type,value,length);
+	}
 }
 
 void saveTs(char *text, char *type, char *value, char *length)
@@ -26,13 +30,7 @@ void saveTs(char *text, char *type, char *value, char *length)
     {
         fp = fopen(FILE_NAME, APPEND_FILE);
         initTs(fp);
-        if (searchTs(text, "name") == 0)
-        {
-        }
-        else
-        {
-            fprintf(fp, "\n%-35s %-20s %-45s %-20s", text, type, value, length);
-        }
+        fprintf(fp, "\n%-35s %-20s %-45s %-20s", text, type, value, length);
         fclose(fp);
     }
     else
@@ -41,4 +39,29 @@ void saveTs(char *text, char *type, char *value, char *length)
         fprintf(fp, "\n%-35s %-20s %-45s %-20s", text, type, value, length);
         fclose(fp);
     }
+}
+
+int searchTs(char *text){
+	
+	char linea[1000],word[100];
+	int i=0;
+	
+	FILE *fp = fopen(FILE_NAME, READ_FILE);
+    if(fp!= NULL) 
+	{	
+		while(fgets(linea,sizeof(linea),fp))
+		{
+			printf("LINEA %d: %s\n",i, linea);
+			 sscanf(linea, "%s", word);
+			 printf("primer palabra : %s\n", word);
+			printf("palabra buscada: %s\n", text);
+			if(strcmp(word,text)==0){
+				fclose(fp);
+				return 1;
+			}
+			i++;
+		}
+	}
+	fclose(fp);
+	return 0;
 }

@@ -140,7 +140,6 @@ void pprints()
 programa_aumentado: 
         programa {
                 pprints();
-                printf("Generando assembler...");
         };
 
 programa:

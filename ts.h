@@ -3,7 +3,6 @@
 #define FILE_NAME "ts.txt"
 #define READ_FILE "r"
 #define APPEND_FILE "a"
-#define FILE_LINE 120
 
 void initTs(FILE *);
 int searchTs(char *);

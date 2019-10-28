@@ -16,7 +16,7 @@ int crearTerceto(char *arg1, char *arg2, char *arg3, int numeracion)
 {
     FILE *fp = fopen(FILE_NAME_TERCETOS, READ_FILE_TERCETOS);
     fp = fopen(FILE_NAME_TERCETOS, APPEND_FILE_TERCETOS);
-    fprintf(fp, "[%d](%s, %s, %s)\n", numeracion, arg1, arg2, arg3);
+    fprintf(fp, "[%05d](%s, %s, %s)\n", numeracion, arg1, arg2, arg3);
     fclose(fp);
     return numeracion;
 };

@@ -3,6 +3,8 @@
 #include <string.h>
 #define FILE_NAME_TERCETOS "intermedia.txt"
 #define FILE_NAME_ASS "Final.asm"
+#define FILE_NAME_TS "ts.txt"
+#define FILE_SIZE_TS 124
 #define FILE_NAME_TERCETOS_COPIA "intermedia_copia.txt"
 
 #define READ_FILE_TERCETOS_PLUS "r+"

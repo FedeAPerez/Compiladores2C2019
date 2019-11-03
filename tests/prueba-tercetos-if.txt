@@ -8,6 +8,10 @@ ENDVAR
 IF pepe1 > 3 OR pepe2 < 3
 THEN
 	pepe2 := 1
+	IF pepe4 == 2 THEN
+		pepe4 := 1
+
+	ENDIF
 ELSE
 	pepe4 := 10
 ENDIF

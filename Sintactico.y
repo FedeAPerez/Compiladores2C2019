@@ -14,6 +14,7 @@ int yylex();
 int yyparse();
 void yyerror(const char *str);
 void status();
+void controlar_if_anidados(int cant);
 
 void yyerror(const char *str)
 {
@@ -105,7 +106,7 @@ void pprints()
         int TLSalto = -1;
 		int Find1 = -1;
         char *comparacionActual = "";
-		int i=0;
+		int cant_if=0;
 %}
 
 %type <intValue> CONST_INT
@@ -190,7 +191,7 @@ sentencia:
         ciclo_repeat
         | asignacion
         | asignacion_multiple
-        | condicional
+        | { cant_if++; controlar_if_anidados(cant_if); } condicional
         | io_lectura
         | io_salida;
 
@@ -201,18 +202,19 @@ io_salida:
         PRINT CONST_STRING | PRINT ID;
 
 condicional:
-        IF expresion_logica THEN cuerpo {
+		IF expresion_logica THEN cuerpo {
                 Cind = crearTerceto("JI","#", "_", numeracionTercetos);
                 while(!pilaVacia(&pilaExpresion)){
                         ActualizarArchivo(sacarDePila(&pilaExpresion), Cind + 1);
                 }
                 ponerEnPila(&pilaExpresion,Cind);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
-        } ELSE cuerpo ENDIF {				
+        } ELSE cuerpo ENDIF {	
+				cant_if=0;
                 ActualizarArchivo(sacarDePila(&pilaExpresion), numeracionTercetos);
                 //numeracionTercetos = avanzarTerceto(numeracionTercetos);
         }
-        | IF expresion_logica THEN cuerpo {
+        | IF expresion_logica  THEN cuerpo {
                 Cind = crearTerceto("JI","#", "_", numeracionTercetos);
                 while(!pilaVacia(&pilaExpresion)){
                         ActualizarArchivo(sacarDePila(&pilaExpresion), Cind + 1);
@@ -220,6 +222,7 @@ condicional:
                 ponerEnPila(&pilaExpresion,Cind);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         } ENDIF {
+				cant_if=0;
                 ActualizarArchivo(sacarDePila(&pilaExpresion), numeracionTercetos);
                //numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
@@ -459,4 +462,10 @@ factor:
 void status(char *str)
 {
         crearStatus(str, Eind, Tind, Find, numeracionTercetos);
+}
+
+void controlar_if_anidados(int cant){
+	status("Ingresa a controlar");
+	if(cant >=3)
+		yyerror("No se puede tener mas de 2 ifs anidados\n");
 }

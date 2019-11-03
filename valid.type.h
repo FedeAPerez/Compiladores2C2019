@@ -59,13 +59,13 @@ int validType(char *text, int type, void (*next)(char *, char *, char *, char *)
         }
         else
         {
+			
             next(text, "CONST_INT", text, "");
         }
         break;
     case TYPE_FLOAT:
         if (atof(text) > FLT_MAX)
         {
-
             printError(ERR_FLT_MAX, text);
             exit(0);
         }

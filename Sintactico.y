@@ -7,6 +7,8 @@
 #include "status.h"
 #include "archivos.h"
 #include "assembler.h"
+#include "ColaDinamica.h"
+
  
 int yylex();
 int yyparse();
@@ -32,7 +34,13 @@ pila pilaExpresion;
 pila pilaTermino;
 pila pilaRepeat;
 
- 
+t_cola colaId;
+
+ struct declaraciones_ts {
+	char *text;
+	char *type;
+};
+struct declaraciones_ts dec_ts[1000];
 int main()
 {
         clean();
@@ -41,6 +49,7 @@ int main()
         crearPila(&pilaID);
         crearPila(&pilaExpresion);
         crearPila(&pilaTermino);
+		crearCola(&colaId);
         yyparse();
         generarAssembler();
         exit(0);
@@ -94,9 +103,9 @@ void pprints()
         char valor_comparacion[3] = "";
         int TLind = -1;
         int TLSalto = -1;
-
+		int Find1 = -1;
         char *comparacionActual = "";
-
+		int i=0;
 %}
 
 %type <intValue> CONST_INT
@@ -153,7 +162,10 @@ declaraciones:
         VAR linea_declaraciones ENDVAR;
 
 linea_declaraciones:
-        CORCHETE_ABRE lista_tipo_datos CORCHETE_CIERRA DOS_PUNTOS CORCHETE_ABRE lista_id CORCHETE_CIERRA;
+        CORCHETE_ABRE lista_tipo_datos CORCHETE_CIERRA DOS_PUNTOS CORCHETE_ABRE lista_id CORCHETE_CIERRA
+			{
+
+			};
 
 lista_tipo_datos:
         lista_tipo_datos COMA tipo_dato
@@ -198,7 +210,7 @@ condicional:
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         } ELSE cuerpo ENDIF {				
                 ActualizarArchivo(sacarDePila(&pilaExpresion), numeracionTercetos);
-                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+                //numeracionTercetos = avanzarTerceto(numeracionTercetos);
         }
         | IF expresion_logica THEN cuerpo {
                 Cind = crearTerceto("JI","#", "_", numeracionTercetos);
@@ -209,7 +221,7 @@ condicional:
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         } ENDIF {
                 ActualizarArchivo(sacarDePila(&pilaExpresion), numeracionTercetos);
-                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+               //numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
 
 ciclo_repeat:
@@ -220,9 +232,14 @@ ciclo_repeat:
         } 
         
         cuerpo UNTIL expresion_logica {
-                 // ACA SE SALTARIA COMPARANDO EL RESULTADO DE LA EXPRESION LOGICA, POR LO QUE NO SERIA JMP, LO DEJE PARA QUE SE ENTIENDA
-                Cind = crearTercetoID("JMP","_", sacarDePila(&pilaRepeat),numeracionTercetos);
-                avanzarTerceto(numeracionTercetos);
+				//Cind = crearTercetoSalto("JI", sacarDePila(&pilaRepeat), "_", numeracionTercetos);
+				//numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				Cind = sacarDePila(&pilaRepeat);
+				 while(!pilaVacia(&pilaExpresion)){
+                        ActualizarArchivo(sacarDePila(&pilaExpresion), Cind);
+                }
+				//ActualizarArchivo(sacarDePila(&pilaExpresion), numeracionTercetos);
+               // numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
 
 asignacion:
@@ -233,11 +250,11 @@ asignacion:
 
 asignacion_multiple:
         asignacion_multiple_declare OP_ASIG asignacion_multiple_asign {
-                while(!pilaVacia(&pilaID) && !pilaVacia(&pilaExpresion))
+                /*while(!pilaVacia(&pilaID) && !pilaVacia(&pilaExpresion))
                 {
                         Aind = crearTercetoOperacion(":=", sacarDePila(&pilaID), sacarDePila( &pilaExpresion), numeracionTercetos);
                         numeracionTercetos = avanzarTerceto(numeracionTercetos);
-                }
+                }*/
         };
 
 asignacion_multiple_declare:
@@ -245,29 +262,45 @@ asignacion_multiple_declare:
 		
 lista_variables:
         lista_variables COMA ID {
-                LVind = crearTerceto($3, "_", "_", numeracionTercetos);
-                ponerEnPila(&pilaID, LVind);
-                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+                ponerEncola(&colaId,$3);
+				 status("mete en cola");
+				//LVind = crearTerceto($3, "_", "_", numeracionTercetos);
+                //ponerEnPila(&pilaID, LVind);
+                //numeracionTercetos = avanzarTerceto(numeracionTercetos);
         }
         | ID { 
-                LVind = crearTerceto($1, "_", "_", numeracionTercetos);
-                ponerEnPila(&pilaID, LVind);
-                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+                ponerEncola(&colaId,$1);
+				status("mete en cola");
+				//LVind = crearTerceto($1, "_", "_", numeracionTercetos);
+				//ponerEnPila(&pilaID, LVind);
+                //numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
 		
 asignacion_multiple_asign: 
         CORCHETE_ABRE lista_datos CORCHETE_CIERRA;
 
 lista_datos:
-        lista_datos COMA expresion_algebraica  {
+        lista_datos COMA {LVind = crearTerceto(sacarDecola(&colaId), "_", "_", numeracionTercetos);
+							status("saca en cola");
+							ponerEnPila(&pilaID, LVind); 
+							numeracionTercetos = avanzarTerceto(numeracionTercetos);} 
+				expresion_algebraica  {
                 LDind = Eind;
-                ponerEnPila(&pilaExpresion, LDind);
+                //ponerEnPila(&pilaExpresion, LDind);
+				Aind = crearTercetoOperacion(":=", sacarDePila(&pilaID),LDind, numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
         }
-        | expresion_algebraica {
+        | {LVind = crearTerceto(sacarDecola(&colaId), "_", "_", numeracionTercetos);
+			status("saca en cola");
+			ponerEnPila(&pilaID, LVind); 
+			numeracionTercetos = avanzarTerceto(numeracionTercetos);} 
+				expresion_algebraica {
                 LDind = Eind;
-                ponerEnPila(&pilaExpresion, LDind);
+                //ponerEnPila(&pilaExpresion, LDind);
+				Aind = crearTercetoOperacion(":=", sacarDePila(&pilaID), LDind, numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
-
+		
 expresion_logica:
         termino_logico {
                 ELind = Tind;
@@ -290,7 +323,7 @@ expresion_logica:
                 ponerEnPila(&pilaExpresion,ELind);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         }
-        | NOT termino_logico {
+        | NOT termino_logico_not {
                 ELind = Tind;
                 ELind = crearTerceto(valor_comparacion,"#", "_", numeracionTercetos);
                 ponerEnPila(&pilaExpresion,ELind);
@@ -302,6 +335,12 @@ expresion_logica:
                 ponerEnPila(&pilaExpresion,ELind);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
+		
+termino_logico_not: 
+        expresion_algebraica {Tind1 = Eind;} comparacion_jump expresion_algebraica {Tind2 = Eind;} {
+                Tind = crearTercetoOperacion("CMP", Tind1, Tind2, numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+        };
 
 termino_logico: 
         expresion_algebraica {Tind1 = Eind;} comparacion expresion_algebraica {Tind2 = Eind;} {
@@ -310,6 +349,26 @@ termino_logico:
         };
 
 comparacion:
+        OP_MENOR {
+                strcpy(valor_comparacion, "JAE");
+        }
+        | OP_MENOR_IGUAL {
+                strcpy(valor_comparacion, "JA");
+        }
+	| OP_MAYOR {
+                strcpy(valor_comparacion, "JBE");
+        }
+	| OP_MAYOR_IGUAL {
+		strcpy(valor_comparacion, "JB");
+        }
+	| OP_IGUAL {
+		strcpy(valor_comparacion, "JNE");
+        }
+	| OP_DISTINTO {
+		strcpy(valor_comparacion, "JE");
+        };
+
+comparacion_jump:
         OP_MENOR {
                 strcpy(valor_comparacion, "JB");
         }
@@ -384,13 +443,13 @@ factor:
                 Find = Eind;
                 status("pa expresion pc a factor");
         }
-        | PARENTESIS_ABRE expresion MOD expresion PARENTESIS_CIERRA {
-                Find = crearTercetoOperacion("OP_MOD", Eind, Find, numeracionTercetos);
+        | PARENTESIS_ABRE expresion {Find1=Eind;} MOD expresion PARENTESIS_CIERRA {
+                Find = crearTercetoOperacion("OP_MOD", Find1, Find, numeracionTercetos);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("MOD a Factor");
         }
-        | PARENTESIS_ABRE expresion DIV expresion PARENTESIS_CIERRA {
-                Find = crearTercetoOperacion("OP_DIV", Eind, Find, numeracionTercetos);
+        | PARENTESIS_ABRE  expresion {Find1=Eind;} DIV expresion PARENTESIS_CIERRA {
+                Find = crearTercetoOperacion("OP_DIV", Find1, Find, numeracionTercetos);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("DIV a Factor");
         };

@@ -10,8 +10,8 @@ THEN
 	pepe2 := 1
 	IF pepe4 == 2 THEN
 		pepe4 := 1
-
 	ENDIF
+	pepe1 := pepe4 / pepe3
 ELSE
 	pepe4 := 10
 ENDIF

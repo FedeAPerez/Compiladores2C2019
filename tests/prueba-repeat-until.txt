@@ -1,0 +1,10 @@
+VAR 
+    [INTEGER, INTEGER, INTEGER, INTEGER] : [pepe1, pepe2, pepe3, pepe4]
+ENDVAR
+
+--/ Así son los comentarios en el 2°Cuat de LyC --/ Comentario  /-- /--
+[pepe1, pepe2, pepe3, pepe4] := [10*2, 100, 3, 1+2]
+
+REPEAT
+    pepe2 := pepe2 - 1
+UNTIL pepe2 == 3

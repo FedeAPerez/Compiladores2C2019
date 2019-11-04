@@ -46,7 +46,18 @@
 [0-9]+                                  { validType(yytext, TYPE_INT); yylval.intValue = atoi(yytext); return CONST_INT; }
 [0-9]+"."[0-9\+\-\e]+                   { validType(yytext, TYPE_FLOAT); yylval.floatValue = atof(yytext); return CONST_FLOAT; }
 [a-zA-Z][a-zA-Z0-9_]*                   { validType(yytext, TYPE_ID); yylval.stringValue = strdup(yytext); return ID; }
-\-\-\/(\\.|[^"\\])*\/\-\-               { };
+\-\-\/(\\.|[^"\\])*\/\-\-               { char * comentarios;
+										  char *segundonivel;
+										  comentarios = (strstr(yytext,"/--"));
+										  segundonivel = strstr(comentarios +3, "/--");
+										  if(segundonivel != NULL){
+											if(strstr(segundonivel+3,"/--") != NULL){
+												fprintf(stderr, "No se permite un segundo nivel de comentarios...Fin de ejecucion.\n");
+												system ("Pause");
+												exit (1);
+											}
+										  }
+										 }
 \"(\\.|[^"\\])*\"                       { validType(yytext, TYPE_STRING); yylval.stringValue = strdup(yytext); return CONST_STRING; }
 \n                                      /* ignore end of line */;
 [ \t]+                                  /* ignore whitespace */;

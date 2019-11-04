@@ -66,7 +66,6 @@ int validType(char *text, int type)
     case TYPE_FLOAT:
         if (atof(text) > FLT_MAX)
         {
-
             printError(ERR_FLT_MAX, text);
             exit(0);
         }

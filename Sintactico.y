@@ -55,7 +55,7 @@ int main()
         crearPila(&pilaID);
         crearPila(&pilaExpresion);
         crearPila(&pilaTermino);
-		crearCola(&colaId);
+	crearCola(&colaId);
         yyparse();
         generarAssembler();
         exit(0);

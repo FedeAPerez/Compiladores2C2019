@@ -9,6 +9,7 @@
 #include "string.h"
 #include "stdlib.h"
 #include "float.h"
+#include "ts.h"
 
 #define ERR_STRING_LENGTH "Cadena de caracteres mayor a 30"
 #define ERR_INT_MAX "Entero fuera de rango de los 16 bits (sin signo)"
@@ -25,14 +26,14 @@ void printError(char *errorMessage, char *errorLex)
     printf("\033[0m");
 }
 
-int validType(char *text, int type, void (*next)(char *, char *, char *, char *))
+int validType(char *text, int type)
 {
     int length;
     char stringLength[20];
     switch (type)
     {
     case TYPE_ID:
-        next(text, "", "", "");
+        insertInTs(text, "", "", "");
         return 1;
         break;
     case TYPE_STRING:
@@ -47,7 +48,7 @@ int validType(char *text, int type, void (*next)(char *, char *, char *, char *)
         {
             // converts length into string
             sprintf(stringLength, "%d", length);
-            next(text, "CONST_STRING", text, stringLength);
+            insertInTs(text, "CONST_STRING", text, stringLength);
             return 1;
         }
         break;
@@ -59,7 +60,7 @@ int validType(char *text, int type, void (*next)(char *, char *, char *, char *)
         }
         else
         {
-            next(text, "CONST_INT", text, "");
+            insertInTs(text, "CONST_INT", text, "");
         }
         break;
     case TYPE_FLOAT:
@@ -71,7 +72,7 @@ int validType(char *text, int type, void (*next)(char *, char *, char *, char *)
         }
         else
         {
-            next(text, "CONST_FLOAT", text, "");
+            insertInTs(text, "CONST_FLOAT", text, "");
         }
         return 1;
         break;

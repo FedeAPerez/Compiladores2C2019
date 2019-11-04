@@ -2,12 +2,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "PilaDinamica.h" 
+#include "prints.h"
+#include "pila-dinamica.h" 
 #include "tercetos.h"
 #include "status.h"
 #include "archivos.h"
 #include "assembler.h"
- 
+#include "ts.h" 
+
 int yylex();
 int yyparse();
 void yyerror(const char *str);
@@ -28,6 +30,8 @@ int yywrap()
 
 pila pilaFactor;
 pila pilaID;
+pila_s pilaIDDeclare;
+pila_s pilaTipoDeclare;
 pila pilaExpresion;
 pila pilaTermino;
 pila pilaRepeat;
@@ -56,13 +60,6 @@ void pprintfd(int str) {
 
 void pprintff(float str) {
         printf("\t %f \n", str);
-}
-
-void pprints()
-{
-    printf("\033[0;32m");
-    printf("\t[COMPILACION EXITOSA]\n");
-    printf("\033[0m");
 }
 
 %}
@@ -101,7 +98,7 @@ void pprints()
 
 %type <intValue> CONST_INT
 %type <floatValue> CONST_FLOAT
-%type <stringValue> ID CONST_STRING
+%type <stringValue> ID CONST_STRING TIPO_FLOAT TIPO_INTEGER
 
 // Sector declaraciones
 %token VAR ENDVAR TIPO_INTEGER TIPO_FLOAT
@@ -139,7 +136,7 @@ void pprints()
 %%
 programa_aumentado: 
         programa {
-                pprints();
+                pprints("COMPILACION EXITOSA");
         };
 
 programa:
@@ -149,22 +146,43 @@ programa:
 
 // Declaraciones
 declaraciones:
-        VAR linea_declaraciones ENDVAR;
+        VAR lista_linea_declaraciones ENDVAR;
+
+lista_linea_declaraciones:
+        lista_linea_declaraciones linea_declaraciones
+        | linea_declaraciones;
 
 linea_declaraciones:
-        CORCHETE_ABRE lista_tipo_datos CORCHETE_CIERRA DOS_PUNTOS CORCHETE_ABRE lista_id CORCHETE_CIERRA;
+        CORCHETE_ABRE {
+                crearPilaS(&pilaIDDeclare);
+                crearPilaS(&pilaTipoDeclare);
+        } lista_tipo_datos CORCHETE_CIERRA DOS_PUNTOS CORCHETE_ABRE lista_id CORCHETE_CIERRA {
+                while(!pilaVaciaS(&pilaIDDeclare) && !pilaVaciaS(&pilaTipoDeclare)){
+                        char *id = sacarDePilaS(&pilaIDDeclare);
+                        char *type = sacarDePilaS(&pilaTipoDeclare);
+                        modifyTypeTs(id, type);
+                }
+        };
 
 lista_tipo_datos:
         lista_tipo_datos COMA tipo_dato
         | tipo_dato;
 
 lista_id:
-        lista_id COMA ID
-        | ID;
+        lista_id COMA ID {
+                ponerEnPilaS(&pilaIDDeclare, $3);
+        }
+        | ID {
+                ponerEnPilaS(&pilaIDDeclare, $1);
+        };
 
 tipo_dato:
-        TIPO_INTEGER
-        | TIPO_FLOAT;
+        TIPO_INTEGER {
+                ponerEnPilaS(&pilaTipoDeclare, $1);
+        }
+        | TIPO_FLOAT {
+                ponerEnPilaS(&pilaTipoDeclare, $1);
+        };
 
 //Fin Declaraciones
 
@@ -233,7 +251,7 @@ asignacion:
 asignacion_multiple:
         asignacion_multiple_declare OP_ASIG asignacion_multiple_asign {
                 while(!pilaVacia(&pilaID) && !pilaVacia(&pilaExpresion))
-                {
+                {     
                         Aind = crearTercetoOperacion(":=", sacarDePila(&pilaID), sacarDePila( &pilaExpresion), numeracionTercetos);
                         numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 }

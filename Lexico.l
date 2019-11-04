@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include "y.tab.h"
 #include "valid.type.h"
-#include "ts.h"
 
 %}
 %%
@@ -42,13 +41,13 @@
 "]"                                     return CORCHETE_CIERRA;
 ","                                     return COMA;
 ":"                                     return DOS_PUNTOS;
-"INTEGER"                               return TIPO_INTEGER;
-"FLOAT"                                 return TIPO_FLOAT;
-[0-9]+                                  { validType(yytext, TYPE_INT, insertInTs); yylval.intValue = atoi(yytext); return CONST_INT; }
-[0-9]+"."[0-9\+\-\e]+                   { validType(yytext, TYPE_FLOAT, insertInTs); yylval.floatValue = atof(yytext); return CONST_FLOAT; }
-[a-zA-Z][a-zA-Z0-9_]*                   { validType(yytext, TYPE_ID, insertInTs); yylval.stringValue = strdup(yytext); return ID; }
+"INTEGER"                               { yylval.stringValue = strdup(yytext); return TIPO_INTEGER; }
+"FLOAT"                                 { yylval.stringValue = strdup(yytext); return TIPO_FLOAT; }
+[0-9]+                                  { validType(yytext, TYPE_INT); yylval.intValue = atoi(yytext); return CONST_INT; }
+[0-9]+"."[0-9\+\-\e]+                   { validType(yytext, TYPE_FLOAT); yylval.floatValue = atof(yytext); return CONST_FLOAT; }
+[a-zA-Z][a-zA-Z0-9_]*                   { validType(yytext, TYPE_ID); yylval.stringValue = strdup(yytext); return ID; }
 \-\-\/(\\.|[^"\\])*\/\-\-               { };
-\"(\\.|[^"\\])*\"                       { validType(yytext, TYPE_STRING, insertInTs); yylval.stringValue = strdup(yytext); return CONST_STRING; }
+\"(\\.|[^"\\])*\"                       { validType(yytext, TYPE_STRING); yylval.stringValue = strdup(yytext); return CONST_STRING; }
 \n                                      /* ignore end of line */;
 [ \t]+                                  /* ignore whitespace */;
 \n|.       		                        { printError("Caracter inesperado", yytext); exit(0); } // hanlde unmatched chars

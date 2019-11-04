@@ -1,0 +1,19 @@
+VAR 
+    [INTEGER, INTEGER, INTEGER, INTEGER] : [pepe1, pepe2, pepe3, pepe4]
+ENDVAR
+
+--/ Así son los comentarios en el 2°Cuat de LyC --/ Comentario  /-- /--
+
+[pepe1, pepe2, pepe3, pepe4] := [10*2, 100, 3, 1+2]
+
+IF pepe1 != 3 OR pepe2 <= 3
+THEN
+	pepe2 := 1
+	IF pepe1 == 2 
+	THEN
+	   pepe1 := pepe4 * pepe3
+	ENDIF
+        
+ELSE
+	pepe4 := 10
+ENDIF

@@ -17,7 +17,7 @@ int yyparse();
 void yyerror(const char *str);
 void status();
 void controlar_if_anidados(int cant);
-
+char* getCodOp(char* salto);
 void yyerror(const char *str)
 {
         printf("\033[0;31m");        
@@ -106,6 +106,7 @@ void pprintff(float str) {
         char *comparacionActual = "";
 	int cant_if=0;
 	int i=0;
+	
 %}
 
 %type <intValue> CONST_INT
@@ -354,14 +355,21 @@ expresion_logica:
         }
         | termino_logico {
                 ELind = Tind;
-                ELind = crearTercetoSalto(valor_comparacion,numeracionTercetos + 1, "_", numeracionTercetos);
+                //ELind = crearTercetoSalto(valor_comparacion,numeracionTercetos + 1, "_", numeracionTercetos);
+				ELind = crearTerceto(getCodOp(valor_comparacion),"#", "_", numeracionTercetos);
+                expr_if[expr_if_index].posicion = ELind;
+				expr_if[expr_if_index].nro_if = cant_if;
+				expr_if_index++;
+				ponerEnPila(&pilaExpresion,ELind);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				
         } OR termino_logico {
                 ELind = Tind;
                 ELind = crearTerceto(valor_comparacion,"#", "_", numeracionTercetos);
                 expr_if[expr_if_index].posicion = ELind;
 				expr_if[expr_if_index].nro_if = cant_if;
 				expr_if_index++;
+				ActualizarArchivo(sacarDePila(&pilaExpresion), ELind + 1 );
 				ponerEnPila(&pilaExpresion,ELind);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         }
@@ -389,7 +397,7 @@ termino_logico_not:
                 Tind = crearTercetoOperacion("CMP", Tind1, Tind2, numeracionTercetos);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
-
+		
 termino_logico: 
         expresion_algebraica {Tind1 = Eind;} comparacion expresion_algebraica {Tind2 = Eind;} {
                 Tind = crearTercetoOperacion("CMP", Tind1, Tind2, numeracionTercetos);
@@ -398,22 +406,23 @@ termino_logico:
 
 comparacion:
         OP_MENOR {
-                strcpy(valor_comparacion, "JAE");
+			strcpy(valor_comparacion, "JAE");
+		
         }
         | OP_MENOR_IGUAL {
-                strcpy(valor_comparacion, "JA");
+					strcpy(valor_comparacion, "JA");
         }
 	| OP_MAYOR {
-                strcpy(valor_comparacion, "JBE");
+		strcpy(valor_comparacion, "JBE");
         }
 	| OP_MAYOR_IGUAL {
-		strcpy(valor_comparacion, "JB");
+				strcpy(valor_comparacion, "JB");
         }
 	| OP_IGUAL {
-		strcpy(valor_comparacion, "JNE");
+				strcpy(valor_comparacion, "JNE");
         }
 	| OP_DISTINTO {
-		strcpy(valor_comparacion, "JE");
+				strcpy(valor_comparacion, "JE");
         };
 
 comparacion_jump:
@@ -516,4 +525,33 @@ void controlar_if_anidados(int cant){
 		yyerror("No se puede tener mas de 2 ifs anidados\n");
 		exit(2);
 	}
+}
+
+char* getCodOp(char* salto)
+{
+	if(!strcmp(salto, "JAE"))
+	{
+		return "JB";
+	}
+	else if(!strcmp(salto, "JA"))
+	{
+		return "JBE";
+	}
+	else if(!strcmp(salto, "JBE"))
+	{
+		return "JA";
+	}
+	else if(!strcmp(salto, "JB"))
+	{
+		return "JAE";
+	}
+	else if(!strcmp(salto, "JNE"))
+	{
+		return "JE";
+	}
+	else if(!strcmp(salto, "JE"))
+	{
+		return "JNE";
+	}
+
 }

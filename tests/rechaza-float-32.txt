@@ -1,0 +1,6 @@
+--/ aasdasdasd /--
+VAR
+    [INTEGER, FLOAT, INTEGER]: [miInti, miFloat, miInt2]
+    [FLOAT, INTEGER]: [VARIABLETIENEIGUALA35CHARSPARAPRUEB, j]
+ENDVAR 
+miFloat := 0.2

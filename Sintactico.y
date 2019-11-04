@@ -2,10 +2,24 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "prints.h"
+#include "pila-dinamica.h" 
+#include "tercetos.h"
+#include "status.h"
+#include "archivos.h"
+#include "assembler.h"
+#include "ts.h" 
+#include "cola-dinamica.h"
+#define FILE_NAME_TERCETOS "intermedia.txt"
  
+int yylex();
+int yyparse();
+void yyerror(const char *str);
+void status();
+void controlar_if_anidados(int cant);
+char* getCodOp(char* salto);
 void yyerror(const char *str)
 {
-
         printf("\033[0;31m");        
         printf("\t[SYNTAX ERROR]: %s\n", str);
         printf("\033[0m");
@@ -15,23 +29,48 @@ int yywrap()
 {
         return 1;
 } 
-  
+
+pila pilaFactor;
+pila pilaID;
+pila_s pilaIDDeclare;
+pila_s pilaTipoDeclare;
+pila pilaExpresion;
+pila pilaTermino;
+pila pilaRepeat;
+
+t_cola colaId;
+
+struct ifs {
+	int posicion;
+	int nro_if;
+};
+struct ifs expr_if[1000];
+int expr_if_index = 0;
+
 int main()
 {
+        clean();
+        crearPila(&pilaRepeat);
+        crearPila(&pilaFactor);
+        crearPila(&pilaID);
+        crearPila(&pilaExpresion);
+        crearPila(&pilaTermino);
+	crearCola(&colaId);
         yyparse();
+        generarAssembler();
         exit(0);
 }
 
-void pprintf(const char *str) {
+void pprintf(char *str) {
         printf("\t %s \n", str);
 }
 
-void pprints()
-{
-    printf("\033[0;32m");
-    printf("\t[COMPILACION EXITOSA]\n");
-    printf("\033[0m");
-    exit(0);
+void pprintfd(int str) {
+        printf("\t %d \n", str);
+}
+
+void pprintff(float str) {
+        printf("\t %f \n", str);
 }
 
 %}
@@ -42,6 +81,37 @@ void pprints()
         float floatValue;
         char *stringValue;
 }
+
+%{
+        // Aux
+        int numeracionTercetos = 0;
+        // Índices
+
+        // Separen los punteros por comentarios que los agrupen
+        int Tind = -1;
+        int Find = -1;
+        int Eind = -1;
+        int Eizqind = -1;
+        int Aind = -1;
+        int LVind = -1;
+        int LDind = -1;
+        int Tind1 = -1;
+        int Tind2 = -1;
+        int ELind = -1;
+        int Cind = -1;
+        char valor_comparacion[3] = "";
+        int TLind = -1;
+        int TLSalto = -1;
+	int Find1 = -1;
+        char *comparacionActual = "";
+	int cant_if=0;
+	int i=0;
+	
+%}
+
+%type <intValue> CONST_INT
+%type <floatValue> CONST_FLOAT
+%type <stringValue> ID CONST_STRING TIPO_FLOAT TIPO_INTEGER
 
 // Sector declaraciones
 %token VAR ENDVAR TIPO_INTEGER TIPO_FLOAT
@@ -75,230 +145,414 @@ void pprints()
 // Parentesis, corchetes, otros caracteres
 %token PARENTESIS_ABRE PARENTESIS_CIERRA CORCHETE_ABRE CORCHETE_CIERRA COMA DOS_PUNTOS
 
+%start programa_aumentado
 %%
 programa_aumentado: 
         programa {
-                pprints();
+                pprints("COMPILACION EXITOSA");
         };
 
 programa:
-        declaraciones cuerpo {
-                pprintf("\tdeclaraciones cuerpo - es -  programa\n");
-        }
-        | declaraciones {
-                pprintf("\tdeclaraciones - es -  programa");
-        }
-        | cuerpo {
-                pprintf("\tcuerpo - es -  programa");
-        };
+        declaraciones cuerpo
+        | declaraciones
+        | cuerpo;
 
 // Declaraciones
 declaraciones:
-        VAR linea_declaraciones ENDVAR {
-                pprintf("VAR ENDVAR - es - declaraciones");
-        };
+        VAR lista_linea_declaraciones ENDVAR;
+
+lista_linea_declaraciones:
+        lista_linea_declaraciones linea_declaraciones
+        | linea_declaraciones;
 
 linea_declaraciones:
-        CORCHETE_ABRE lista_tipo_datos CORCHETE_CIERRA DOS_PUNTOS CORCHETE_ABRE lista_variables CORCHETE_CIERRA {
-                pprintf("\tCA lista_tipo_datos CC DOS_PUNTOS CA lista_variables CC - es - linea_declaraciones");
+        CORCHETE_ABRE {
+                crearPilaS(&pilaIDDeclare);
+                crearPilaS(&pilaTipoDeclare);
+        } lista_tipo_datos CORCHETE_CIERRA DOS_PUNTOS CORCHETE_ABRE lista_id CORCHETE_CIERRA {
+                while(!pilaVaciaS(&pilaIDDeclare) && !pilaVaciaS(&pilaTipoDeclare)){
+                        char *id = sacarDePilaS(&pilaIDDeclare);
+                        char *type = sacarDePilaS(&pilaTipoDeclare);
+                        modifyTypeTs(id, type);
+                }
         };
 
 lista_tipo_datos:
-        lista_tipo_datos COMA tipo_dato {
-                pprintf("\tlista_tipo_datos COMA tipo_dato - es - lista_tipo_datos");
-        }
-        | tipo_dato {
-                pprintf("\ttipo_dato - es - lista_tipo_datos");
-        };
+        lista_tipo_datos COMA tipo_dato
+        | tipo_dato;
 
-lista_variables:
-        lista_variables COMA ID {
-                pprintf("\t\tlista_variables COMA ID - es - lista_variables");
+lista_id:
+        lista_id COMA ID {
+                ponerEnPilaS(&pilaIDDeclare, $3);
         }
         | ID {
-                pprintf("\tID - es - lista_Variables");
+                ponerEnPilaS(&pilaIDDeclare, $1);
         };
 
 tipo_dato:
         TIPO_INTEGER {
-                pprintf("\t\tINTEGER - es - tipo_dato");
+                ponerEnPilaS(&pilaTipoDeclare, $1);
         }
-        | TIPO_FLOAT{
-                pprintf("\t\tFLOAT - es - tipo_dato");
+        | TIPO_FLOAT {
+                ponerEnPilaS(&pilaTipoDeclare, $1);
         };
 
 //Fin Declaraciones
 
 //Seccion codigo
 cuerpo: 
-        cuerpo sentencia {
-                pprintf("\tcuerpo sentencia - es - cuerpo\n");
-        }
-        | sentencia {
-                pprintf("\tsentencia - es - cuerpo\n");
-        };
+        cuerpo sentencia
+        | sentencia;
 
 sentencia:
-        ciclo_repeat {
-                pprintf("\tciclo_repeat - es - sentencia");
-        }
-        | asignacion {
-                pprintf("\tasignacion - es - sentencia");
-        }
-        | asignacion_multiple {
-                pprintf("\tsignacion_multiple - es - sentencia");
-        }
-        | condicional {
-                pprintf("\tcondicional - es - sentencia");
-        }
-        | io_lectura {
-                pprintf("\t io_lectura - es - sentencia");
-        }
-        | io_salida {
-                pprintf("\t io_salida - es - sentencia");
-        };
+        ciclo_repeat
+        | asignacion
+        | asignacion_multiple
+        | { cant_if++; controlar_if_anidados(cant_if); } condicional
+        | io_lectura
+        | io_salida;
 
 io_lectura:
         READ ID {
-                pprintf("READ ID - es - io_lectura");
+                crearTerceto("READ", $2, "_", numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
 
 io_salida:
         PRINT CONST_STRING {
-                pprintf("PRINT CONST_STRING - es - io_salida");
-        }
-        | PRINT ID
-        {
-                pprintf("PRINT ID - es - io_salida");
+                crearTerceto("PRINT", $2, "_", numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+        } | PRINT ID {
+                crearTerceto("PRINT", $2, "_", numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
 
 condicional:
-        IF expresion_logica THEN cuerpo ELSE cuerpo ENDIF {
-                pprintf("IF expresion_logica THEN cuerpo ELSE cuerpo ENDIF - es - condicional");
+	IF expresion_logica THEN cuerpo {
+                Cind = crearTerceto("JI","#", "_", numeracionTercetos);
+                if(cant_if > 1){
+                        for(i=0;i<expr_if_index;i++)
+                        {
+                                if(expr_if[i].nro_if == 2){
+                                        ActualizarArchivo(expr_if[i].posicion, Cind + 1);
+                                }
+                        }
+                }
+                else{
+                        for(i=0;i<expr_if_index;i++)
+                        {
+                                if(expr_if[i].nro_if == 1){
+                                        ActualizarArchivo(expr_if[i].posicion, Cind + 1);
+                                }
+                        }
+                }
+                ponerEnPila(&pilaExpresion,Cind);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+        } ELSE cuerpo ENDIF {	
+		cant_if--;
+                ActualizarArchivo(sacarDePila(&pilaExpresion), numeracionTercetos);
         }
-        | IF expresion_logica THEN cuerpo ENDIF {
-                pprintf("IF expresion_logica THEN cuerpo ENDIF - es - condicional");
+        | IF expresion_logica  THEN cuerpo {
+                Cind = crearTerceto("JI","#", "_", numeracionTercetos);
+                if(cant_if > 1){
+                        for(i=0;i<expr_if_index;i++)
+                        {
+                                if(expr_if[i].nro_if == 2){
+                                        ActualizarArchivo(expr_if[i].posicion, Cind + 1);
+                                }
+                        }
+                }
+                else{
+                        for(i=0;i<expr_if_index;i++)
+                        {
+                                if(expr_if[i].nro_if == 1){
+                                        ActualizarArchivo(expr_if[i].posicion, Cind + 1);
+                                }
+                        }
+                }
+                ponerEnPila(&pilaExpresion,Cind);
+        numeracionTercetos = avanzarTerceto(numeracionTercetos);
+        } ENDIF {
+		cant_if--;
+                ActualizarArchivo(sacarDePila(&pilaExpresion), numeracionTercetos);
         };
 
 ciclo_repeat:
-        REPEAT cuerpo UNTIL expresion_logica {
-                pprintf("REPEAT cuerpo UNTIL expresion_logica - es - ciclo_repeat");
+        REPEAT {
+                ponerEnPila(&pilaRepeat, numeracionTercetos );
+                avanzarTerceto(numeracionTercetos);
+        } 
+        
+        cuerpo UNTIL expresion_logica {
+	        Cind = sacarDePila(&pilaRepeat);
+		while(!pilaVacia(&pilaExpresion)){
+                        ActualizarArchivo(sacarDePila(&pilaExpresion), Cind);
+                }
         };
 
 asignacion:
-        ID OP_ASIG expresion {
-                pprintf("id OP_ASIG expresion - es - asignacion");
+        ID OP_ASIG expresion_algebraica {
+                Aind = crearTercetoID(":=", $1, Eind, numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
 
 asignacion_multiple:
         asignacion_multiple_declare OP_ASIG asignacion_multiple_asign {
-                pprintf("asignacion_multiple_declare OP_ASIG asignacion_multiple_asign - es - asignacion_multiple");
         };
 
 asignacion_multiple_declare:
-        CORCHETE_ABRE lista_variables CORCHETE_CIERRA {
-                pprintf("\t\tCA lista_variables CC - es - asignacion_multiple_declare");
+        CORCHETE_ABRE lista_variables CORCHETE_CIERRA;
+		
+lista_variables:
+        lista_variables COMA ID {
+                ponerEncola(&colaId,$3);
+        }
+        | ID { 
+                ponerEncola(&colaId,$1);
         };
-
+		
 asignacion_multiple_asign: 
-        CORCHETE_ABRE lista_datos CORCHETE_CIERRA {
-                pprintf("\t\tCA lista_datos CC - es - asignacion_multiple_asign");
-        };
+        CORCHETE_ABRE lista_datos CORCHETE_CIERRA;
 
 lista_datos:
-        lista_datos COMA expresion  {
-                pprintf("\tlista_datos COMA termino - es - lista_datos");
+        lista_datos COMA {LVind = crearTerceto(sacarDecola(&colaId), "_", "_", numeracionTercetos);
+                status("saca en cola");
+                ponerEnPila(&pilaID, LVind); 
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+        } expresion_algebraica  {
+                LDind = Eind;
+		Aind = crearTercetoOperacion(":=", sacarDePila(&pilaID),LDind, numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
         }
-        | expresion {
-                pprintf("\t\ttermino - es - lista_datos");
+        | {
+                LVind = crearTerceto(sacarDecola(&colaId), "_", "_", numeracionTercetos);
+                status("saca en cola");
+                ponerEnPila(&pilaID, LVind); 
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+        } expresion_algebraica {
+                LDind = Eind;
+	        Aind = crearTercetoOperacion(":=", sacarDePila(&pilaID), LDind, numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
-
+		
 expresion_logica:
-        termino_logico AND termino_logico {
-                pprintf("termino_logico AND termino_logico - es - expresion_logica");
-        }
-        | termino_logico OR termino_logico {
-                pprintf("termino_logico OR termino_logico - es - expresion_logica");
-        }
-        | NOT termino_logico {
-                pprintf("NOT termino_logico - es - expresion_logica");
+        termino_logico {
+                ELind = Tind;
+                ELind = crearTerceto(valor_comparacion,"#", "_", numeracionTercetos);
+                expr_if[expr_if_index].posicion = ELind;
+				expr_if[expr_if_index].nro_if = cant_if;
+				expr_if_index++;
+				ponerEnPila(&pilaExpresion,ELind);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+	} AND termino_logico {
+                ELind = Tind;
+                ELind = crearTerceto(valor_comparacion,"#", "_", numeracionTercetos);
+                expr_if[expr_if_index].posicion = ELind;
+				expr_if[expr_if_index].nro_if = cant_if;
+				expr_if_index++;
+				ponerEnPila(&pilaExpresion,ELind);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
         }
         | termino_logico {
-                pprintf("termino_logico - es - expresion_logica");
+                ELind = Tind;
+                //ELind = crearTercetoSalto(valor_comparacion,numeracionTercetos + 1, "_", numeracionTercetos);
+				ELind = crearTerceto(getCodOp(valor_comparacion),"#", "_", numeracionTercetos);
+                expr_if[expr_if_index].posicion = ELind;
+				expr_if[expr_if_index].nro_if = cant_if;
+				expr_if_index++;
+				ponerEnPila(&pilaExpresion,ELind);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				
+        } OR termino_logico {
+                ELind = Tind;
+                ELind = crearTerceto(valor_comparacion,"#", "_", numeracionTercetos);
+                expr_if[expr_if_index].posicion = ELind;
+				expr_if[expr_if_index].nro_if = cant_if;
+				expr_if_index++;
+				ActualizarArchivo(sacarDePila(&pilaExpresion), ELind + 1 );
+				ponerEnPila(&pilaExpresion,ELind);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+        }
+        | NOT termino_logico_not {
+                ELind = Tind;
+                ELind = crearTerceto(valor_comparacion,"#", "_", numeracionTercetos);
+				expr_if[expr_if_index].posicion = ELind;
+				expr_if[expr_if_index].nro_if = cant_if;
+				expr_if_index++;
+                ponerEnPila(&pilaExpresion,ELind);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+        }
+        | termino_logico {
+                ELind = Tind;
+                ELind = crearTerceto(valor_comparacion,"#", "_", numeracionTercetos);
+				expr_if[expr_if_index].posicion = ELind;
+				expr_if[expr_if_index].nro_if = cant_if;
+				expr_if_index++;
+                ponerEnPila(&pilaExpresion,ELind);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
-
+		
+termino_logico_not: 
+        expresion_algebraica {Tind1 = Eind;} comparacion_jump expresion_algebraica {Tind2 = Eind;} {
+                Tind = crearTercetoOperacion("CMP", Tind1, Tind2, numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+        };
+		
 termino_logico: 
-        expresion comparacion expresion {
-                pprintf("\t\texpresion comparacion expresion  - es - expresion_logica");
+        expresion_algebraica {Tind1 = Eind;} comparacion expresion_algebraica {Tind2 = Eind;} {
+                Tind = crearTercetoOperacion("CMP", Tind1, Tind2, numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
 
 comparacion:
         OP_MENOR {
-                pprintf("comparacion - es - OP_MENOR");
+			strcpy(valor_comparacion, "JAE");
+		
         }
         | OP_MENOR_IGUAL {
-                pprintf("comparacion - es - OP_MENOR_IGUAL");
+					strcpy(valor_comparacion, "JA");
         }
 	| OP_MAYOR {
-                pprintf("comparacion - es - OP_MAYOR");
+		strcpy(valor_comparacion, "JBE");
         }
 	| OP_MAYOR_IGUAL {
-                pprintf("comparacion - es - OP_MAYOR_IGUAL");
+				strcpy(valor_comparacion, "JB");
         }
 	| OP_IGUAL {
-                pprintf("comparacion - es - OP_IGUAL");
+				strcpy(valor_comparacion, "JNE");
         }
 	| OP_DISTINTO {
-                pprintf("OP_DISTINTO - es - comparacion");
+				strcpy(valor_comparacion, "JE");
         };
+
+comparacion_jump:
+        OP_MENOR {
+                strcpy(valor_comparacion, "JB");
+        }
+        | OP_MENOR_IGUAL {
+                strcpy(valor_comparacion, "JBE");
+        }
+	| OP_MAYOR {
+                strcpy(valor_comparacion, "JA");
+        }
+	| OP_MAYOR_IGUAL {
+		strcpy(valor_comparacion, "JAE");
+        }
+	| OP_IGUAL {
+		strcpy(valor_comparacion, "JE");
+        }
+	| OP_DISTINTO {
+		strcpy(valor_comparacion, "JNE");
+        };
+
+expresion_algebraica: expresion;
 
 expresion:
         expresion OP_SUMA termino {
-                pprintf("\texpresion OP_SUMA termino - es - termino");
+                Eind = crearTercetoOperacion("+", Eind, Tind, numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+                status("expresion suma termino a expresion");
+        }
+        | expresion OP_RESTA termino {      
+                Eind = crearTercetoOperacion("-", Eind, Tind, numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+                status("expresion resta termino a expresion");
         }
         | termino {
-                pprintf("\ttermino - es - expresion");
+                Eind = Tind;
+                status("termino a exp");
         };
 		
 termino:
-        termino operacion factor {
-                pprintf("\t\ttermino operacion factor - es - termino");
+        termino OP_MULTIPLICACION factor {
+                Tind = crearTercetoOperacion("*", Tind, Find, numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+                status("multiplicar a termino");
+        }
+        | termino OP_DIVISION factor {
+                Tind = crearTercetoOperacion("/", Tind, Find, numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+                status("dividir a termino");
         }
         | factor {
-                pprintf("\t\tfactor - es - termino");
-        };
-
-operacion:
-        OP_MULTIPLICACION {
-                pprintf("\tOP_MULTIPLICACION - es - operacion");
-        }
-        | OP_RESTA {
-                pprintf("\tOP_RESTA - es - operacion");
-        }
-        | OP_SUMA {
-                pprintf("\tOP_SUMA - es - operacion");
-        }
-        | OP_DIVISION{
-                pprintf("\tOP_DIVISION - es - operacion");
+                Tind = Find;                
+                status("factor a termino");
         };
 
 factor:
         CONST_INT {
-                pprintf("\tCTE INT - es - factor");
+                Find = crearTercetoInt($1, "_", "_", numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+                status("int a factor");
         }
         | CONST_FLOAT {
-                pprintf("\tCTE FLOAT - es - factor");
+                Find = crearTercetoFloat($1, "_", "_", numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+                status("float a factor");
         }
         | ID {
-                pprintf("\tID - es - factor");
+                Find = crearTerceto($1, "_", "_", numeracionTercetos);
+                ponerEnPila(&pilaFactor, Find);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+                status("id a factor");
         }
         | PARENTESIS_ABRE expresion PARENTESIS_CIERRA {
-                pprintf("\tPARENTESIS_ABRE expresion PARENTESIS_CIERRA - es - factor");
+                Find = Eind;
+                status("pa expresion pc a factor");
         }
-        | expresion MOD expresion {
-                pprintf("\texpresion MOD expresion - es - factor");
+        | PARENTESIS_ABRE expresion {Find1=Eind;} MOD expresion PARENTESIS_CIERRA {
+                Find = crearTercetoOperacion("OP_MOD", Find1, Find, numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+                status("MOD a Factor");
         }
-        | expresion DIV expresion {
-                pprintf("\texpresion DIV expresion - es - factor");
-        };;
+        | PARENTESIS_ABRE  expresion {Find1=Eind;} DIV expresion PARENTESIS_CIERRA {
+                Find = crearTercetoOperacion("OP_DIV", Find1, Find, numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+                status("DIV a Factor");
+        };
+
 %%
+
+void status(char *str)
+{
+        crearStatus(str, Eind, Tind, Find, numeracionTercetos);
+}
+
+void controlar_if_anidados(int cant){
+	status("Ingresa a controlar");
+	if(cant >=3){
+		clean();
+		yyerror("No se puede tener mas de 2 ifs anidados\n");
+		exit(2);
+	}
+}
+
+char* getCodOp(char* salto)
+{
+	if(!strcmp(salto, "JAE"))
+	{
+		return "JB";
+	}
+	else if(!strcmp(salto, "JA"))
+	{
+		return "JBE";
+	}
+	else if(!strcmp(salto, "JBE"))
+	{
+		return "JA";
+	}
+	else if(!strcmp(salto, "JB"))
+	{
+		return "JAE";
+	}
+	else if(!strcmp(salto, "JNE"))
+	{
+		return "JE";
+	}
+	else if(!strcmp(salto, "JE"))
+	{
+		return "JNE";
+	}
+        printf("salto no encontrado");
+        return "ERROR";
+}

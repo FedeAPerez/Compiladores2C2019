@@ -8,9 +8,12 @@
 #include "stdio.h"
 #include "string.h"
 #include "stdlib.h"
+#include "float.h"
+#include "ts.h"
 
 #define ERR_STRING_LENGTH "Cadena de caracteres mayor a 30"
 #define ERR_INT_MAX "Entero fuera de rango de los 16 bits (sin signo)"
+#define ERR_FLT_MAX "Float fuera de rango de los 32 bits"
 #define TYPE_ID 1
 #define TYPE_FLOAT 2
 #define TYPE_STRING 3
@@ -23,14 +26,14 @@ void printError(char *errorMessage, char *errorLex)
     printf("\033[0m");
 }
 
-int validType(char *text, int type, void (*next)(char *, char *, char *, char *))
+int validType(char *text, int type)
 {
     int length;
     char stringLength[20];
     switch (type)
     {
     case TYPE_ID:
-        next(text, "", "", "");
+        insertInTs(text, "", "", "");
         return 1;
         break;
     case TYPE_STRING:
@@ -45,7 +48,7 @@ int validType(char *text, int type, void (*next)(char *, char *, char *, char *)
         {
             // converts length into string
             sprintf(stringLength, "%d", length);
-            next(text, "CONST_STRING", text, stringLength);
+            insertInTs(text, "CONST_STRING", text, stringLength);
             return 1;
         }
         break;
@@ -57,11 +60,19 @@ int validType(char *text, int type, void (*next)(char *, char *, char *, char *)
         }
         else
         {
-            next(text, "CONST_INT", text, "");
+            insertInTs(text, "CONST_INT", text, "");
         }
         break;
     case TYPE_FLOAT:
-        next(text, "CONST_FLOAT", text, "");
+        if (atof(text) > FLT_MAX)
+        {
+            printError(ERR_FLT_MAX, text);
+            exit(0);
+        }
+        else
+        {
+            insertInTs(text, "CONST_FLOAT", text, "");
+        }
         return 1;
         break;
     default:

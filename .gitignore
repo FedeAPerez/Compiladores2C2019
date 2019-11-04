@@ -1,6 +1,12 @@
 lex.yy.c
 ts.txt
+tercetos.txt
+intermedia.txt
+status.txt
+Final.asm
 y.tab.*
 y.*
+*.exe
 /build/*
 .DS_Store
+/min-comp/*

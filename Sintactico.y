@@ -553,5 +553,6 @@ char* getCodOp(char* salto)
 	{
 		return "JNE";
 	}
-
+        printf("salto no encontrado");
+        return "ERROR";
 }

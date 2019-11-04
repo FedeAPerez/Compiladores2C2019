@@ -9,43 +9,7 @@ ENDVAR
 
 IF pepe1 != 3 OR pepe2 <= 3
 THEN
-	pepe2 := 1
-	IF pepe1 == 2 
-	THEN
-	   pepe1 := pepe4 * pepe3
-	ENDIF
-        
+	pepe2 := 1    
 ELSE
 	pepe4 := 10
 ENDIF
-
-REPEAT
-    pepe2 := pepe2 - 1
-    pepe1 := pepe4 * 10
-UNTIL pepe2 == 3 OR pepe1 > 100
-
-IF pepe3 >= 3 AND pepe2 < 3
-THEN
-	pepe2 := pepe1 / pepe4
-ELSE
-	pepe4 := 10
-ENDIF
-
-REPEAT
-    pepe2 := pepe2 - 1
-    pepe1 := pepe4 * 10
-UNTIL pepe2 == 3 AND pepe1 > 100
-
-IF NOT pepe3 == 4
-THEN
-	pepe2 := (1 DIV 3)
-ELSE
-	pepe4 := (10 MOD 3)
-ENDIF
-
-REPEAT
-    pepe2 := pepe2 - 1
-    pepe1 := pepe4 * 10
-UNTIL pepe2 != 3
-
-pepe2 := 6

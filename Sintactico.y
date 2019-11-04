@@ -203,7 +203,10 @@ io_lectura:
         READ ID;
 
 io_salida:
-        PRINT CONST_STRING | PRINT ID;
+        PRINT CONST_STRING {
+                crearTerceto("PRINT", $2, "_", numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+        } | PRINT ID;
 
 condicional:
         IF expresion_logica THEN cuerpo {

@@ -32,6 +32,9 @@ char *getAsmType(char *tsType)
     else if (strcmp(tsType, "INTEGER") == 0) {
         return "dd";
     }
+    else if (strcmp(tsType, "CONST_STRING") == 0 ) {
+        return "db";
+    }
     else 
     {
         return "erase_consts";

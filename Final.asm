@@ -1,10 +1,13 @@
 .386
 .MODEL SMALL
 .DATA
-_miInti dd ?
-_miFloat dd ?
-_miInt2 dd ?
-_VARIABLETIENEIGUALA35CHARSPARAPRUEB dd ?
-_j dd ?
-_0.2 erase_consts ?
+_a dd ?
+_b dd ?
+_c dd ?
+_y dd ?
+_x dd ?
+_"Ingrese a:" db ?
+_"Ingrese b" db ?
+_"Ingrese c" db ?
+_"El resultado es" db ?
 .CODE

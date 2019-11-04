@@ -1,5 +1,5 @@
 VAR
-    [FLOAT, FLOAT, FLOAT, FLOAT] : [a, b, c, y]
+    [FLOAT, FLOAT, FLOAT, FLOAT, FLOAT] : [a, b, c, y, x]
 ENDVAR
 PRINT "Ingrese a:"
 READ a

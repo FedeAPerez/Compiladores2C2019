@@ -37,6 +37,7 @@ pila_s pilaTipoDeclare;
 pila pilaExpresion;
 pila pilaTermino;
 pila pilaRepeat;
+ArrayTercetos aTercetos;
 
 t_cola colaId;
 
@@ -50,6 +51,7 @@ int expr_if_index = 0;
 int main()
 {
         clean();
+        crearTercetos(&aTercetos, 100);
         crearPila(&pilaRepeat);
         crearPila(&pilaFactor);
         crearPila(&pilaID);
@@ -57,7 +59,7 @@ int main()
         crearPila(&pilaTermino);
 	crearCola(&colaId);
         yyparse();
-        generarAssembler();
+        generarAssembler(&aTercetos);
         exit(0);
 }
 
@@ -493,6 +495,17 @@ factor:
         | ID {
                 Find = crearTerceto($1, "_", "_", numeracionTercetos);
                 ponerEnPila(&pilaFactor, Find);
+                // POC - Tercetos
+                Terceto t;
+                printf("\n en el terceto id de bería quedar %d", numeracionTercetos);
+                t.tercetoID = numeracionTercetos;
+                t.stringValue = malloc(strlen($1));
+                strcpy(t.stringValue, $1);
+                t.type = 'S';
+                t.isOperand = 1;
+                insertarTercetos(&aTercetos, t);
+                free(t.stringValue);
+                // fin POC
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("id a factor");
         }

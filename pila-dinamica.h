@@ -29,6 +29,7 @@ char* sacarDePilaS(pila_s *);
 void crearPila(pila *p){
     *p=NULL;
 }
+
 void crearPilaS(pila_s *p){
     *p=NULL;
 }

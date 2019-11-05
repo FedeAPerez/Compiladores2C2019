@@ -5,7 +5,44 @@
 #include "archivos.h"
 #include "prints.h"
 
-void generarAssembler(void)
+void crearTercetos(ArrayTercetos * a, size_t n)
+{
+    a->tamanioTotal = n;
+    a->tamanioUsado = 0;
+    a->punteroTercetos = (Terceto *)malloc(n * sizeof(Terceto));
+
+    // Initialize all values of the array to 0
+    for(unsigned int i = 0; i<n; i++)
+    {
+        memset(&a->punteroTercetos[i],0,sizeof(Terceto));
+    }
+};
+
+void insertarTercetos(ArrayTercetos *a, Terceto element) 
+{
+    if (a->tamanioUsado == a->tamanioTotal)
+    {
+        a->tamanioTotal *= 2;
+        a->punteroTercetos = (Terceto *)realloc(a->punteroTercetos, a->tamanioTotal * sizeof(Terceto));
+    }
+
+    // Copiar Terceto
+
+    a->punteroTercetos[a->tamanioUsado].tercetoID = element.tercetoID;
+    a->punteroTercetos[a->tamanioUsado].type = element.type;
+    a->punteroTercetos[a->tamanioUsado].isOperand = element.isOperand;
+
+    if(element.type == 'S') {
+        a->punteroTercetos[a->tamanioUsado].stringValue = (char*)malloc(strlen(element.stringValue) + 1);
+    }
+    else if (element.type == 'I') {
+        a->punteroTercetos[a->tamanioUsado].intValue = element.intValue;
+    }
+
+    a->tamanioUsado++;
+};
+
+void generarAssembler(ArrayTercetos *a)
 {
     pprints("Generando Assembler...");
     FILE *fpAss = fopen("Final.asm", "r");
@@ -14,6 +51,13 @@ void generarAssembler(void)
     fprintf(fpAss, "\n.MODEL SMALL");
     generarData(fpAss);
     generarCode(fpAss);
+    
+    if((int)a->tamanioUsado > 0) {
+        for(int i=0; i < (int)a->tamanioUsado; i++) {
+            printf("\nEn el terceto quedó '%d' de tipo %c es operando? %d, de valor '%s'", a->punteroTercetos[i].type, a->punteroTercetos[i].tercetoID, a->punteroTercetos[i].isOperand, a->punteroTercetos[i].stringValue);
+        }
+    }
+
     fclose(fpAss);
     pprints("Assembler generado...");
 };
@@ -21,6 +65,15 @@ void generarAssembler(void)
 void generarCode(FILE *fpAss)
 {
     fprintf(fpAss, "\n.CODE");
+    FILE *fpTs = fopen("intermedia.txt", "r");
+    char linea[200];
+    ArrayTercetos arrayTercetos;
+    crearTercetos(&arrayTercetos, 100);
+
+    while(fgets(linea, sizeof(linea), fpTs))
+    {
+        printf("\ntenemos la linea \'%s\'", trim(linea, NULL));
+    }
 };
 
 char *getAsmType(char *tsType)
@@ -40,9 +93,6 @@ char *getAsmType(char *tsType)
         return "erase_consts";
     }
 }
-
-
-
 
 void generarData(FILE *fpAss)
 {

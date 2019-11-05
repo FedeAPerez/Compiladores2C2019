@@ -34,7 +34,11 @@ void insertarTercetos(ArrayTercetos *a, Terceto element)
 
     if(element.type == 'S') {
         a->punteroTercetos[a->tamanioUsado].stringValue = (char*)malloc(strlen(element.stringValue) + 1);
+        strcpy(a->punteroTercetos[a->tamanioUsado].stringValue, element.stringValue);
     }
+    else if (element.type == 'F') {
+        a->punteroTercetos[a->tamanioUsado].floatValue = element.floatValue;
+    } 
     else if (element.type == 'I') {
         a->punteroTercetos[a->tamanioUsado].intValue = element.intValue;
     }
@@ -54,7 +58,13 @@ void generarAssembler(ArrayTercetos *a)
     
     if((int)a->tamanioUsado > 0) {
         for(int i=0; i < (int)a->tamanioUsado; i++) {
-            printf("\nEn el terceto quedó '%d' de tipo %c es operando? %d, de valor '%s'", a->punteroTercetos[i].type, a->punteroTercetos[i].tercetoID, a->punteroTercetos[i].isOperand, a->punteroTercetos[i].stringValue);
+            if(a->punteroTercetos[i].type == 'S') {
+                printf("\n[%d] -%c- es operando? %d, de valor '%s'", a->punteroTercetos[i].tercetoID, a->punteroTercetos[i].type, a->punteroTercetos[i].isOperand, a->punteroTercetos[i].stringValue);
+            } else if (a->punteroTercetos[i].type == 'F') {
+                printf("\n[%d] -%c- es operando? %d, de valor '%f'", a->punteroTercetos[i].tercetoID, a->punteroTercetos[i].type, a->punteroTercetos[i].isOperand, a->punteroTercetos[i].floatValue);
+            } else if (a->punteroTercetos[i].type == 'I') {
+                printf("\n[%d] -%c- es operando? %d, de valor '%d'", a->punteroTercetos[i].tercetoID, a->punteroTercetos[i].type, a->punteroTercetos[i].isOperand, a->punteroTercetos[i].intValue);
+            }
         }
     }
 

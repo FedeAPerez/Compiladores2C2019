@@ -484,11 +484,23 @@ termino:
 factor:
         CONST_INT {
                 Find = crearTercetoInt($1, "_", "_", numeracionTercetos);
+                Terceto t;
+                t.tercetoID = Find;
+                t.intValue = $1;
+                t.type = 'I';
+                t.isOperand = 1;
+                insertarTercetos(&aTercetos, t);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("int a factor");
         }
         | CONST_FLOAT {
                 Find = crearTercetoFloat($1, "_", "_", numeracionTercetos);
+                Terceto t;
+                t.tercetoID = Find;
+                t.floatValue = $1;
+                t.type = 'F';
+                t.isOperand = 1;
+                insertarTercetos(&aTercetos, t);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("float a factor");
         }
@@ -497,9 +509,8 @@ factor:
                 ponerEnPila(&pilaFactor, Find);
                 // POC - Tercetos
                 Terceto t;
-                printf("\n en el terceto id de bería quedar %d", numeracionTercetos);
-                t.tercetoID = numeracionTercetos;
-                t.stringValue = malloc(strlen($1));
+                t.tercetoID = Find;
+                t.stringValue = malloc(strlen($1)+1);
                 strcpy(t.stringValue, $1);
                 t.type = 'S';
                 t.isOperand = 1;

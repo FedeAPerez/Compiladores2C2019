@@ -41,6 +41,7 @@ void insertarTercetos(ArrayTercetos *a, Terceto element)
 
     if(element.isOperand == 1) {
         if(element.type == 'S') {
+            // Puede ser variable o Const string -> puede convenir un type V
             a->punteroTercetos[a->tamanioUsado].stringValue = (char*)malloc(strlen(element.stringValue) + 1);
             strcpy(a->punteroTercetos[a->tamanioUsado].stringValue, element.stringValue);
         }
@@ -77,10 +78,31 @@ void generarAssembler(ArrayTercetos *a)
                 }
             }
             if(a->punteroTercetos[i].isOperator == 1) {
+                // acá, cada left o right puede volver a ser otro operador, así que tiene que ir resolviendose
+                // desde arriba hacia abajo
+                // los siguientes prints son ilustrativos de como debería quedar el "SWITCH" para insertar codigo
+                // para cada operacion
+                if(a->punteroTercetos[i].operator == '+') {
+                    fprintf(fpAss, "\nFADD %d %d", a->punteroTercetos[a->punteroTercetos[i].left].intValue,  a->punteroTercetos[a->punteroTercetos[i].right].intValue);
+                }
+                if(a->punteroTercetos[i].operator == '*') {
+                    fprintf(fpAss, "\nFMUL %d %d", a->punteroTercetos[a->punteroTercetos[i].left].intValue,  a->punteroTercetos[a->punteroTercetos[i].right].intValue);
+                }
+                if(a->punteroTercetos[i].operator == '/') {
+                    fprintf(fpAss, "\nFDIV %d %d", a->punteroTercetos[a->punteroTercetos[i].left].intValue,  a->punteroTercetos[a->punteroTercetos[i].right].intValue);
+                }
+                if(a->punteroTercetos[i].operator == '-') {
+                    fprintf(fpAss, "\nFRES %d %d", a->punteroTercetos[a->punteroTercetos[i].left].intValue,  a->punteroTercetos[a->punteroTercetos[i].right].intValue);
+                }
+                if(a->punteroTercetos[i].operator == '=') {
+                    fprintf(fpAss, "\nFMOV %s %d", a->punteroTercetos[a->punteroTercetos[i].left].stringValue,  a->punteroTercetos[a->punteroTercetos[i].right].intValue);
+                }
                 printf("\n[%d] es operador ('%c', [%d], [%d])", a->punteroTercetos[i].tercetoID, a->punteroTercetos[i].operator, a->punteroTercetos[i].left, a->punteroTercetos[i].right);
             }
         }
+        
     }
+    
 
     fclose(fpAss);
     pprints("Assembler generado...");

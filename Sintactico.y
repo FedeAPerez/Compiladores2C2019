@@ -478,23 +478,23 @@ termino_logico:
 
 comparacion:
         OP_MENOR {
-			strcpy(valor_comparacion, "JAE");
+	        strcpy(valor_comparacion, "JAE");
 		
         }
         | OP_MENOR_IGUAL {
-					strcpy(valor_comparacion, "JA");
+		strcpy(valor_comparacion, "JA");
         }
 	| OP_MAYOR {
 		strcpy(valor_comparacion, "JBE");
         }
 	| OP_MAYOR_IGUAL {
-				strcpy(valor_comparacion, "JB");
+		strcpy(valor_comparacion, "JB");
         }
 	| OP_IGUAL {
-				strcpy(valor_comparacion, "JNE");
+	        strcpy(valor_comparacion, "JNE");
         }
 	| OP_DISTINTO {
-				strcpy(valor_comparacion, "JE");
+	        strcpy(valor_comparacion, "JE");
         };
 
 comparacion_jump:
@@ -621,11 +621,13 @@ factor:
         }
         | CONST_FLOAT {
                 Find = crearTercetoFloat($1, "_", "_", numeracionTercetos);
+
                 Terceto t;
                 t.tercetoID = Find;
                 t.floatValue = $1;
                 t.type = 'F';
                 t.isOperand = 1;
+                
                 insertarTercetos(&aTercetos, t);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("float a factor");
@@ -633,6 +635,7 @@ factor:
         | ID {
                 Find = crearTerceto($1, "_", "_", numeracionTercetos);
                 ponerEnPila(&pilaFactor, Find);
+
                 // POC - Tercetos
                 Terceto t;
                 t.tercetoID = Find;
@@ -643,6 +646,7 @@ factor:
                 insertarTercetos(&aTercetos, t);
                 free(t.stringValue);
                 // fin POC
+
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("id a factor");
         }

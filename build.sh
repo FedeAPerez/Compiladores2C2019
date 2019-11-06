@@ -1,7 +1,7 @@
 sh clean.sh
 bison -yd Sintactico.y
 flex Lexico.l
-gcc  prints.c archivos.c ts.c y.tab.c lex.yy.c assembler.c -ll -o ./build/Ejecutable
+gcc  terceto.c prints.c archivos.c ts.c y.tab.c lex.yy.c assembler.c -ll -o ./build/Ejecutable
 echo "PRUEBA - OK"
 cat tests/prueba.txt | ./build/Ejecutable
 echo "PRUEBA PARENTESIS - OK"

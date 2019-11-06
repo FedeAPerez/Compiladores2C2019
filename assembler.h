@@ -1,16 +1,18 @@
 typedef struct Terceto {
     int tercetoID;
-    char type; // S, F, I
-    // Store for values
-    char *stringValue;
-    int intValue;
-    float floatValue;
     // Helpers for Assembler
+    // Operator
     int isOperator;
     char operator; // + / - *
     int left;
     int right;
+    // Operand
     int isOperand;
+    char type; // S, F, I
+    // Operand -> Store for values
+    char *stringValue;
+    int intValue;
+    float floatValue;
     int isConst;
 } Terceto;
 

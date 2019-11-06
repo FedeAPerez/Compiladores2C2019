@@ -7,6 +7,9 @@ typedef struct Terceto {
     float floatValue;
     // Helpers for Assembler
     int isOperator;
+    char operator; // + / - *
+    int left;
+    int right;
     int isOperand;
     int isConst;
 } Terceto;

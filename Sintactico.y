@@ -451,12 +451,40 @@ expresion_algebraica: expresion;
 
 expresion:
         expresion OP_SUMA termino {
+                // Creo terceto    
+                Terceto t;
+                t.isOperator = 1;
+                t.operator = '+';
+                t.left = Eind;
+                t.right = Tind;
+
+                // Asigno numeracion del esquema anterior
                 Eind = crearTercetoOperacion("+", Eind, Tind, numeracionTercetos);
+                t.tercetoID = Eind;
+
+                // Inserto en la lista de structs
+                insertarTercetos(&aTercetos, t);
+
+                // pido la nueva numeracion
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("expresion suma termino a expresion");
         }
         | expresion OP_RESTA termino {      
+                // Creo terceto    
+                Terceto t;
+                t.isOperator = 1;
+                t.operator = '-';
+                t.left = Eind;
+                t.right = Tind;
+
+                // Asigno numeracion del esquema anterior
                 Eind = crearTercetoOperacion("-", Eind, Tind, numeracionTercetos);
+                t.tercetoID = Eind;
+
+                // Inserto en la lista de structs
+                insertarTercetos(&aTercetos, t);
+
+                // pido la nueva numeracion
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("expresion resta termino a expresion");
         }
@@ -467,12 +495,40 @@ expresion:
 		
 termino:
         termino OP_MULTIPLICACION factor {
+                // Creo terceto    
+                Terceto t;
+                t.isOperator = 1;
+                t.operator = '*';
+                t.left = Tind;
+                t.right = Find;
+
+                // Asigno numeracion del esquema anterior
                 Tind = crearTercetoOperacion("*", Tind, Find, numeracionTercetos);
+                t.tercetoID = Tind;
+
+                // Inserto en la lista de structs
+                insertarTercetos(&aTercetos, t);
+
+                // pido la nueva numeracion
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("multiplicar a termino");
         }
         | termino OP_DIVISION factor {
+                // Creo terceto    
+                Terceto t;
+                t.isOperator = 1;
+                t.operator = '/';
+                t.left = Tind;
+                t.right = Find;
+
+                // Asigno numeracion del esquema anterior
                 Tind = crearTercetoOperacion("/", Tind, Find, numeracionTercetos);
+                t.tercetoID = Tind;
+
+                // Inserto en la lista de structs
+                insertarTercetos(&aTercetos, t);
+
+                // pido la nueva numeracion
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("dividir a termino");
         }

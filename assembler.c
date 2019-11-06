@@ -31,16 +31,25 @@ void insertarTercetos(ArrayTercetos *a, Terceto element)
     a->punteroTercetos[a->tamanioUsado].tercetoID = element.tercetoID;
     a->punteroTercetos[a->tamanioUsado].type = element.type;
     a->punteroTercetos[a->tamanioUsado].isOperand = element.isOperand;
+    a->punteroTercetos[a->tamanioUsado].isOperator = element.isOperator;
 
-    if(element.type == 'S') {
-        a->punteroTercetos[a->tamanioUsado].stringValue = (char*)malloc(strlen(element.stringValue) + 1);
-        strcpy(a->punteroTercetos[a->tamanioUsado].stringValue, element.stringValue);
+    if(element.isOperator) {
+        a->punteroTercetos[a->tamanioUsado].operator = element.operator;
+        a->punteroTercetos[a->tamanioUsado].left = element.left;
+        a->punteroTercetos[a->tamanioUsado].right = element.right;
     }
-    else if (element.type == 'F') {
-        a->punteroTercetos[a->tamanioUsado].floatValue = element.floatValue;
-    } 
-    else if (element.type == 'I') {
-        a->punteroTercetos[a->tamanioUsado].intValue = element.intValue;
+
+    if(element.isOperand == 1) {
+        if(element.type == 'S') {
+            a->punteroTercetos[a->tamanioUsado].stringValue = (char*)malloc(strlen(element.stringValue) + 1);
+            strcpy(a->punteroTercetos[a->tamanioUsado].stringValue, element.stringValue);
+        }
+        else if (element.type == 'F') {
+            a->punteroTercetos[a->tamanioUsado].floatValue = element.floatValue;
+        } 
+        else if (element.type == 'I') {
+            a->punteroTercetos[a->tamanioUsado].intValue = element.intValue;
+        }
     }
 
     a->tamanioUsado++;
@@ -58,12 +67,17 @@ void generarAssembler(ArrayTercetos *a)
     
     if((int)a->tamanioUsado > 0) {
         for(int i=0; i < (int)a->tamanioUsado; i++) {
-            if(a->punteroTercetos[i].type == 'S') {
-                printf("\n[%d] -%c- es operando? %d, de valor '%s'", a->punteroTercetos[i].tercetoID, a->punteroTercetos[i].type, a->punteroTercetos[i].isOperand, a->punteroTercetos[i].stringValue);
-            } else if (a->punteroTercetos[i].type == 'F') {
-                printf("\n[%d] -%c- es operando? %d, de valor '%f'", a->punteroTercetos[i].tercetoID, a->punteroTercetos[i].type, a->punteroTercetos[i].isOperand, a->punteroTercetos[i].floatValue);
-            } else if (a->punteroTercetos[i].type == 'I') {
-                printf("\n[%d] -%c- es operando? %d, de valor '%d'", a->punteroTercetos[i].tercetoID, a->punteroTercetos[i].type, a->punteroTercetos[i].isOperand, a->punteroTercetos[i].intValue);
+            if(a->punteroTercetos[i].isOperand == 1) {
+                if(a->punteroTercetos[i].type == 'S') {
+                    printf("\n[%d] -%c- es operando, de valor '%s'", a->punteroTercetos[i].tercetoID, a->punteroTercetos[i].type, a->punteroTercetos[i].stringValue);
+                } else if (a->punteroTercetos[i].type == 'F') {
+                    printf("\n[%d] -%c- es operando, de valor '%f'", a->punteroTercetos[i].tercetoID, a->punteroTercetos[i].type, a->punteroTercetos[i].floatValue);
+                } else if (a->punteroTercetos[i].type == 'I') {
+                    printf("\n[%d] -%c- es operando, de valor '%d'", a->punteroTercetos[i].tercetoID, a->punteroTercetos[i].type, a->punteroTercetos[i].intValue);
+                }
+            }
+            if(a->punteroTercetos[i].isOperator == 1) {
+                printf("\n[%d] es operador ('%c', [%d], [%d])", a->punteroTercetos[i].tercetoID, a->punteroTercetos[i].operator, a->punteroTercetos[i].left, a->punteroTercetos[i].right);
             }
         }
     }

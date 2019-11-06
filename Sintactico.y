@@ -317,23 +317,93 @@ asignacion_multiple_asign:
         CORCHETE_ABRE lista_datos CORCHETE_CIERRA;
 
 lista_datos:
-        lista_datos COMA {LVind = crearTerceto(sacarDecola(&colaId), "_", "_", numeracionTercetos);
+        lista_datos COMA {
+                char * tokenId = sacarDecola(&colaId);
+
+                // Creo terceto    
+                Terceto t;
+                t.isOperand = 1;
+                t.type = 'S';
+                t.stringValue = malloc(strlen(tokenId)+1);
+                strcpy(t.stringValue, tokenId);
+
+                LVind = crearTerceto(tokenId, "_", "_", numeracionTercetos);
+                t.tercetoID = LVind;
+
+                // Inserto en la lista de structs
+                insertarTercetos(&aTercetos, t);
+                free(t.stringValue);
+
                 status("saca en cola");
                 ponerEnPila(&pilaID, LVind); 
+
+                // Pido la nueva numeracion
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         } expresion_algebraica  {
                 LDind = Eind;
-		Aind = crearTercetoOperacion(":=", sacarDePila(&pilaID),LDind, numeracionTercetos);
+
+                int id = sacarDePila(&pilaID);
+                
+                // Creo terceto    
+                Terceto t;
+                t.isOperator = 1;
+                t.operator = '=';
+                t.left = id;
+                t.right = LDind;
+
+
+                // Asigno numeracion del esquema anterior
+		Aind = crearTercetoOperacion(":=", id,LDind, numeracionTercetos);
+                t.tercetoID = Aind;
+
+                // Inserto en la lista de structs
+                insertarTercetos(&aTercetos, t);
+
+                // Pido la numeracion
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         }
         | {
-                LVind = crearTerceto(sacarDecola(&colaId), "_", "_", numeracionTercetos);
+                char * tokenId = sacarDecola(&colaId);
+
+                // Creo terceto    
+                Terceto t;
+                t.isOperand = 1;
+                t.type = 'S';
+                t.stringValue = malloc(strlen(tokenId)+1);
+                strcpy(t.stringValue, tokenId);
+
+                LVind = crearTerceto(tokenId, "_", "_", numeracionTercetos);
+                t.tercetoID = LVind;
+
+                // Inserto en la lista de structs
+                insertarTercetos(&aTercetos, t);
+                free(t.stringValue);
+
                 status("saca en cola");
-                ponerEnPila(&pilaID, LVind); 
+                ponerEnPila(&pilaID, LVind);
+
+                // Pido la nueva numeracion 
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         } expresion_algebraica {
                 LDind = Eind;
-	        Aind = crearTercetoOperacion(":=", sacarDePila(&pilaID), LDind, numeracionTercetos);
+
+                int id = sacarDePila(&pilaID);
+
+                // Creo terceto    
+                Terceto t;
+                t.isOperator = 1;
+                t.operator = '=';
+                t.left = id;
+                t.right = LDind;
+
+                // Asigno numeracion del esquema anterior
+	        Aind = crearTercetoOperacion(":=", id, LDind, numeracionTercetos);
+                t.tercetoID = Aind;
+
+                // Inserto en la lista de structs
+                insertarTercetos(&aTercetos, t);
+
+                // Pido la nueva numeracion
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
 		

@@ -321,18 +321,20 @@ lista_datos:
                 char * tokenId = sacarDecola(&colaId);
 
                 // Creo terceto    
-                Terceto t;
-                t.isOperand = 1;
-                t.type = 'S';
-                t.stringValue = malloc(strlen(tokenId)+1);
-                strcpy(t.stringValue, tokenId);
+                Terceto tListaVariables;
+                tListaVariables.isOperand = 1;
+                tListaVariables.type = 'S';
+                tListaVariables.stringValue = malloc(strlen(tokenId)+1);
+                strcpy(tListaVariables.stringValue, tokenId);
 
                 LVind = crearTerceto(tokenId, "_", "_", numeracionTercetos);
-                t.tercetoID = LVind;
+                tListaVariables.tercetoID = LVind;
 
                 // Inserto en la lista de structs
-                insertarTercetos(&aTercetos, t);
-                free(t.stringValue);
+                insertarTercetos(&aTercetos, tListaVariables);
+                free(tListaVariables.stringValue);
+
+                printf("\n [%d] debía quedar %s", tListaVariables.tercetoID,tokenId);
 
                 status("saca en cola");
                 ponerEnPila(&pilaID, LVind); 
@@ -345,19 +347,20 @@ lista_datos:
                 int id = sacarDePila(&pilaID);
                 
                 // Creo terceto    
-                Terceto t;
-                t.isOperator = 1;
-                t.operator = '=';
-                t.left = id;
-                t.right = LDind;
+                Terceto tAsig;
+                tAsig.isOperator = 1;
+                tAsig.isOperand = 0;
+                tAsig.operator = '=';
+                tAsig.left = id;
+                tAsig.right = LDind;
 
 
                 // Asigno numeracion del esquema anterior
 		Aind = crearTercetoOperacion(":=", id,LDind, numeracionTercetos);
-                t.tercetoID = Aind;
+                tAsig.tercetoID = Aind;
 
                 // Inserto en la lista de structs
-                insertarTercetos(&aTercetos, t);
+                insertarTercetos(&aTercetos, tAsig);
 
                 // Pido la numeracion
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
@@ -366,18 +369,20 @@ lista_datos:
                 char * tokenId = sacarDecola(&colaId);
 
                 // Creo terceto    
-                Terceto t;
-                t.isOperand = 1;
-                t.type = 'S';
-                t.stringValue = malloc(strlen(tokenId)+1);
-                strcpy(t.stringValue, tokenId);
+                Terceto tIdLista;
+                tIdLista.isOperand = 1;
+                tIdLista.type = 'S';
+                tIdLista.stringValue = malloc(strlen(tokenId)+1);
+                strcpy(tIdLista.stringValue, tokenId);
 
                 LVind = crearTerceto(tokenId, "_", "_", numeracionTercetos);
-                t.tercetoID = LVind;
+                tIdLista.tercetoID = LVind;
 
                 // Inserto en la lista de structs
-                insertarTercetos(&aTercetos, t);
-                free(t.stringValue);
+                insertarTercetos(&aTercetos, tIdLista);
+                free(tIdLista.stringValue);
+
+                printf("\n [%d] debía quedar %s", tIdLista.tercetoID, tokenId);
 
                 status("saca en cola");
                 ponerEnPila(&pilaID, LVind);
@@ -390,18 +395,21 @@ lista_datos:
                 int id = sacarDePila(&pilaID);
 
                 // Creo terceto    
-                Terceto t;
-                t.isOperator = 1;
-                t.operator = '=';
-                t.left = id;
-                t.right = LDind;
+                Terceto tAsigU;
+                tAsigU.isOperator = 1;
+                tAsigU.operator = '=';
+                tAsigU.left = id;
+                tAsigU.right = LDind;
 
                 // Asigno numeracion del esquema anterior
 	        Aind = crearTercetoOperacion(":=", id, LDind, numeracionTercetos);
-                t.tercetoID = Aind;
+                tAsigU.tercetoID = Aind;
 
                 // Inserto en la lista de structs
-                insertarTercetos(&aTercetos, t);
+                insertarTercetos(&aTercetos, tAsigU);
+
+
+                printf("\n [%d] debía quedar [%d] [%d] ", tAsigU.tercetoID, id, LDind);
 
                 // Pido la nueva numeracion
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
@@ -522,18 +530,19 @@ expresion_algebraica: expresion;
 expresion:
         expresion OP_SUMA termino {
                 // Creo terceto    
-                Terceto t;
-                t.isOperator = 1;
-                t.operator = '+';
-                t.left = Eind;
-                t.right = Tind;
+                Terceto tSuma;
+                tSuma.isOperator = 1;
+                tSuma.isOperand = 0;
+                tSuma.operator = '+';
+                tSuma.left = Eind;
+                tSuma.right = Tind;
 
                 // Asigno numeracion del esquema anterior
                 Eind = crearTercetoOperacion("+", Eind, Tind, numeracionTercetos);
-                t.tercetoID = Eind;
+                tSuma.tercetoID = Eind;
 
                 // Inserto en la lista de structs
-                insertarTercetos(&aTercetos, t);
+                insertarTercetos(&aTercetos, tSuma);
 
                 // pido la nueva numeracion
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
@@ -541,18 +550,19 @@ expresion:
         }
         | expresion OP_RESTA termino {      
                 // Creo terceto    
-                Terceto t;
-                t.isOperator = 1;
-                t.operator = '-';
-                t.left = Eind;
-                t.right = Tind;
+                Terceto tResta;
+                tResta.isOperator = 1;
+                tResta.isOperand = 0;
+                tResta.operator = '-';
+                tResta.left = Eind;
+                tResta.right = Tind;
 
                 // Asigno numeracion del esquema anterior
                 Eind = crearTercetoOperacion("-", Eind, Tind, numeracionTercetos);
-                t.tercetoID = Eind;
+                tResta.tercetoID = Eind;
 
                 // Inserto en la lista de structs
-                insertarTercetos(&aTercetos, t);
+                insertarTercetos(&aTercetos, tResta);
 
                 // pido la nueva numeracion
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
@@ -566,18 +576,18 @@ expresion:
 termino:
         termino OP_MULTIPLICACION factor {
                 // Creo terceto    
-                Terceto t;
-                t.isOperator = 1;
-                t.operator = '*';
-                t.left = Tind;
-                t.right = Find;
+                Terceto tOperadorMulti;
+                tOperadorMulti.isOperator = 1;
+                tOperadorMulti.operator = '*';
+                tOperadorMulti.left = Tind;
+                tOperadorMulti.right = Find;
 
                 // Asigno numeracion del esquema anterior
                 Tind = crearTercetoOperacion("*", Tind, Find, numeracionTercetos);
-                t.tercetoID = Tind;
+                tOperadorMulti.tercetoID = Tind;
 
                 // Inserto en la lista de structs
-                insertarTercetos(&aTercetos, t);
+                insertarTercetos(&aTercetos, tOperadorMulti);
 
                 // pido la nueva numeracion
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
@@ -585,18 +595,18 @@ termino:
         }
         | termino OP_DIVISION factor {
                 // Creo terceto    
-                Terceto t;
-                t.isOperator = 1;
-                t.operator = '/';
-                t.left = Tind;
-                t.right = Find;
+                Terceto tOperadorDiv;
+                tOperadorDiv.isOperator = 1;
+                tOperadorDiv.operator = '/';
+                tOperadorDiv.left = Tind;
+                tOperadorDiv.right = Find;
 
                 // Asigno numeracion del esquema anterior
                 Tind = crearTercetoOperacion("/", Tind, Find, numeracionTercetos);
-                t.tercetoID = Tind;
+                tOperadorDiv.tercetoID = Tind;
 
                 // Inserto en la lista de structs
-                insertarTercetos(&aTercetos, t);
+                insertarTercetos(&aTercetos, tOperadorDiv);
 
                 // pido la nueva numeracion
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
@@ -609,42 +619,52 @@ termino:
 
 factor:
         CONST_INT {
+                Terceto tConstInt;
+                tConstInt.intValue = $1;
+                tConstInt.type = 'I';
+                tConstInt.isOperand = 1;
+
                 Find = crearTercetoInt($1, "_", "_", numeracionTercetos);
-                Terceto t;
-                t.tercetoID = Find;
-                t.intValue = $1;
-                t.type = 'I';
-                t.isOperand = 1;
-                insertarTercetos(&aTercetos, t);
+                tConstInt.tercetoID = Find;
+
+                // Inserto en la lista
+                insertarTercetos(&aTercetos, tConstInt);
+
+                // Pido la nueva numeracion
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("int a factor");
         }
         | CONST_FLOAT {
-                Find = crearTercetoFloat($1, "_", "_", numeracionTercetos);
 
-                Terceto t;
-                t.tercetoID = Find;
-                t.floatValue = $1;
-                t.type = 'F';
-                t.isOperand = 1;
+                Terceto tConstFloat;
+                tConstFloat.floatValue = $1;
+                tConstFloat.type = 'F';
+                tConstFloat.isOperand = 1;
+
+                Find = crearTercetoFloat($1, "_", "_", numeracionTercetos);
+                tConstFloat.tercetoID = Find;
                 
-                insertarTercetos(&aTercetos, t);
+                insertarTercetos(&aTercetos, tConstFloat);
+
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("float a factor");
         }
         | ID {
-                Find = crearTerceto($1, "_", "_", numeracionTercetos);
-                ponerEnPila(&pilaFactor, Find);
 
                 // POC - Tercetos
-                Terceto t;
-                t.tercetoID = Find;
-                t.stringValue = malloc(strlen($1)+1);
-                strcpy(t.stringValue, $1);
-                t.type = 'S';
-                t.isOperand = 1;
-                insertarTercetos(&aTercetos, t);
-                free(t.stringValue);
+                Terceto tId;
+                tId.stringValue = malloc(strlen($1)+1);
+                strcpy(tId.stringValue, $1);
+                tId.type = 'S';
+                tId.isOperand = 1;
+
+
+                Find = crearTerceto($1, "_", "_", numeracionTercetos);
+                ponerEnPila(&pilaFactor, Find);
+                tId.tercetoID = Find;
+
+                insertarTercetos(&aTercetos, tId);
+                free(tId.stringValue);
                 // fin POC
 
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);

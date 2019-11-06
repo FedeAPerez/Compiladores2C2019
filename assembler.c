@@ -15,6 +15,9 @@ void generarAssembler(ArrayTercetos *a)
 
     if((int)a->tamanioUsado > 0) {
         for(int i=0; i < (int)a->tamanioUsado; i++) {
+
+            printf("\n[%d] de Operando %d Operador %d", a->punteroTercetos[i].tercetoID, a->punteroTercetos[i].isOperand, a->punteroTercetos[i].isOperator);
+
             if(a->punteroTercetos[i].isOperand == 1) {
                 if(a->punteroTercetos[i].type == 'S') {
                     printf("\n[%d] -%c- es operando, de valor '%s'", a->punteroTercetos[i].tercetoID, a->punteroTercetos[i].type, a->punteroTercetos[i].stringValue);
@@ -24,12 +27,13 @@ void generarAssembler(ArrayTercetos *a)
                     printf("\n[%d] -%c- es operando, de valor '%d'", a->punteroTercetos[i].tercetoID, a->punteroTercetos[i].type, a->punteroTercetos[i].intValue);
                 }
             }
-            if(a->punteroTercetos[i].isOperator == 1) {
+            else if(a->punteroTercetos[i].isOperator == 1) {
                 // acá, cada left o right puede volver a ser otro operador, así que tiene que ir resolviendose
                 // desde arriba hacia abajo
                 // los siguientes prints son ilustrativos de como debería quedar el "SWITCH" para insertar codigo
                 // para cada operacion
-                if(a->punteroTercetos[i].operator == '+') {
+                char operador = a->punteroTercetos[i].operator;
+                if(operador == '+') {
                     if(a->punteroTercetos[a->punteroTercetos[i].left].isOperand == 1) {
                         // si lo que está a izquerda es un operando (constnates o variables), 
                         // ya puedo hacer FMOV -> Esta lógica se repite para TODAS las instrucciones binarias
@@ -44,7 +48,7 @@ void generarAssembler(ArrayTercetos *a)
 
                     fprintf(fpAss, "\nFADD");
                 }
-                if(a->punteroTercetos[i].operator == '*') {
+                else if(operador == '*') {
                     if(a->punteroTercetos[a->punteroTercetos[i].left].isOperand == 1) {
                         // si lo que está a izquerda es un operando (constnates o variables), 
                         // ya puedo hacer FMOV -> Esta lógica se repite para TODAS las instrucciones binarias
@@ -60,7 +64,7 @@ void generarAssembler(ArrayTercetos *a)
                     fprintf(fpAss, "\nFMUL");
                 }
 
-                if(a->punteroTercetos[i].operator == '/') {
+                else if(operador == '/') {
                     if(a->punteroTercetos[a->punteroTercetos[i].left].isOperand == 1) {
                         // si lo que está a izquerda es un operando (constnates o variables), 
                         // ya puedo hacer FMOV -> Esta lógica se repite para TODAS las instrucciones binarias
@@ -76,7 +80,7 @@ void generarAssembler(ArrayTercetos *a)
                     fprintf(fpAss, "\nFDIV");
                 }
 
-                if(a->punteroTercetos[i].operator == '-') {
+                else if (operador == '-') {
                     if(a->punteroTercetos[a->punteroTercetos[i].left].isOperand == 1) {
                         // si lo que está a izquerda es un operando (constnates o variables), 
                         // ya puedo hacer FMOV -> Esta lógica se repite para TODAS las instrucciones binarias
@@ -92,10 +96,11 @@ void generarAssembler(ArrayTercetos *a)
                     fprintf(fpAss, "\nFSUB");
                 }
 
-                if(a->punteroTercetos[i].operator == '=') {
-                    // lo que tengo a izquierda siempre lo puedo asignar
+                else if (operador == '=') {
+                    // lo que tengo a izquierda siempre lo puedo asignar porque será un ID (si está en left)
                     // si lo tengo en ST0 ya puede ser resuelto con la siguiente linea
                     // PERO -> si el lado derecho es otra variable primero tengo que moverla a ST0
+                    printf("\n %s El operando %d que tengo es el %d %d %f %s",a->punteroTercetos[a->punteroTercetos[i].left].stringValue, a->punteroTercetos[a->punteroTercetos[i].right].isOperand, a->punteroTercetos[a->punteroTercetos[i].right].tercetoID,a->punteroTercetos[a->punteroTercetos[i].right].intValue,a->punteroTercetos[a->punteroTercetos[i].right].floatValue,a->punteroTercetos[a->punteroTercetos[i].right].stringValue);
                     if(a->punteroTercetos[a->punteroTercetos[i].right].isOperand == 1) {
                         // acá podría chequear tipos para cargar siempre flotante
                         fprintf(fpAss, "\nFLD %d", a->punteroTercetos[a->punteroTercetos[i].right].intValue);
@@ -104,6 +109,8 @@ void generarAssembler(ArrayTercetos *a)
                     fprintf(fpAss, "\nFSTP %s", a->punteroTercetos[a->punteroTercetos[i].left].stringValue);
                 }
                 printf("\n[%d] es operador ('%c', [%d], [%d])", a->punteroTercetos[i].tercetoID, a->punteroTercetos[i].operator, a->punteroTercetos[i].left, a->punteroTercetos[i].right);
+            } else {
+                printf("\n[%d] no sé que verga es ", a->punteroTercetos[i].tercetoID);
             }
         }
         

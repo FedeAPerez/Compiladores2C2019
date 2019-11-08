@@ -1,5 +1,3 @@
-del intermedia.txt
-del ts.txt
 mkdir build
 bison -dy Sintactico.y
 pause

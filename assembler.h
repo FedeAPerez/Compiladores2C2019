@@ -6,5 +6,5 @@
 #include "terceto.h"
 
 void generarAssembler(ArrayTercetos *);
-void generarCode(FILE *);
+void generarCode(FILE *, ArrayTercetos *);
 void generarData(FILE *);

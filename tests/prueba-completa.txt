@@ -3,15 +3,18 @@ VAR
 	[INTEGER, INTEGER, FLOAT, INTEGER] : [pepe3, pepe4, resMod, resDiv] 
 ENDVAR
 
---/ Asi son los comentarios en el 2doCuat de LyC --/ Comentario  /-- /--
+pepe1 := 3
+pepe2 := 3
 
-[pepe1, pepe2, pepe3, pepe4, pepe5] := [10*2, 100, 3, 1+2, 10 - 10 / 5]
-
-IF pepe1 != 3 OR pepe2 <= 3
+IF pepe1 != 3 OR pepe2 == 3
 THEN
-	pepe2 := 1    
+	pepe2 := 1
 ELSE
 	pepe4 := 10
-	resMod := (10 MOD 1)
-	resDiv := (10 DIV 1)
 ENDIF
+
+
+REPEAT
+    pepe2 := pepe2 - 1
+    pepe1 := pepe4 * 10
+UNTIL pepe2 == 3 OR pepe1 > 100

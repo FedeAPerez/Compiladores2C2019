@@ -94,18 +94,21 @@ void pprintff(float str) {
         int Find = -1;
         int Eind = -1;
         int Eizqind = -1;
+
+        // Asignacion simple
         int Aind = -1;
+        int AIind = -1;
+
         int LVind = -1;
         int LDind = -1;
         int Tind1 = -1;
         int Tind2 = -1;
         int ELind = -1;
         int Cind = -1;
-        char valor_comparacion[3] = "";
+        char* valor_comparacion;
         int TLind = -1;
         int TLSalto = -1;
 	int Find1 = -1;
-        char *comparacionActual = "";
 	int cant_if=0;
 	int i=0;
 	
@@ -282,9 +285,8 @@ condicional:
 ciclo_repeat:
         REPEAT {
                 ponerEnPila(&pilaRepeat, numeracionTercetos );
-                avanzarTerceto(numeracionTercetos);
+                // avanzarTerceto(numeracionTercetos);
         } 
-        
         cuerpo UNTIL expresion_logica {
 	        Cind = sacarDePila(&pilaRepeat);
 		while(!pilaVacia(&pilaExpresion)){
@@ -293,8 +295,32 @@ ciclo_repeat:
         };
 
 asignacion:
-        ID OP_ASIG expresion_algebraica {
-                Aind = crearTercetoID(":=", $1, Eind, numeracionTercetos);
+        ID {
+                Terceto tIdAsignacion;
+                tIdAsignacion.isOperand = 1;
+                tIdAsignacion.isOperator = 0;
+                tIdAsignacion.type = 'S';
+                tIdAsignacion.stringValue = malloc(strlen($1)+1);
+                strcpy(tIdAsignacion.stringValue, $1);
+
+                AIind = crearTerceto($1, "_", "_", numeracionTercetos);
+                tIdAsignacion.tercetoID = AIind;
+
+                insertarTercetos(&aTercetos, tIdAsignacion);
+
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+        } OP_ASIG expresion_algebraica {
+                Terceto tOpAsignacion;
+                tOpAsignacion.isOperator = 1;
+                tOpAsignacion.isOperand = 0;
+                tOpAsignacion.operator = TOP_ASIG;
+                tOpAsignacion.left = AIind;
+                tOpAsignacion.right = Eind;
+
+                Aind = crearTercetoOperacion(":=", AIind, Eind, numeracionTercetos);
+                tOpAsignacion.tercetoID = Aind;
+
+                insertarTercetos(&aTercetos, tOpAsignacion);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
 
@@ -409,52 +435,151 @@ lista_datos:
 		
 expresion_logica:
         termino_logico {
+                Terceto tTerminoLogicoAnd;
+                tTerminoLogicoAnd.isOperator = 1;
+                tTerminoLogicoAnd.isOperand = 0;
+                tTerminoLogicoAnd.operator = TOP_JUMP;
+                tTerminoLogicoAnd.left = 0; // es un operador unario
+                tTerminoLogicoAnd.right = 0; // es un operator unario
+                tTerminoLogicoAnd.operatorStringValue = malloc(strlen(valor_comparacion) + 1);
+                strcpy(tTerminoLogicoAnd.operatorStringValue, valor_comparacion);
+
                 ELind = crearTerceto(valor_comparacion,"#", "_", numeracionTercetos);
+                tTerminoLogicoAnd.tercetoID = ELind;
+
+
+                insertarTercetos(&aTercetos, tTerminoLogicoAnd);
+                free(tTerminoLogicoAnd.operatorStringValue);
+
                 expr_if[expr_if_index].posicion = ELind;
-				expr_if[expr_if_index].nro_if = cant_if;
-				expr_if_index++;
-				ponerEnPila(&pilaExpresion,ELind);
+                expr_if[expr_if_index].nro_if = cant_if;
+                expr_if_index++;
+                ponerEnPila(&pilaExpresion,ELind);
+
+                free(valor_comparacion);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
 	} AND termino_logico {
+                Terceto tAndTerminoLogico;
+                tAndTerminoLogico.isOperator = 1;
+                tAndTerminoLogico.isOperand = 0;
+                tAndTerminoLogico.operator = TOP_JUMP;
+                tAndTerminoLogico.left = 0; // es un operador unario
+                tAndTerminoLogico.right = 0; // es un operator unario
+                tAndTerminoLogico.operatorStringValue = malloc(strlen(valor_comparacion) + 1);
+                strcpy(tAndTerminoLogico.operatorStringValue, valor_comparacion);
+
                 ELind = crearTerceto(valor_comparacion,"#", "_", numeracionTercetos);
+                tAndTerminoLogico.tercetoID = ELind;
+
+                insertarTercetos(&aTercetos, tAndTerminoLogico);
+                free(tAndTerminoLogico.operatorStringValue);
+
                 expr_if[expr_if_index].posicion = ELind;
-				expr_if[expr_if_index].nro_if = cant_if;
-				expr_if_index++;
-				ponerEnPila(&pilaExpresion,ELind);
+		expr_if[expr_if_index].nro_if = cant_if;
+                expr_if_index++;
+                ponerEnPila(&pilaExpresion,ELind);
+
+                free(valor_comparacion);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         }
-        | termino_logico {
+        | termino_logico {                
+                Terceto tTerminoLogicoOr;
+                tTerminoLogicoOr.isOperator = 1;
+                tTerminoLogicoOr.isOperand = 0;
+                tTerminoLogicoOr.operator = TOP_JUMP;
+                tTerminoLogicoOr.left = 0; // es un operador unario
+                tTerminoLogicoOr.right = 0; // es un operator unario
+                tTerminoLogicoOr.operatorStringValue = malloc(strlen(getCodOp(valor_comparacion)) + 1);
+                strcpy(tTerminoLogicoOr.operatorStringValue, getCodOp(valor_comparacion));
+
+
 		ELind = crearTerceto(getCodOp(valor_comparacion),"#", "_", numeracionTercetos);
+                tTerminoLogicoOr.tercetoID = ELind;
+
+                insertarTercetos(&aTercetos, tTerminoLogicoOr);
+                free(tTerminoLogicoOr.operatorStringValue);
+
                 expr_if[expr_if_index].posicion = ELind;
-				expr_if[expr_if_index].nro_if = cant_if;
-				expr_if_index++;
-				ponerEnPila(&pilaExpresion,ELind);
+		expr_if[expr_if_index].nro_if = cant_if;
+		expr_if_index++;
+		ponerEnPila(&pilaExpresion,ELind);
+
+                free(valor_comparacion);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
 				
         } OR termino_logico {
+                Terceto tOrTerminoLogico;
+                tOrTerminoLogico.isOperator = 1;
+                tOrTerminoLogico.isOperand = 0;
+                tOrTerminoLogico.operator = TOP_JUMP;
+                tOrTerminoLogico.left = 0; // es un operador unario
+                tOrTerminoLogico.right = 0; // es un operator unario
+                tOrTerminoLogico.operatorStringValue = malloc(strlen(valor_comparacion) + 1);
+                strcpy(tOrTerminoLogico.operatorStringValue, valor_comparacion);
+
                 ELind = crearTerceto(valor_comparacion,"#", "_", numeracionTercetos);
+                tOrTerminoLogico.tercetoID = ELind;
+
+                insertarTercetos(&aTercetos, tOrTerminoLogico);
+                free(tOrTerminoLogico.operatorStringValue);
+
                 expr_if[expr_if_index].posicion = ELind;
-				expr_if[expr_if_index].nro_if = cant_if;
-				expr_if_index++;
-				ActualizarArchivo(sacarDePila(&pilaExpresion), ELind + 1 );
-				ponerEnPila(&pilaExpresion,ELind);
+		expr_if[expr_if_index].nro_if = cant_if;
+		expr_if_index++;
+		ActualizarArchivo(sacarDePila(&pilaExpresion), ELind + 1 );
+		ponerEnPila(&pilaExpresion,ELind);
+
+                free(valor_comparacion);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         }
         | NOT termino_logico_not {
+                Terceto tNotTerminoLogico;
+                tNotTerminoLogico.isOperator = 1;
+                tNotTerminoLogico.isOperand = 0;
+                tNotTerminoLogico.operator = TOP_JUMP;
+                tNotTerminoLogico.left = 0; // es un operador unario
+                tNotTerminoLogico.right = 0; // es un operator unario
+                tNotTerminoLogico.operatorStringValue = malloc(strlen(valor_comparacion) + 1);
+                strcpy(tNotTerminoLogico.operatorStringValue, valor_comparacion);
+
                 ELind = crearTerceto(valor_comparacion,"#", "_", numeracionTercetos);
-				expr_if[expr_if_index].posicion = ELind;
-				expr_if[expr_if_index].nro_if = cant_if;
-				expr_if_index++;
+                tNotTerminoLogico.tercetoID = ELind;
+
+                insertarTercetos(&aTercetos, tNotTerminoLogico);
+                free(tNotTerminoLogico.operatorStringValue);
+
+		expr_if[expr_if_index].posicion = ELind;
+                expr_if[expr_if_index].nro_if = cant_if;
+                expr_if_index++;
                 ponerEnPila(&pilaExpresion,ELind);
+
+                free(valor_comparacion);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         }
         | termino_logico {
-                ELind = Tind; // Esto no hace nada, si ELind se va a pisar con crearTerceto;
+                Terceto tTerminoLogico;
+                tTerminoLogico.isOperator = 1;
+                tTerminoLogico.isOperand = 0;
+                tTerminoLogico.operator = TOP_JUMP;
+                tTerminoLogico.left = 0; // es un operador unario
+                tTerminoLogico.right = 0; // es un operator unario
+                tTerminoLogico.operatorStringValue = malloc(strlen(valor_comparacion) + 1);
+                strcpy(tTerminoLogico.operatorStringValue, valor_comparacion);
+
+
                 ELind = crearTerceto(valor_comparacion,"#", "_", numeracionTercetos);
-				expr_if[expr_if_index].posicion = ELind;
-				expr_if[expr_if_index].nro_if = cant_if;
-				expr_if_index++;
+                tTerminoLogico.tercetoID = ELind;
+
+                insertarTercetos(&aTercetos, tTerminoLogico);
+                free(tTerminoLogico.operatorStringValue);
+
+		expr_if[expr_if_index].posicion = ELind;
+		expr_if[expr_if_index].nro_if = cant_if;
+		expr_if_index++;
                 ponerEnPila(&pilaExpresion,ELind);
+
+                // libero el valor comparacion y avanzo en los tercetos
+                free(valor_comparacion);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
 		
@@ -476,7 +601,12 @@ termino_logico_not:
         };
 		
 termino_logico: 
-        expresion_algebraica {Tind1 = Eind;} comparacion expresion_algebraica {Tind2 = Eind;} {
+        expresion_algebraica { 
+                Tind1 = Eind; 
+        } 
+        comparacion expresion_algebraica { 
+                Tind2 = Eind;
+
                 Terceto tCmp;
                 tCmp.isOperator = 1;
                 tCmp.isOperand = 0;
@@ -494,43 +624,54 @@ termino_logico:
 
 comparacion:
         OP_MENOR {
+                valor_comparacion = malloc(strlen("JAE") + 1);
 	        strcpy(valor_comparacion, "JAE");
-		
         }
         | OP_MENOR_IGUAL {
-		strcpy(valor_comparacion, "JA");
+                valor_comparacion = malloc(strlen("JA") + 1);
+	        strcpy(valor_comparacion, "JA");
         }
 	| OP_MAYOR {
-		strcpy(valor_comparacion, "JBE");
+                valor_comparacion = malloc(strlen("JBE") + 1);
+	        strcpy(valor_comparacion, "JBE");
         }
 	| OP_MAYOR_IGUAL {
-		strcpy(valor_comparacion, "JB");
+                valor_comparacion = malloc(strlen("JB") + 1);
+	        strcpy(valor_comparacion, "JB");
         }
 	| OP_IGUAL {
+                valor_comparacion = malloc(strlen("JNE") + 1);
 	        strcpy(valor_comparacion, "JNE");
         }
 	| OP_DISTINTO {
+                valor_comparacion = malloc(strlen("JE") + 1);
 	        strcpy(valor_comparacion, "JE");
         };
 
 comparacion_jump:
         OP_MENOR {
-                strcpy(valor_comparacion, "JB");
+                valor_comparacion = malloc(strlen("JB") + 1);
+	        strcpy(valor_comparacion, "JB");
         }
         | OP_MENOR_IGUAL {
-                strcpy(valor_comparacion, "JBE");
+                valor_comparacion = malloc(strlen("JBE") + 1);
+	        strcpy(valor_comparacion, "JBE");
         }
 	| OP_MAYOR {
-                strcpy(valor_comparacion, "JA");
+                valor_comparacion = malloc(strlen("JA") + 1);
+	        strcpy(valor_comparacion, "JA");
         }
 	| OP_MAYOR_IGUAL {
-		strcpy(valor_comparacion, "JAE");
+                valor_comparacion = malloc(strlen("JAE") + 1);
+	        strcpy(valor_comparacion, "JAE");
         }
 	| OP_IGUAL {
-		strcpy(valor_comparacion, "JE");
+                valor_comparacion = malloc(strlen("JE") + 1);
+	        strcpy(valor_comparacion, "JE");
         }
 	| OP_DISTINTO {
-		strcpy(valor_comparacion, "JNE");
+                valor_comparacion = malloc(strlen("JNE") + 1);
+	        strcpy(valor_comparacion, "JNE");
         };
 
 expresion_algebraica: expresion;

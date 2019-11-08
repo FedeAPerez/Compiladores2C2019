@@ -10,30 +10,32 @@
 #define TOP_MOD 5
 #define TOP_DIV_ENTERA 6
 #define TOP_CMP 7
+#define TOP_JUMP 8
 
 typedef struct Terceto {
     int tercetoID;
     // Helpers for Assembler
     // Operator
-    int isOperator;
-    int operator; // + / - * MOD DIV
+    int isOperator; // Siempre setear con 1 o 0
+    int operator; // + / - * MOD DIV CMP
+    char * operatorStringValue; // JAE, JI, JE -> Sirve para las comparaciones
     int left;
     int right;
     // Operand
-    int isOperand;
+    int isOperand; // Siempre setear con 1 o 0
     char type; // S, F, I
     // Operand -> Store for values
     char *stringValue;
     int intValue;
     float floatValue;
-    int isConst;
+    int isConst; // sin utilizar todavía, podría servir para optimizar? 
 } Terceto;
 
 typedef struct ArrayTercetos 
 {
     size_t tamanioUsado;
     size_t tamanioTotal;
-    struct Terceto *punteroTercetos;
+    struct Terceto *array;
 } ArrayTercetos;
 
 void crearTercetos(ArrayTercetos *, size_t);

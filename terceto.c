@@ -19,6 +19,8 @@ char * getStringFromOperator(int operator) {
         return "CMP";
     } else if (operator == TOP_JUMP) {
         return "JUMP";
+    } else if (operator == TOP_ETIQUETA) {
+        return "ETIQ";
     } else {
         return "AGREGAR STRING DE OPERATOR";
     }

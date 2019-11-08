@@ -234,12 +234,14 @@ io_salida:
 
 condicional:
 	IF expresion_logica THEN cuerpo {
+
                 Cind = crearTerceto("JI","#", "_", numeracionTercetos);
                 if(cant_if > 1){
                         for(i=0;i<expr_if_index;i++)
                         {
                                 if(expr_if[i].nro_if == 2){
                                         ActualizarArchivo(expr_if[i].posicion, Cind + 1);
+                                        aTercetos.array[expr_if[i].posicion].left = Cind + 1;
                                 }
                         }
                 }
@@ -248,22 +250,41 @@ condicional:
                         {
                                 if(expr_if[i].nro_if == 1){
                                         ActualizarArchivo(expr_if[i].posicion, Cind + 1);
+                                        aTercetos.array[expr_if[i].posicion].left = Cind + 1;
                                 }
                         }
                 }
                 ponerEnPila(&pilaExpresion,Cind);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
-        } ELSE cuerpo ENDIF {	
+        } ELSE {
+                Terceto tEtiquetaElse;
+                tEtiquetaElse.isOperator = 1;
+                tEtiquetaElse.isOperand = 0;
+                tEtiquetaElse.operator = TOP_ETIQUETA;
+                tEtiquetaElse.left = numeracionTercetos;
+                tEtiquetaElse.right = 0;
+                tEtiquetaElse.tercetoID = numeracionTercetos;
+
+                crearTerceto("ETIQUETA", "_", "_", numeracionTercetos);
+
+                insertarTercetos(&aTercetos, tEtiquetaElse);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+
+        } cuerpo ENDIF {	
 		cant_if--;
-                ActualizarArchivo(sacarDePila(&pilaExpresion), numeracionTercetos);
+                int sPEelseEndIf = sacarDePila(&pilaExpresion);
+
+                ActualizarArchivo(sPEelseEndIf, numeracionTercetos);
+                aTercetos.array[sPEelseEndIf].left = numeracionTercetos;
         }
-        | IF expresion_logica  THEN cuerpo {
+        | IF expresion_logica THEN cuerpo {
                 Cind = crearTerceto("JI","#", "_", numeracionTercetos);
                 if(cant_if > 1){
                         for(i=0;i<expr_if_index;i++)
                         {
                                 if(expr_if[i].nro_if == 2){
                                         ActualizarArchivo(expr_if[i].posicion, Cind + 1);
+                                        aTercetos.array[expr_if[i].posicion].left = Cind + 1;
                                 }
                         }
                 }
@@ -272,25 +293,44 @@ condicional:
                         {
                                 if(expr_if[i].nro_if == 1){
                                         ActualizarArchivo(expr_if[i].posicion, Cind + 1);
+                                        aTercetos.array[expr_if[i].posicion].left = Cind + 1;
                                 }
                         }
                 }
                 ponerEnPila(&pilaExpresion,Cind);
-        numeracionTercetos = avanzarTerceto(numeracionTercetos);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
         } ENDIF {
 		cant_if--;
-                ActualizarArchivo(sacarDePila(&pilaExpresion), numeracionTercetos);
+                int sPEEndIf = sacarDePila(&pilaExpresion);
+
+                ActualizarArchivo(sPEEndIf, numeracionTercetos);
+                aTercetos.array[sPEEndIf].left = numeracionTercetos;
         };
 
 ciclo_repeat:
         REPEAT {
                 ponerEnPila(&pilaRepeat, numeracionTercetos );
-                // avanzarTerceto(numeracionTercetos);
+
+                Terceto tEtiqueta;
+                tEtiqueta.isOperator = 1;
+                tEtiqueta.isOperand = 0;
+                tEtiqueta.operator = TOP_ETIQUETA;
+                tEtiqueta.left = numeracionTercetos;
+                tEtiqueta.right = 0;
+                tEtiqueta.tercetoID = numeracionTercetos;
+
+                crearTerceto("ETIQUETA", "_", "_", numeracionTercetos);
+
+                insertarTercetos(&aTercetos, tEtiqueta);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
         } 
         cuerpo UNTIL expresion_logica {
 	        Cind = sacarDePila(&pilaRepeat);
 		while(!pilaVacia(&pilaExpresion)){
-                        ActualizarArchivo(sacarDePila(&pilaExpresion), Cind);
+                        int sacaPilaExpresion = sacarDePila(&pilaExpresion);
+                        printf("\nvoy a actualizar el indice %d con %d\n", sacaPilaExpresion, Cind);
+                        ActualizarArchivo(sacaPilaExpresion, Cind);
+                        aTercetos.array[sacaPilaExpresion].left = Cind;
                 }
         };
 
@@ -502,7 +542,7 @@ expresion_logica:
                 expr_if[expr_if_index].posicion = ELind;
 		expr_if[expr_if_index].nro_if = cant_if;
 		expr_if_index++;
-		ponerEnPila(&pilaExpresion,ELind);
+		ponerEnPila(&pilaExpresion, ELind);
 
                 free(valor_comparacion);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
@@ -526,8 +566,12 @@ expresion_logica:
                 expr_if[expr_if_index].posicion = ELind;
 		expr_if[expr_if_index].nro_if = cant_if;
 		expr_if_index++;
-		ActualizarArchivo(sacarDePila(&pilaExpresion), ELind + 1 );
-		ponerEnPila(&pilaExpresion,ELind);
+
+                int sPEtOrTerminoLogico = sacarDePila(&pilaExpresion);
+		ActualizarArchivo(sPEtOrTerminoLogico, ELind + 1 );
+                aTercetos.array[sPEtOrTerminoLogico].left = ELind + 1;
+
+		ponerEnPila(&pilaExpresion, ELind);
 
                 free(valor_comparacion);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);

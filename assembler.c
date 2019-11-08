@@ -16,6 +16,24 @@ void generarAssembler(ArrayTercetos *a)
     pprints("Assembler generado...");
 };
 
+void generarOperandoIzquierdo(FILE *fpAss, ArrayTercetos *a, int i)
+{
+    if(a->array[a->array[i].left].type == 'I')
+        fprintf(fpAss, "\nFLD %d", a->array[a->array[i].left].intValue);
+    else if (a->array[a->array[i].left].type == 'S') {
+        fprintf(fpAss, "\nFLD %s", a->array[a->array[i].left].stringValue);
+    }
+}
+
+void generarOperandoDerecho(FILE *fpAss, ArrayTercetos *a, int i)
+{
+    if(a->array[a->array[i].right].type == 'I')
+        fprintf(fpAss, "\nFLD %d", a->array[a->array[i].right].intValue);
+    else if (a->array[a->array[i].right].type == 'S') {
+        fprintf(fpAss, "\nFLD %s", a->array[a->array[i].right].stringValue);
+    }
+}
+
 void generarCode(FILE *fpAss, ArrayTercetos *a)
 {
     fprintf(fpAss, "\n.CODE");
@@ -54,64 +72,41 @@ void generarCode(FILE *fpAss, ArrayTercetos *a)
                 char operador = a->array[i].operator;
                 if(operador == TOP_SUM) {
                     if(a->array[a->array[i].left].isOperand == 1) {
-                        // si lo que está a izquerda es un operando (constnates o variables), 
-                        // ya puedo hacer FMOV -> Esta lógica se repite para TODAS las instrucciones binarias
-                        fprintf(fpAss, "\nFMOV %d", a->array[a->array[i].left].intValue);
+                        generarOperandoIzquierdo(fpAss, a, i);
                     }
 
                     if(a->array[a->array[i].right].isOperand == 1) {
-                        // si lo que está a derecha o derecha es un operando (constnates o variables), 
-                        // ya puedo hacer FMOV -> Esta lógica se repite para TODAS las instrucciones binarias
-                        fprintf(fpAss, "\nFMOV %d", a->array[a->array[i].right].intValue);
+                        generarOperandoDerecho(fpAss, a, i);
                     }
-
                     fprintf(fpAss, "\nFADD");
                 }
                 else if(operador == TOP_MUL) {
                     if(a->array[a->array[i].left].isOperand == 1) {
-                        // si lo que está a izquerda es un operando (constnates o variables), 
-                        // ya puedo hacer FMOV -> Esta lógica se repite para TODAS las instrucciones binarias
-                        fprintf(fpAss, "\nFMOV %d", a->array[a->array[i].left].intValue);
+                        generarOperandoIzquierdo(fpAss, a, i);
                     }
-
                     if(a->array[a->array[i].right].isOperand == 1) {
-                        // si lo que está a derecha o derecha es un operando (constnates o variables), 
-                        // ya puedo hacer FMOV -> Esta lógica se repite para TODAS las instrucciones binarias
-                        fprintf(fpAss, "\nFMOV %d", a->array[a->array[i].right].intValue);
+                        generarOperandoDerecho(fpAss, a, i);
                     }
-
                     fprintf(fpAss, "\nFMUL");
                 }
 
                 else if(operador == TOP_DIV) {
                     if(a->array[a->array[i].left].isOperand == 1) {
-                        // si lo que está a izquerda es un operando (constnates o variables), 
-                        // ya puedo hacer FMOV -> Esta lógica se repite para TODAS las instrucciones binarias
-                        fprintf(fpAss, "\nFMOV %d", a->array[a->array[i].left].intValue);
+                        generarOperandoIzquierdo(fpAss, a, i);
                     }
-
                     if(a->array[a->array[i].right].isOperand == 1) {
-                        // si lo que está a derecha o derecha es un operando (constnates o variables), 
-                        // ya puedo hacer FMOV -> Esta lógica se repite para TODAS las instrucciones binarias
-                        fprintf(fpAss, "\nFMOV %d", a->array[a->array[i].right].intValue);
+                        generarOperandoDerecho(fpAss, a, i);
                     }
-
                     fprintf(fpAss, "\nFDIV");
                 }
 
                 else if (operador == TOP_RES) {
                     if(a->array[a->array[i].left].isOperand == 1) {
-                        // si lo que está a izquerda es un operando (constnates o variables), 
-                        // ya puedo hacer FMOV -> Esta lógica se repite para TODAS las instrucciones binarias
-                        fprintf(fpAss, "\nFMOV %d", a->array[a->array[i].left].intValue);
+                        generarOperandoIzquierdo(fpAss, a, i);
                     }
-
                     if(a->array[a->array[i].right].isOperand == 1) {
-                        // si lo que está a derecha o derecha es un operando (constnates o variables), 
-                        // ya puedo hacer FMOV -> Esta lógica se repite para TODAS las instrucciones binarias
-                        fprintf(fpAss, "\nFMOV %d", a->array[a->array[i].right].intValue);
+                        generarOperandoDerecho(fpAss, a, i);
                     }
-
                     fprintf(fpAss, "\nFSUB");
                 }
 
@@ -120,71 +115,47 @@ void generarCode(FILE *fpAss, ArrayTercetos *a)
                     // si lo tengo en ST0 ya puede ser resuelto con la siguiente linea
                     // PERO -> si el lado derecho es otra variable primero tengo que moverla a ST0
                     if(a->array[a->array[i].right].isOperand == 1) {
-                        // acá podría chequear tipos para cargar siempre flotante
-                        fprintf(fpAss, "\nFLD %d", a->array[a->array[i].right].intValue);
+                        generarOperandoDerecho(fpAss, a, i);
                     }
-
                     fprintf(fpAss, "\nFSTP %s", a->array[a->array[i].left].stringValue);
                 }
                 else if (operador == TOP_MOD) {
                     if(a->array[a->array[i].left].isOperand == 1) {
-                        // si lo que está a izquerda es un operando (constnates o variables), 
-                        // ya puedo hacer FMOV -> Esta lógica se repite para TODAS las instrucciones binarias
-                        fprintf(fpAss, "\nFMOV %d", a->array[a->array[i].left].intValue);
+                        generarOperandoIzquierdo(fpAss, a, i);
                     }
-
                     if(a->array[a->array[i].right].isOperand == 1) {
-                        // si lo que está a derecha o derecha es un operando (constnates o variables), 
-                        // ya puedo hacer FMOV -> Esta lógica se repite para TODAS las instrucciones binarias
-                        fprintf(fpAss, "\nFMOV %d", a->array[a->array[i].right].intValue);
+                        generarOperandoDerecho(fpAss, a, i);
                     }
-
                     fprintf(fpAss, "\nFMOD");
                 }
                 else if (operador == TOP_DIV) {
                     // No conozco la diferencia exacta entre esta división y la otra,
                     // posiblemente una conversión entre Float a Int
                     if(a->array[a->array[i].left].isOperand == 1) {
-                        // si lo que está a izquerda es un operando (constnates o variables), 
-                        // ya puedo hacer FMOV -> Esta lógica se repite para TODAS las instrucciones binarias
-                        fprintf(fpAss, "\nFMOV %d", a->array[a->array[i].left].intValue);
+                        generarOperandoIzquierdo(fpAss, a, i);
                     }
-
                     if(a->array[a->array[i].right].isOperand == 1) {
-                        // si lo que está a derecha o derecha es un operando (constnates o variables), 
-                        // ya puedo hacer FMOV -> Esta lógica se repite para TODAS las instrucciones binarias
-                        fprintf(fpAss, "\nFMOV %d", a->array[a->array[i].right].intValue);
+                        generarOperandoDerecho(fpAss, a, i);
                     }
-
                     fprintf(fpAss, "\nFDIV");
                 }
                 else if (operador == TOP_CMP) {
                     // No conozco la diferencia exacta entre esta división y la otra,
                     // posiblemente una conversión entre Float a Int
                     if(a->array[a->array[i].left].isOperand == 1) {
-                        // si lo que está a izquerda es un operando (constnates o variables), 
-                        // ya puedo hacer FLD -> Esta lógica se repite para TODAS las instrucciones binarias
-                        if(a->array[a->array[i].left].type == 'I')
-                            fprintf(fpAss, "\nFLD %d", a->array[a->array[i].left].intValue);
-                        else if (a->array[a->array[i].left].type == 'S') {
-                            fprintf(fpAss, "\nFLD %s", a->array[a->array[i].left].stringValue);
-                        }
+                        generarOperandoIzquierdo(fpAss, a, i);
                     }
 
                     if(a->array[a->array[i].right].isOperand == 1) {
-                        // si lo que está a izquerda es un operando (constnates o variables), 
-                        // ya puedo hacer FLD -> Esta lógica se repite para TODAS las instrucciones binarias
-                        if(a->array[a->array[i].right].type == 'I')
-                            fprintf(fpAss, "\nFLD %d", a->array[a->array[i].right].intValue);
-                        else if (a->array[a->array[i].right].type == 'S') {
-                            fprintf(fpAss, "\nFLD %s", a->array[a->array[i].right].stringValue);
-                        }
+                        generarOperandoDerecho(fpAss, a, i);
                     }
-
                     fprintf(fpAss, "\nCMP");
                 }
                 else if (operador == TOP_JUMP) {
-                    fprintf(fpAss, "\n%s", a->array[i].operatorStringValue);
+                    fprintf(fpAss, "\n%s #%d", a->array[i].operatorStringValue, a->array[i].left);
+                }
+                else if(operador == TOP_ETIQUETA) {
+                    fprintf(fpAss, "\n#%d", a->array[i].left);
                 }
 
                 printf("\n[%d] es operador ('%s', [%d], [%d])", a->array[i].tercetoID, getStringFromOperator(a->array[i].operator), a->array[i].left, a->array[i].right);

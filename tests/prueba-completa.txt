@@ -3,18 +3,14 @@ VAR
 	[INTEGER, INTEGER, FLOAT, INTEGER] : [pepe3, pepe4, resMod, resDiv] 
 ENDVAR
 
-pepe1 := 3
-pepe2 := 3
-
-IF pepe1 != 3 OR pepe2 == 3
-THEN
-	pepe2 := 1
-ELSE
-	pepe4 := 10
-ENDIF
-
+pepe1 := 1
 
 REPEAT
-    pepe2 := pepe2 - 1
+    pepe2 := pepe2 - 5 - 3
     pepe1 := pepe4 * 10
 UNTIL pepe2 == 3 OR pepe1 > 100
+
+IF pepe2 > pepe5
+THEN 
+    pepe2 := 123
+ENDIF

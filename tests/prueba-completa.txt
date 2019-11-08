@@ -1,6 +1,6 @@
 VAR 
     [INTEGER, INTEGER, INTEGER, INTEGER] : [pepe1, pepe2]
-	[INTEGER, INTEGER] : [pepe3, pepe4] 
+	[INTEGER, INTEGER, FLOAT, INTEGER] : [pepe3, pepe4, resMod, resDiv] 
 ENDVAR
 
 --/ Asi son los comentarios en el 2doCuat de LyC --/ Comentario  /-- /--
@@ -12,4 +12,6 @@ THEN
 	pepe2 := 1    
 ELSE
 	pepe4 := 10
+	resMod := (10 MOD 1)
+	resDiv := (10 DIV 1)
 ENDIF

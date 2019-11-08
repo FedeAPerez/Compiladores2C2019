@@ -1,5 +1,27 @@
 #include "terceto.h"
 
+char * getStringFromOperator(int operator) {
+    if (operator == TOP_ASIG) {
+        return ":=";
+    } else if (operator == TOP_SUM) {
+        return "+";
+    } else if (operator == TOP_MUL) {
+        return "*";
+    } else if (operator == TOP_RES) {
+        return "-";
+    } else if (operator == TOP_DIV) {
+        return "/";
+    } else if (operator == TOP_MOD) {
+        return "MOD";
+    } else if (operator == TOP_DIV_ENTERA) {
+        return "DIV";
+    } else if (operator == TOP_CMP) {
+        return "CMP";
+    } else {
+        return "AGREGAR STRING DE OPERATOR";
+    }
+} 
+
 void crearTercetos(ArrayTercetos * a, size_t n)
 {
     a->tamanioTotal = n;
@@ -49,11 +71,6 @@ void insertarTercetos(ArrayTercetos *a, Terceto element)
         else if (element.type == 'I') {
             a->punteroTercetos[a->tamanioUsado].intValue = element.intValue;
         }
-    }
-
-    if(element.tercetoID == 7)
-    {
-        printf("\n Aca el problem: Operator: %d Operando: %d", element.isOperator, element.isOperand);
     }
 
     a->tamanioUsado = a->tamanioUsado + 1;

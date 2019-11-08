@@ -299,8 +299,7 @@ asignacion:
         };
 
 asignacion_multiple:
-        asignacion_multiple_declare OP_ASIG asignacion_multiple_asign {
-        };
+        asignacion_multiple_declare OP_ASIG asignacion_multiple_asign;
 
 asignacion_multiple_declare:
         CORCHETE_ABRE lista_variables CORCHETE_CIERRA;
@@ -334,8 +333,6 @@ lista_datos:
                 insertarTercetos(&aTercetos, tListaVariables);
                 free(tListaVariables.stringValue);
 
-                printf("\n [%d] debía quedar %s", tListaVariables.tercetoID,tokenId);
-
                 status("saca en cola");
                 ponerEnPila(&pilaID, LVind); 
 
@@ -350,7 +347,7 @@ lista_datos:
                 Terceto tAsig;
                 tAsig.isOperator = 1;
                 tAsig.isOperand = 0;
-                tAsig.operator = '=';
+                tAsig.operator = TOP_ASIG;
                 tAsig.left = id;
                 tAsig.right = LDind;
 
@@ -382,8 +379,6 @@ lista_datos:
                 insertarTercetos(&aTercetos, tIdLista);
                 free(tIdLista.stringValue);
 
-                printf("\n [%d] debía quedar %s", tIdLista.tercetoID, tokenId);
-
                 status("saca en cola");
                 ponerEnPila(&pilaID, LVind);
 
@@ -397,7 +392,7 @@ lista_datos:
                 // Creo terceto    
                 Terceto tAsigU;
                 tAsigU.isOperator = 1;
-                tAsigU.operator = '=';
+                tAsigU.operator = TOP_ASIG;
                 tAsigU.left = id;
                 tAsigU.right = LDind;
 
@@ -408,16 +403,12 @@ lista_datos:
                 // Inserto en la lista de structs
                 insertarTercetos(&aTercetos, tAsigU);
 
-
-                printf("\n [%d] debía quedar [%d] [%d] ", tAsigU.tercetoID, id, LDind);
-
                 // Pido la nueva numeracion
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
 		
 expresion_logica:
         termino_logico {
-                ELind = Tind;
                 ELind = crearTerceto(valor_comparacion,"#", "_", numeracionTercetos);
                 expr_if[expr_if_index].posicion = ELind;
 				expr_if[expr_if_index].nro_if = cant_if;
@@ -425,7 +416,6 @@ expresion_logica:
 				ponerEnPila(&pilaExpresion,ELind);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
 	} AND termino_logico {
-                ELind = Tind;
                 ELind = crearTerceto(valor_comparacion,"#", "_", numeracionTercetos);
                 expr_if[expr_if_index].posicion = ELind;
 				expr_if[expr_if_index].nro_if = cant_if;
@@ -434,9 +424,7 @@ expresion_logica:
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         }
         | termino_logico {
-                ELind = Tind;
-                //ELind = crearTercetoSalto(valor_comparacion,numeracionTercetos + 1, "_", numeracionTercetos);
-				ELind = crearTerceto(getCodOp(valor_comparacion),"#", "_", numeracionTercetos);
+		ELind = crearTerceto(getCodOp(valor_comparacion),"#", "_", numeracionTercetos);
                 expr_if[expr_if_index].posicion = ELind;
 				expr_if[expr_if_index].nro_if = cant_if;
 				expr_if_index++;
@@ -444,7 +432,6 @@ expresion_logica:
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
 				
         } OR termino_logico {
-                ELind = Tind;
                 ELind = crearTerceto(valor_comparacion,"#", "_", numeracionTercetos);
                 expr_if[expr_if_index].posicion = ELind;
 				expr_if[expr_if_index].nro_if = cant_if;
@@ -454,7 +441,6 @@ expresion_logica:
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         }
         | NOT termino_logico_not {
-                ELind = Tind;
                 ELind = crearTerceto(valor_comparacion,"#", "_", numeracionTercetos);
 				expr_if[expr_if_index].posicion = ELind;
 				expr_if[expr_if_index].nro_if = cant_if;
@@ -463,7 +449,7 @@ expresion_logica:
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         }
         | termino_logico {
-                ELind = Tind;
+                ELind = Tind; // Esto no hace nada, si ELind se va a pisar con crearTerceto;
                 ELind = crearTerceto(valor_comparacion,"#", "_", numeracionTercetos);
 				expr_if[expr_if_index].posicion = ELind;
 				expr_if[expr_if_index].nro_if = cant_if;
@@ -474,13 +460,35 @@ expresion_logica:
 		
 termino_logico_not: 
         expresion_algebraica {Tind1 = Eind;} comparacion_jump expresion_algebraica {Tind2 = Eind;} {
+                Terceto tCmp;
+                tCmp.isOperator = 1;
+                tCmp.isOperand = 0;
+                tCmp.operator = TOP_CMP;
+                tCmp.left = Tind1;
+                tCmp.right = Tind2;
+
                 Tind = crearTercetoOperacion("CMP", Tind1, Tind2, numeracionTercetos);
+                tCmp.tercetoID = Tind;
+
+                insertarTercetos(&aTercetos, tCmp);
+
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
 		
 termino_logico: 
         expresion_algebraica {Tind1 = Eind;} comparacion expresion_algebraica {Tind2 = Eind;} {
+                Terceto tCmp;
+                tCmp.isOperator = 1;
+                tCmp.isOperand = 0;
+                tCmp.operator = TOP_CMP;
+                tCmp.left = Tind1;
+                tCmp.right = Tind2;
+
                 Tind = crearTercetoOperacion("CMP", Tind1, Tind2, numeracionTercetos);
+                tCmp.tercetoID = Tind;
+
+                insertarTercetos(&aTercetos, tCmp);
+
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
 
@@ -533,7 +541,7 @@ expresion:
                 Terceto tSuma;
                 tSuma.isOperator = 1;
                 tSuma.isOperand = 0;
-                tSuma.operator = '+';
+                tSuma.operator = TOP_SUM;
                 tSuma.left = Eind;
                 tSuma.right = Tind;
 
@@ -553,7 +561,7 @@ expresion:
                 Terceto tResta;
                 tResta.isOperator = 1;
                 tResta.isOperand = 0;
-                tResta.operator = '-';
+                tResta.operator = TOP_RES;
                 tResta.left = Eind;
                 tResta.right = Tind;
 
@@ -578,7 +586,7 @@ termino:
                 // Creo terceto    
                 Terceto tOperadorMulti;
                 tOperadorMulti.isOperator = 1;
-                tOperadorMulti.operator = '*';
+                tOperadorMulti.operator = TOP_MUL;
                 tOperadorMulti.left = Tind;
                 tOperadorMulti.right = Find;
 
@@ -597,7 +605,7 @@ termino:
                 // Creo terceto    
                 Terceto tOperadorDiv;
                 tOperadorDiv.isOperator = 1;
-                tOperadorDiv.operator = '/';
+                tOperadorDiv.operator = TOP_DIV;
                 tOperadorDiv.left = Tind;
                 tOperadorDiv.right = Find;
 
@@ -635,7 +643,6 @@ factor:
                 status("int a factor");
         }
         | CONST_FLOAT {
-
                 Terceto tConstFloat;
                 tConstFloat.floatValue = $1;
                 tConstFloat.type = 'F';
@@ -650,7 +657,6 @@ factor:
                 status("float a factor");
         }
         | ID {
-
                 // POC - Tercetos
                 Terceto tId;
                 tId.stringValue = malloc(strlen($1)+1);
@@ -675,12 +681,38 @@ factor:
                 status("pa expresion pc a factor");
         }
         | PARENTESIS_ABRE expresion {Find1=Eind;} MOD expresion PARENTESIS_CIERRA {
+                Terceto tMod;
+                tMod.isOperator = 1;
+                tMod.isOperand = 0;
+                tMod.operator = TOP_MOD;
+                tMod.left = Find1;
+                tMod.right = Find;
+
                 Find = crearTercetoOperacion("OP_MOD", Find1, Find, numeracionTercetos);
+                tMod.tercetoID = Find;
+
+                // Insertar en array
+                insertarTercetos(&aTercetos, tMod);
+
+                // Avanzo la numeración
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("MOD a Factor");
         }
         | PARENTESIS_ABRE  expresion {Find1=Eind;} DIV expresion PARENTESIS_CIERRA {
+                Terceto tDiv;
+                tDiv.isOperator = 1;
+                tDiv.isOperand = 0;
+                tDiv.operator = TOP_DIV_ENTERA;
+                tDiv.left = Find1;
+                tDiv.right = Find;
+
                 Find = crearTercetoOperacion("OP_DIV", Find1, Find, numeracionTercetos);
+                tDiv.tercetoID = Find;
+
+                // Insertar en array
+                insertarTercetos(&aTercetos, tDiv);
+
+                // Avanzo la numeración
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
                 status("DIV a Factor");
         };

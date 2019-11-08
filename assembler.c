@@ -18,19 +18,23 @@ void generarAssembler(ArrayTercetos *a)
 
 void generarOperandoIzquierdo(FILE *fpAss, ArrayTercetos *a, int i)
 {
-    if(a->array[a->array[i].left].type == 'I')
+    if(a->array[a->array[i].left].type == 'I') {
         fprintf(fpAss, "\nFLD %d", a->array[a->array[i].left].intValue);
-    else if (a->array[a->array[i].left].type == 'S') {
+    } else if (a->array[a->array[i].left].type == 'S') {
         fprintf(fpAss, "\nFLD %s", a->array[a->array[i].left].stringValue);
+    } else if (a->array[a->array[i].left].type == 'F') {
+        fprintf(fpAss, "\nFLD %f", a->array[a->array[i].left].floatValue);
     }
 }
 
 void generarOperandoDerecho(FILE *fpAss, ArrayTercetos *a, int i)
 {
-    if(a->array[a->array[i].right].type == 'I')
+    if(a->array[a->array[i].right].type == 'I') {
         fprintf(fpAss, "\nFLD %d", a->array[a->array[i].right].intValue);
-    else if (a->array[a->array[i].right].type == 'S') {
+    } else if (a->array[a->array[i].right].type == 'S') {
         fprintf(fpAss, "\nFLD %s", a->array[a->array[i].right].stringValue);
+    } else if (a->array[a->array[i].right].type == 'F') {
+        fprintf(fpAss, "\nFLD %f", a->array[a->array[i].right].floatValue);
     }
 }
 

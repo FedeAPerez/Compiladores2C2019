@@ -12,5 +12,5 @@ UNTIL pepe2 == 3 OR pepe1 > 100
 
 IF pepe2 > pepe5
 THEN 
-    pepe2 := 123
+    pepe2 := 123.45
 ENDIF

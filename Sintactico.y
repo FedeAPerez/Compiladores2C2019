@@ -278,6 +278,8 @@ condicional:
                 aTercetos.array[sPEelseEndIf].left = numeracionTercetos;
         }
         | IF expresion_logica THEN cuerpo {
+                // Posiblemente no haga falta este salto,
+                // al menos habría que validarlo, si es un IF THEN ENDIF no es necesario
                 Cind = crearTerceto("JI","#", "_", numeracionTercetos);
                 if(cant_if > 1){
                         for(i=0;i<expr_if_index;i++)
@@ -302,9 +304,23 @@ condicional:
         } ENDIF {
 		cant_if--;
                 int sPEEndIf = sacarDePila(&pilaExpresion);
+                printf("\nDebería poner el salto hacia el terceto %d en %d\n", numeracionTercetos, sPEEndIf);
+
+                Terceto tEtiquetaIfThenEndif;
+                tEtiquetaIfThenEndif.isOperator = 1;
+                tEtiquetaIfThenEndif.isOperand = 0;
+                tEtiquetaIfThenEndif.operator = TOP_ETIQUETA;
+                tEtiquetaIfThenEndif.left = numeracionTercetos;
+                tEtiquetaIfThenEndif.right = 0;
+                tEtiquetaIfThenEndif.tercetoID = numeracionTercetos;
+
+                crearTerceto("ETIQUETA", "_", "_", numeracionTercetos);
 
                 ActualizarArchivo(sPEEndIf, numeracionTercetos);
                 aTercetos.array[sPEEndIf].left = numeracionTercetos;
+
+                insertarTercetos(&aTercetos, tEtiquetaIfThenEndif);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
 
 ciclo_repeat:

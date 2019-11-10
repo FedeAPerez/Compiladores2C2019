@@ -84,3 +84,5 @@ void insertarTercetos(ArrayTercetos *a, Terceto element)
 
     a->tamanioUsado = a->tamanioUsado + 1;
 };
+
+

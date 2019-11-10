@@ -10,7 +10,6 @@
 #include "assembler.h"
 #include "ts.h" 
 #include "cola-dinamica.h"
-#define FILE_NAME_TERCETOS "intermedia.txt"
  
 int yylex();
 int yyparse();
@@ -348,6 +347,16 @@ ciclo_repeat:
                         ActualizarArchivo(sacaPilaExpresion, Cind);
                         aTercetos.array[sacaPilaExpresion].left = Cind;
                 }
+			Terceto tEtiqueta;
+                tEtiqueta.isOperator = 1;
+                tEtiqueta.isOperand = 0;
+                tEtiqueta.operator = TOP_ETIQUETA;
+                tEtiqueta.left = numeracionTercetos;
+                tEtiqueta.right = 0;
+                tEtiqueta.tercetoID = numeracionTercetos;
+			crearTerceto("ETIQUETA", "_", "_", numeracionTercetos);
+			insertarTercetos(&aTercetos, tEtiqueta);
+            numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
 
 asignacion:

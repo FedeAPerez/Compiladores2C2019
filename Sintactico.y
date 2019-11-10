@@ -239,6 +239,7 @@ condicional:
                         for(i=0;i<expr_if_index;i++)
                         {
                                 if(expr_if[i].nro_if == 2){
+                                        printf("\nC [%d] por #%d\n", expr_if[i].posicion, Cind + 1);
                                         ActualizarArchivo(expr_if[i].posicion, Cind + 1);
                                         aTercetos.array[expr_if[i].posicion].left = Cind + 1;
                                 }
@@ -248,6 +249,7 @@ condicional:
                         for(i=0;i<expr_if_index;i++)
                         {
                                 if(expr_if[i].nro_if == 1){
+                                        printf("\nD [%d] por #%d\n", expr_if[i].posicion, Cind + 1);
                                         ActualizarArchivo(expr_if[i].posicion, Cind + 1);
                                         aTercetos.array[expr_if[i].posicion].left = Cind + 1;
                                 }
@@ -273,6 +275,7 @@ condicional:
 		cant_if--;
                 int sPEelseEndIf = sacarDePila(&pilaExpresion);
 
+                printf("\nE [%d] por #%d\n", sPEelseEndIf, numeracionTercetos);
                 ActualizarArchivo(sPEelseEndIf, numeracionTercetos);
                 aTercetos.array[sPEelseEndIf].left = numeracionTercetos;
         }
@@ -284,6 +287,7 @@ condicional:
                         for(i=0;i<expr_if_index;i++)
                         {
                                 if(expr_if[i].nro_if == 2){
+                                        printf("\nF [%d] por #%d\n", expr_if[i].posicion, Cind + 1);
                                         ActualizarArchivo(expr_if[i].posicion, Cind + 1);
                                         aTercetos.array[expr_if[i].posicion].left = Cind + 1;
                                 }
@@ -293,6 +297,7 @@ condicional:
                         for(i=0;i<expr_if_index;i++)
                         {
                                 if(expr_if[i].nro_if == 1){
+                                        printf("\nG [%d] por #%d\n", expr_if[i].posicion, Cind + 1);
                                         ActualizarArchivo(expr_if[i].posicion, Cind + 1);
                                         aTercetos.array[expr_if[i].posicion].left = Cind + 1;
                                 }
@@ -303,7 +308,6 @@ condicional:
         } ENDIF {
 		cant_if--;
                 int sPEEndIf = sacarDePila(&pilaExpresion);
-                printf("\nDebería poner el salto hacia el terceto %d en %d\n", numeracionTercetos, sPEEndIf);
 
                 Terceto tEtiquetaIfThenEndif;
                 tEtiquetaIfThenEndif.isOperator = 1;
@@ -315,6 +319,7 @@ condicional:
 
                 crearTerceto("ETIQUETA", "_", "_", numeracionTercetos);
 
+                printf("\nH [%d] por #%d\n", sPEEndIf, Cind + 1);
                 ActualizarArchivo(sPEEndIf, numeracionTercetos);
                 aTercetos.array[sPEEndIf].left = numeracionTercetos;
 
@@ -343,7 +348,7 @@ ciclo_repeat:
 	        Cind = sacarDePila(&pilaRepeat);
 		while(!pilaVacia(&pilaExpresion)){
                         int sacaPilaExpresion = sacarDePila(&pilaExpresion);
-                        printf("\nvoy a actualizar el indice %d con %d\n", sacaPilaExpresion, Cind);
+                        printf("\n A [%d] por #%d\n", sacaPilaExpresion, Cind);
                         ActualizarArchivo(sacaPilaExpresion, Cind);
                         aTercetos.array[sacaPilaExpresion].left = Cind;
                 }
@@ -593,6 +598,8 @@ expresion_logica:
 		expr_if_index++;
 
                 int sPEtOrTerminoLogico = sacarDePila(&pilaExpresion);
+
+                printf("\nB [%d] por #%d\n", sPEtOrTerminoLogico, ELind + 1);
 		ActualizarArchivo(sPEtOrTerminoLogico, ELind + 1 );
                 aTercetos.array[sPEtOrTerminoLogico].left = ELind + 1;
 

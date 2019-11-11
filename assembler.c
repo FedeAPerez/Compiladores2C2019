@@ -154,10 +154,10 @@ void generarCode(FILE *fpAss, ArrayTercetos *a)
                     if(a->array[a->array[i].right].isOperand == 1) {
                         generarOperandoDerecho(fpAss, a, i);
                     }
-                    fprintf(fpAss, "\t FCOMP\t\t;Comparo \n");
-					fprintf(fpAss, "\t FFREE ST(0) \t; Vacio ST0\n");
-					fprintf(fpAss, "\t FSTSW AX \t\t; mueve los bits C a FLAGS\n");
-					fprintf(fpAss, "\t SAHF \t\t\t;Almacena el registro AH en el registro FLAGS \n");
+                    fprintf(fpAss, "\n FCOMP\t\t;Comparo \n");
+					fprintf(fpAss, "\n FFREE ST(0) \t; Vacio ST0\n");
+					fprintf(fpAss, "\n FSTSW AX \t\t; mueve los bits C a FLAGS\n");
+					fprintf(fpAss, "\n SAHF \t\t\t;Almacena el registro AH en el registro FLAGS \n");
                 }
                 else if (operador == TOP_JUMP) {
                     fprintf(fpAss, "\n%s #%d", a->array[i].operatorStringValue, a->array[i].left);

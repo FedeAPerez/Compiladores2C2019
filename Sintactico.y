@@ -47,6 +47,12 @@ struct ifs {
 struct ifs expr_if[1000];
 int expr_if_index = 0;
 
+struct repeat {
+	int posicion;
+};
+struct repeat expr_repeat[1000];
+int expr_repeat_index = 0;
+
 int main()
 {
         clean();
@@ -110,6 +116,7 @@ void pprintff(float str) {
 	int Find1 = -1;
 	int cant_if=0;
 	int i=0;
+	int repeat=0;
 	
 %}
 
@@ -233,8 +240,21 @@ io_salida:
 
 condicional:
 	IF expresion_logica THEN cuerpo {
-
+				
                 Cind = crearTerceto("JI","#", "_", numeracionTercetos);
+				
+				Terceto tTerminoJump;
+                tTerminoJump.isOperator = 1;
+                tTerminoJump.isOperand = 0;
+                tTerminoJump.operator = TOP_JUMP;
+                tTerminoJump.left = 0; // es un operador unario
+                tTerminoJump.right = 0; // es un operator unario
+                tTerminoJump.operatorStringValue = malloc(strlen("JI") + 1);
+                strcpy(tTerminoJump.operatorStringValue, "JI");
+                tTerminoJump.tercetoID = Cind;
+                insertarTercetos(&aTercetos, tTerminoJump);
+                free(tTerminoJump.operatorStringValue);
+				
                 if(cant_if > 1){
                         for(i=0;i<expr_if_index;i++)
                         {
@@ -272,7 +292,10 @@ condicional:
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
 
         } cuerpo ENDIF {	
-		cant_if--;
+				cant_if--;
+				if(cant_if == 0)
+					expr_if_index = 0;
+					
                 int sPEelseEndIf = sacarDePila(&pilaExpresion);
 
                 printf("\nE [%d] por #%d\n", sPEelseEndIf, numeracionTercetos);
@@ -283,13 +306,25 @@ condicional:
                 // Posiblemente no haga falta este salto,
                 // al menos habría que validarlo, si es un IF THEN ENDIF no es necesario
                 Cind = crearTerceto("JI","#", "_", numeracionTercetos);
+				Terceto tTerminoJump;
+                tTerminoJump.isOperator = 1;
+                tTerminoJump.isOperand = 0;
+                tTerminoJump.operator = TOP_JUMP;
+                tTerminoJump.left = 0; // es un operador unario
+                tTerminoJump.right = 0; // es un operator unario
+                tTerminoJump.operatorStringValue = malloc(strlen("JI") + 1);
+                strcpy(tTerminoJump.operatorStringValue, "JI");
+                tTerminoJump.tercetoID = Cind;
+                insertarTercetos(&aTercetos, tTerminoJump);
+                free(tTerminoJump.operatorStringValue);
+				
                 if(cant_if > 1){
                         for(i=0;i<expr_if_index;i++)
                         {
                                 if(expr_if[i].nro_if == 2){
                                         printf("\nF [%d] por #%d\n", expr_if[i].posicion, Cind + 1);
                                         ActualizarArchivo(expr_if[i].posicion, Cind + 1);
-                                        aTercetos.array[expr_if[i].posicion].left = Cind + 1;
+                                        aTercetos.array[expr_if[i].posicion].left = (Cind + 1);
                                 }
                         }
                 }
@@ -306,7 +341,9 @@ condicional:
                 ponerEnPila(&pilaExpresion,Cind);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
         } ENDIF {
-		cant_if--;
+				cant_if--;
+				if(cant_if == 0)
+					expr_if_index = 0;
                 int sPEEndIf = sacarDePila(&pilaExpresion);
 
                 Terceto tEtiquetaIfThenEndif;
@@ -343,15 +380,23 @@ ciclo_repeat:
 
                 insertarTercetos(&aTercetos, tEtiqueta);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				repeat++;
         } 
         cuerpo UNTIL expresion_logica {
 	        Cind = sacarDePila(&pilaRepeat);
-		while(!pilaVacia(&pilaExpresion)){
+			for(i=0;i<expr_repeat_index;i++)
+			{
+				printf("\n A [%d] por #%d\n", expr_repeat[i].posicion, Cind  );
+				ActualizarArchivo(expr_repeat[i].posicion, Cind );
+                aTercetos.array[expr_repeat[i].posicion].left = Cind ;
+			}
+			
+		/*while(!pilaVacia(&pilaExpresion)){
                         int sacaPilaExpresion = sacarDePila(&pilaExpresion);
                         printf("\n A [%d] por #%d\n", sacaPilaExpresion, Cind);
                         ActualizarArchivo(sacaPilaExpresion, Cind);
                         aTercetos.array[sacaPilaExpresion].left = Cind;
-                }
+                }*/
 			Terceto tEtiqueta;
                 tEtiqueta.isOperator = 1;
                 tEtiqueta.isOperand = 0;
@@ -362,6 +407,8 @@ ciclo_repeat:
 			crearTerceto("ETIQUETA", "_", "_", numeracionTercetos);
 			insertarTercetos(&aTercetos, tEtiqueta);
             numeracionTercetos = avanzarTerceto(numeracionTercetos);
+			repeat = 0;
+			expr_repeat_index=0;
         };
 
 asignacion:
@@ -521,9 +568,17 @@ expresion_logica:
                 insertarTercetos(&aTercetos, tTerminoLogicoAnd);
                 free(tTerminoLogicoAnd.operatorStringValue);
 
-                expr_if[expr_if_index].posicion = ELind;
-                expr_if[expr_if_index].nro_if = cant_if;
-                expr_if_index++;
+				if(cant_if > 0)
+				{
+					expr_if[expr_if_index].posicion = ELind;
+					expr_if[expr_if_index].nro_if = cant_if;
+					expr_if_index++;
+				}
+				if(repeat > 0)
+				{
+					expr_repeat[expr_repeat_index].posicion = ELind;
+					expr_repeat_index++;
+				}
                 ponerEnPila(&pilaExpresion,ELind);
 
                 free(valor_comparacion);
@@ -544,9 +599,18 @@ expresion_logica:
                 insertarTercetos(&aTercetos, tAndTerminoLogico);
                 free(tAndTerminoLogico.operatorStringValue);
 
-                expr_if[expr_if_index].posicion = ELind;
-		expr_if[expr_if_index].nro_if = cant_if;
-                expr_if_index++;
+				if(cant_if > 0)
+				{
+					expr_if[expr_if_index].posicion = ELind;
+					expr_if[expr_if_index].nro_if = cant_if;
+					expr_if_index++;
+				}
+				if(repeat > 0)
+				{
+					expr_repeat[expr_repeat_index].posicion = ELind;
+					expr_repeat_index++;
+				}
+				
                 ponerEnPila(&pilaExpresion,ELind);
 
                 free(valor_comparacion);
@@ -561,18 +625,16 @@ expresion_logica:
                 tTerminoLogicoOr.right = 0; // es un operator unario
                 tTerminoLogicoOr.operatorStringValue = malloc(strlen(getCodOp(valor_comparacion)) + 1);
                 strcpy(tTerminoLogicoOr.operatorStringValue, getCodOp(valor_comparacion));
-
-
-		ELind = crearTerceto(getCodOp(valor_comparacion),"#", "_", numeracionTercetos);
+				
+				ELind = crearTerceto(getCodOp(valor_comparacion),"#", "_", numeracionTercetos);
                 tTerminoLogicoOr.tercetoID = ELind;
-
                 insertarTercetos(&aTercetos, tTerminoLogicoOr);
                 free(tTerminoLogicoOr.operatorStringValue);
-
-                expr_if[expr_if_index].posicion = ELind;
-		expr_if[expr_if_index].nro_if = cant_if;
-		expr_if_index++;
-		ponerEnPila(&pilaExpresion, ELind);
+				
+                //expr_if[expr_if_index].posicion = ELind;
+				//expr_if[expr_if_index].nro_if = cant_if;
+				//expr_if_index++;
+				ponerEnPila(&pilaExpresion, ELind);
 
                 free(valor_comparacion);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
@@ -590,20 +652,27 @@ expresion_logica:
                 ELind = crearTerceto(valor_comparacion,"#", "_", numeracionTercetos);
                 tOrTerminoLogico.tercetoID = ELind;
 
-                insertarTercetos(&aTercetos, tOrTerminoLogico);
-                free(tOrTerminoLogico.operatorStringValue);
-
-                expr_if[expr_if_index].posicion = ELind;
-		expr_if[expr_if_index].nro_if = cant_if;
-		expr_if_index++;
-
-                int sPEtOrTerminoLogico = sacarDePila(&pilaExpresion);
-
+				int sPEtOrTerminoLogico = sacarDePila(&pilaExpresion);
                 printf("\nB [%d] por #%d\n", sPEtOrTerminoLogico, ELind + 1);
-		ActualizarArchivo(sPEtOrTerminoLogico, ELind + 1 );
-                aTercetos.array[sPEtOrTerminoLogico].left = ELind + 1;
-
-		ponerEnPila(&pilaExpresion, ELind);
+				ActualizarArchivo(sPEtOrTerminoLogico, ELind + 1 );
+                aTercetos.array[sPEtOrTerminoLogico].left = (ELind + 1);
+				
+                insertarTercetos(&aTercetos, tOrTerminoLogico);
+                free(tOrTerminoLogico.operatorStringValue );
+				if(cant_if > 0)
+				{
+					expr_if[expr_if_index].posicion = ELind;
+					expr_if[expr_if_index].nro_if = cant_if;
+					expr_if_index++;
+				}
+				if(repeat > 0)
+				{
+					expr_repeat[expr_repeat_index].posicion = ELind;
+					expr_repeat_index++;
+				}
+                
+				
+				//ponerEnPila(&pilaExpresion, ELind);
 
                 free(valor_comparacion);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
@@ -624,9 +693,18 @@ expresion_logica:
                 insertarTercetos(&aTercetos, tNotTerminoLogico);
                 free(tNotTerminoLogico.operatorStringValue);
 
-		expr_if[expr_if_index].posicion = ELind;
-                expr_if[expr_if_index].nro_if = cant_if;
-                expr_if_index++;
+				if(cant_if > 0)
+				{
+					expr_if[expr_if_index].posicion = ELind;
+					expr_if[expr_if_index].nro_if = cant_if;
+					expr_if_index++;
+				}
+				
+				if(repeat > 0)
+				{
+					expr_repeat[expr_repeat_index].posicion = ELind;
+					expr_repeat_index++;
+				}
                 ponerEnPila(&pilaExpresion,ELind);
 
                 free(valor_comparacion);
@@ -649,11 +727,19 @@ expresion_logica:
                 insertarTercetos(&aTercetos, tTerminoLogico);
                 free(tTerminoLogico.operatorStringValue);
 
-		expr_if[expr_if_index].posicion = ELind;
-		expr_if[expr_if_index].nro_if = cant_if;
-		expr_if_index++;
+				if(cant_if > 0)
+				{
+					expr_if[expr_if_index].posicion = ELind;
+					expr_if[expr_if_index].nro_if = cant_if;
+					expr_if_index++;
+				}
+				if(repeat > 0)
+				{
+					expr_repeat[expr_repeat_index].posicion = ELind;
+					expr_repeat_index++;
+				}
                 ponerEnPila(&pilaExpresion,ELind);
-
+				
                 // libero el valor comparacion y avanzo en los tercetos
                 free(valor_comparacion);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
@@ -803,10 +889,10 @@ termino:
                 // Creo terceto    
                 Terceto tOperadorMulti;
                 tOperadorMulti.isOperator = 1;
+				tOperadorMulti.isOperand = 0;
                 tOperadorMulti.operator = TOP_MUL;
                 tOperadorMulti.left = Tind;
                 tOperadorMulti.right = Find;
-
                 // Asigno numeracion del esquema anterior
                 Tind = crearTercetoOperacion("*", Tind, Find, numeracionTercetos);
                 tOperadorMulti.tercetoID = Tind;
@@ -822,6 +908,7 @@ termino:
                 // Creo terceto    
                 Terceto tOperadorDiv;
                 tOperadorDiv.isOperator = 1;
+				tOperadorDiv.isOperand = 0;
                 tOperadorDiv.operator = TOP_DIV;
                 tOperadorDiv.left = Tind;
                 tOperadorDiv.right = Find;
@@ -978,4 +1065,17 @@ char* getCodOp(char* salto)
 	}
         printf("salto no encontrado");
         return "ERROR";
+}
+
+void mostrarTercetos(ArrayTercetos * a){
+	int j;
+	for(j=0;j<(int)a->tamanioUsado; j++){
+		printf("*******************************%d\n",j);
+		
+		printf("ISOPERATOR: %d\n", a->array[j].isOperator);
+		printf("VALOR: %d\n", a->array[j].left);
+				
+
+		
+	}
 }

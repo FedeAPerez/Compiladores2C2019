@@ -42,3 +42,4 @@ typedef struct ArrayTercetos
 void crearTercetos(ArrayTercetos *, size_t);
 void insertarTercetos(ArrayTercetos *, Terceto);
 char * getStringFromOperator(int);
+void guardarEnTerceto(int posicion, int indice);

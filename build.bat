@@ -9,5 +9,5 @@ del ts.txt
 del intermedia.txt
 del status.txt
 echo "PRUEBA - OK TERCETOS ASIG MULT"
-type .\tests\prueba-completa.txt | .\build\Final.exe
+type .\tests\prueba.txt | .\build\Final.exe
 pause

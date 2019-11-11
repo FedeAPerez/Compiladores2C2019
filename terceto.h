@@ -12,6 +12,8 @@
 #define TOP_CMP 7
 #define TOP_JUMP 8
 #define TOP_ETIQUETA 9
+#define TOP_READ 10
+#define TOP_PRINT 11
 
 typedef struct Terceto {
     int tercetoID;

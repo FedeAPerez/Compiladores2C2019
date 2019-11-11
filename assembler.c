@@ -122,6 +122,7 @@ void generarCode(FILE *fpAss, ArrayTercetos *a)
                         generarOperandoDerecho(fpAss, a, i);
                     }
                     fprintf(fpAss, "\nFSTP %s", a->array[a->array[i].left].stringValue);
+					fprintf(fpAss, "\nFFREE ST(0)");
                 }
                 else if (operador == TOP_MOD) {
                     if(a->array[a->array[i].left].isOperand == 1) {
@@ -130,7 +131,7 @@ void generarCode(FILE *fpAss, ArrayTercetos *a)
                     if(a->array[a->array[i].right].isOperand == 1) {
                         generarOperandoDerecho(fpAss, a, i);
                     }
-                    fprintf(fpAss, "\nFMOD");
+                    fprintf(fpAss, "\nFPREM");
                 }
                 else if (operador == TOP_DIV) {
                     // No conozco la diferencia exacta entre esta división y la otra,
@@ -153,7 +154,10 @@ void generarCode(FILE *fpAss, ArrayTercetos *a)
                     if(a->array[a->array[i].right].isOperand == 1) {
                         generarOperandoDerecho(fpAss, a, i);
                     }
-                    fprintf(fpAss, "\nCMP");
+                    fprintf(fpAss, "\t FCOMP\t\t;Comparo \n");
+					fprintf(fpAss, "\t FFREE ST(0) \t; Vacio ST0\n");
+					fprintf(fpAss, "\t FSTSW AX \t\t; mueve los bits C a FLAGS\n");
+					fprintf(fpAss, "\t SAHF \t\t\t;Almacena el registro AH en el registro FLAGS \n");
                 }
                 else if (operador == TOP_JUMP) {
                     fprintf(fpAss, "\n%s #%d", a->array[i].operatorStringValue, a->array[i].left);

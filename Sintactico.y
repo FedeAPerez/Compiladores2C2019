@@ -249,8 +249,8 @@ condicional:
                 tTerminoJump.operator = TOP_JUMP;
                 tTerminoJump.left = 0; // es un operador unario
                 tTerminoJump.right = 0; // es un operator unario
-                tTerminoJump.operatorStringValue = malloc(strlen("JI") + 1);
-                strcpy(tTerminoJump.operatorStringValue, "JI");
+                tTerminoJump.operatorStringValue = malloc(strlen("JMP") + 1);
+                strcpy(tTerminoJump.operatorStringValue, "JMP");
                 tTerminoJump.tercetoID = Cind;
                 insertarTercetos(&aTercetos, tTerminoJump);
                 free(tTerminoJump.operatorStringValue);
@@ -312,8 +312,8 @@ condicional:
                 tTerminoJump.operator = TOP_JUMP;
                 tTerminoJump.left = 0; // es un operador unario
                 tTerminoJump.right = 0; // es un operator unario
-                tTerminoJump.operatorStringValue = malloc(strlen("JI") + 1);
-                strcpy(tTerminoJump.operatorStringValue, "JI");
+                tTerminoJump.operatorStringValue = malloc(strlen("JMP") + 1);
+                strcpy(tTerminoJump.operatorStringValue, "JMP");
                 tTerminoJump.tercetoID = Cind;
                 insertarTercetos(&aTercetos, tTerminoJump);
                 free(tTerminoJump.operatorStringValue);

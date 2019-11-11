@@ -6,11 +6,25 @@ void generarAssembler(ArrayTercetos *a)
     pprints("Generando Assembler...");
     FILE *fpAss = fopen("Final.asm", "r");
     fpAss = fopen("Final.asm", "a");
-    fprintf(fpAss, ".386");
-    fprintf(fpAss, "\n.MODEL SMALL");
+    fprintf(fpAss, "include macros2.asm\n");
+	fprintf(fpAss, "include number.asm\n");
+	fprintf(fpAss, ".MODEL	LARGE \n");
+	fprintf(fpAss, ".386\n");
+	fprintf(fpAss, ".STACK 200h \n");
+    
+	generarData(fpAss);
+	
+    fprintf(fpAss, ".CODE \n");
+	 fprintf(fpAss, "MAIN:\n");
+	 fprintf(fpAss, "\n");
+
     fprintf(fpAss, "\n");
-    generarData(fpAss);
+    fprintf(fpAss, "\t MOV AX,@DATA 	;inicializa el segmento de datos\n");
+    fprintf(fpAss, "\t MOV DS,AX \n");
+    fprintf(fpAss, "\t MOV ES,AX \n");
+    fprintf(fpAss, "\t FNINIT \n");;
     fprintf(fpAss, "\n");
+	
     generarCode(fpAss, a);
     fclose(fpAss);
     pprints("Assembler generado...");
@@ -19,22 +33,22 @@ void generarAssembler(ArrayTercetos *a)
 void generarOperandoIzquierdo(FILE *fpAss, ArrayTercetos *a, int i)
 {
     if(a->array[a->array[i].left].type == 'I') {
-        fprintf(fpAss, "\nFLD %d", a->array[a->array[i].left].intValue);
+        fprintf(fpAss, "\nFLD _%d", a->array[a->array[i].left].intValue);
     } else if (a->array[a->array[i].left].type == 'S') {
-        fprintf(fpAss, "\nFLD %s", a->array[a->array[i].left].stringValue);
+        fprintf(fpAss, "\nFLD _%s", a->array[a->array[i].left].stringValue);
     } else if (a->array[a->array[i].left].type == 'F') {
-        fprintf(fpAss, "\nFLD %f", a->array[a->array[i].left].floatValue);
+        fprintf(fpAss, "\nFLD _%f", a->array[a->array[i].left].floatValue);
     }
 }
 
 void generarOperandoDerecho(FILE *fpAss, ArrayTercetos *a, int i)
 {
     if(a->array[a->array[i].right].type == 'I') {
-        fprintf(fpAss, "\nFLD %d", a->array[a->array[i].right].intValue);
+        fprintf(fpAss, "\nFLD _%d", a->array[a->array[i].right].intValue);
     } else if (a->array[a->array[i].right].type == 'S') {
-        fprintf(fpAss, "\nFLD %s", a->array[a->array[i].right].stringValue);
+        fprintf(fpAss, "\nFLD _%s", a->array[a->array[i].right].stringValue);
     } else if (a->array[a->array[i].right].type == 'F') {
-        fprintf(fpAss, "\nFLD %f", a->array[a->array[i].right].floatValue);
+        fprintf(fpAss, "\nFLD _%f", a->array[a->array[i].right].floatValue);
     }
 }
 
@@ -121,7 +135,7 @@ void generarCode(FILE *fpAss, ArrayTercetos *a)
                     if(a->array[a->array[i].right].isOperand == 1) {
                         generarOperandoDerecho(fpAss, a, i);
                     }
-                    fprintf(fpAss, "\nFSTP %s", a->array[a->array[i].left].stringValue);
+                    fprintf(fpAss, "\nFSTP _%s", a->array[a->array[i].left].stringValue);
 					fprintf(fpAss, "\nFFREE ST(0)");
                 }
                 else if (operador == TOP_MOD) {
@@ -154,10 +168,10 @@ void generarCode(FILE *fpAss, ArrayTercetos *a)
                     if(a->array[a->array[i].right].isOperand == 1) {
                         generarOperandoDerecho(fpAss, a, i);
                     }
-                    fprintf(fpAss, "\n FCOMP\t\t;Comparo \n");
-					fprintf(fpAss, "\n FFREE ST(0) \t; Vacio ST0\n");
-					fprintf(fpAss, "\n FSTSW AX \t\t; mueve los bits C a FLAGS\n");
-					fprintf(fpAss, "\n SAHF \t\t\t;Almacena el registro AH en el registro FLAGS \n");
+                    fprintf(fpAss, "\n FCOMP");
+					fprintf(fpAss, "\n FFREE ST(0)");
+					fprintf(fpAss, "\n FSTSW AX ");
+					fprintf(fpAss, "\n SAHF ");
                 }
                 else if (operador == TOP_JUMP) {
                     fprintf(fpAss, "\n%s #%d", a->array[i].operatorStringValue, a->array[i].left);

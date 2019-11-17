@@ -50,6 +50,7 @@ void insertarTercetos(ArrayTercetos *a, Terceto element)
     // Copiar Terceto
 
     a->array[a->tamanioUsado].tercetoID = element.tercetoID;
+	
     if(element.isOperator == 1) {
         a->array[a->tamanioUsado].isOperand = 0;
         a->array[a->tamanioUsado].isOperator = 1;
@@ -58,7 +59,6 @@ void insertarTercetos(ArrayTercetos *a, Terceto element)
         a->array[a->tamanioUsado].right = element.right;
 
         if(element.operator == TOP_JUMP) {
-			
             a->array[a->tamanioUsado].operatorStringValue = malloc(strlen(element.operatorStringValue) + 1);
             strcpy(a->array[a->tamanioUsado].operatorStringValue, element.operatorStringValue);
         }

@@ -233,6 +233,20 @@ io_salida:
         PRINT CONST_STRING {
                 crearTerceto("PRINT", $2, "_", numeracionTercetos);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				
+				Terceto tPrint;
+                tPrint.isOperand = 0;
+                tPrint.isOperator = 1;
+				tPrint.left = 0; // es un operador unario
+                tPrint.right = 0; // es un operator unario
+				tPrint.operator = TOP_PRINT;
+                tPrint.type = 'S';
+                tPrint.stringValue = malloc(strlen($2)+1);
+                strcpy(tPrint.stringValue, $2);
+
+                tPrint.tercetoID = numeracionTercetos-1;
+
+                insertarTercetos(&aTercetos, tPrint);
         } | PRINT ID {
                 crearTerceto("PRINT", $2, "_", numeracionTercetos);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);

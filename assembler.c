@@ -88,7 +88,12 @@ void generarCode(FILE *fpAss, ArrayTercetos *a)
                 // los siguientes prints son ilustrativos de como debería quedar el "SWITCH" para insertar codigo
                 // para cada operacion
                 char operador = a->array[i].operator;
-                if(operador == TOP_SUM) {
+				if(operador == TOP_PRINT){
+					if (a->array[a->array[i].right].type == 'S') {
+						fprintf(fpAss, "\nFLD _%s", a->array[a->array[i].right].stringValue);
+					}
+				}
+                else if(operador == TOP_SUM) {
                     if(a->array[a->array[i].left].isOperand == 1) {
                         generarOperandoIzquierdo(fpAss, a, i);
                     }

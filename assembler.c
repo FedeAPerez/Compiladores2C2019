@@ -82,10 +82,7 @@ void generarCode(FILE *fpAss, ArrayTercetos *a)
                 }
             }
             else if(a->array[i].isOperator == 1) {
-                // acá, cada left o right puede volver a ser otro operador, así que tiene que ir resolviendose
-                // desde arriba hacia abajo
-                // los siguientes prints son ilustrativos de como debería quedar el "SWITCH" para insertar codigo
-                // para cada operacion
+
                 char operador = a->array[i].operator;
 				if(operador == TOP_PRINT){
 					if (a->array[a->array[i].right].type == 'S') {
@@ -133,9 +130,6 @@ void generarCode(FILE *fpAss, ArrayTercetos *a)
                 }
 
                 else if (operador == TOP_ASIG) {
-                    // lo que tengo a izquierda siempre lo puedo asignar porque será un ID (si está en left)
-                    // si lo tengo en ST0 ya puede ser resuelto con la siguiente linea
-                    // PERO -> si el lado derecho es otra variable primero tengo que moverla a ST0
                     if(a->array[a->array[i].right].isOperand == 1) {
                         generarOperandoDerecho(fpAss, a, i);
                     }
@@ -152,8 +146,6 @@ void generarCode(FILE *fpAss, ArrayTercetos *a)
                     fprintf(fpAss, "\nFPREM");
                 }
                 else if (operador == TOP_DIV) {
-                    // No conozco la diferencia exacta entre esta división y la otra,
-                    // posiblemente una conversión entre Float a Int
                     if(a->array[a->array[i].left].isOperand == 1) {
                         generarOperandoIzquierdo(fpAss, a, i);
                     }
@@ -163,8 +155,6 @@ void generarCode(FILE *fpAss, ArrayTercetos *a)
                     fprintf(fpAss, "\nFDIV");
                 }
                 else if (operador == TOP_CMP) {
-                    // No conozco la diferencia exacta entre esta división y la otra,
-                    // posiblemente una conversión entre Float a Int
                     if(a->array[a->array[i].left].isOperand == 1) {
                         generarOperandoIzquierdo(fpAss, a, i);
                     }

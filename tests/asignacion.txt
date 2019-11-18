@@ -1,0 +1,7 @@
+VAR 
+    [FLOAT, INTEGER, INTEGER, INTEGER] : [pepe1, pepe2, pepe3, pepe4]
+ENDVAR
+
+--/ pepe es la de string /--
+[pepe1, pepe2, pepe3, pepe4,pepe5] := [10.2*2.0, 2, 3, 1+2,1]
+pepe2 := pepe3

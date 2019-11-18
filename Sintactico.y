@@ -17,6 +17,8 @@ void yyerror(const char *str);
 void status();
 void controlar_if_anidados(int cant);
 char* getCodOp(char* salto);
+void verificarTipoDato(int tipo);
+void reiniciarTipoDato();
 void yyerror(const char *str)
 {
         printf("\033[0;31m");        
@@ -52,6 +54,16 @@ struct repeat {
 };
 struct repeat expr_repeat[1000];
 int expr_repeat_index = 0;
+
+struct s_variables {
+	int type;
+};
+struct s_variables variables[1000];
+
+struct s_asignaciones {
+	int type;
+};
+struct s_asignaciones asig[1000];
 
 int main()
 {
@@ -117,7 +129,9 @@ void pprintff(float str) {
 	int cant_if=0;
 	int i=0;
 	int repeat=0;
-	
+	int tipoDatoActual = -1;
+	int cant_var = -1;
+	int cant_asig=-1;
 %}
 
 %type <intValue> CONST_INT
@@ -234,7 +248,7 @@ io_salida:
                 crearTerceto("PRINT", $2, "_", numeracionTercetos);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
 				
-				Terceto tPrint;
+				/*Terceto tPrint;
                 tPrint.isOperand = 0;
                 tPrint.isOperator = 1;
 				tPrint.left = 0; // es un operador unario
@@ -246,7 +260,7 @@ io_salida:
 
                 tPrint.tercetoID = numeracionTercetos-1;
 
-                insertarTercetos(&aTercetos, tPrint);
+                insertarTercetos(&aTercetos, tPrint);*/
         } | PRINT ID {
                 crearTerceto("PRINT", $2, "_", numeracionTercetos);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
@@ -427,6 +441,11 @@ ciclo_repeat:
 
 asignacion:
         ID {
+				if(getType($1) == 0)
+				{
+					yyerror("La variable no fue declarada");
+					exit(2);
+				}
                 Terceto tIdAsignacion;
                 tIdAsignacion.isOperand = 1;
                 tIdAsignacion.isOperator = 0;
@@ -440,7 +459,13 @@ asignacion:
                 insertarTercetos(&aTercetos, tIdAsignacion);
 
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				
+				reiniciarTipoDato();
         } OP_ASIG expresion_algebraica {
+				if(getType($1) != tipoDatoActual){
+					yyerror("No se pueden asignar variables de distintos tipos");
+					exit(0);
+				}
                 Terceto tOpAsignacion;
                 tOpAsignacion.isOperator = 1;
                 tOpAsignacion.isOperand = 0;
@@ -456,17 +481,37 @@ asignacion:
         };
 
 asignacion_multiple:
-        asignacion_multiple_declare OP_ASIG asignacion_multiple_asign;
+        asignacion_multiple_declare OP_ASIG asignacion_multiple_asign {
+				for(i=0;i<cant_var;i++)
+				{
+					if(variables[i].type != asig[i].type ){
+						yyerror("No se pueden asignar variables de distintos tipos");
+						exit(0);
+					}
+				}
+				reiniciarTipoDato();
+			}
 
 asignacion_multiple_declare:
         CORCHETE_ABRE lista_variables CORCHETE_CIERRA;
 		
 lista_variables:
         lista_variables COMA ID {
+				if(getType($3) == 0){
+					yyerror("La variable no fue declarada");
+					exit(0);
+				}
+				variables[cant_var++].type = getType($3);
                 ponerEncola(&colaId,$3);
         }
         | ID { 
+				if(getType($1) == 0){
+					yyerror("La variable no fue declarada");
+					exit(0);
+				}
+				variables[cant_var++].type = getType($1);
                 ponerEncola(&colaId,$1);
+				
         };
 		
 asignacion_multiple_asign: 
@@ -510,7 +555,7 @@ lista_datos:
 
 
                 // Asigno numeracion del esquema anterior
-		Aind = crearTercetoOperacion(":=", id,LDind, numeracionTercetos);
+				Aind = crearTercetoOperacion(":=", id,LDind, numeracionTercetos);
                 tAsig.tercetoID = Aind;
 
                 // Inserto en la lista de structs
@@ -518,6 +563,8 @@ lista_datos:
 
                 // Pido la numeracion
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				asig[cant_asig++].type = tipoDatoActual;
+				reiniciarTipoDato();
         }
         | {
                 char * tokenId = sacarDecola(&colaId);
@@ -541,6 +588,7 @@ lista_datos:
 
                 // Pido la nueva numeracion 
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				
         } expresion_algebraica {
                 LDind = Eind;
 
@@ -562,6 +610,8 @@ lista_datos:
 
                 // Pido la nueva numeracion
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				asig[cant_asig++].type = tipoDatoActual;
+				reiniciarTipoDato();
         };
 		
 expresion_logica:
@@ -958,6 +1008,7 @@ factor:
 
                 // Pido la nueva numeracion
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				verificarTipoDato(1);
                 status("int a factor");
         }
         | CONST_FLOAT {
@@ -972,6 +1023,7 @@ factor:
                 insertarTercetos(&aTercetos, tConstFloat);
 
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				verificarTipoDato(2);
                 status("float a factor");
         }
         | ID {
@@ -992,6 +1044,11 @@ factor:
                 // fin POC
 
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				if(getType($1) == 0){
+					yyerror("La variable no fue declarada");
+					exit(0);
+				}
+				verificarTipoDato(getType($1));
                 status("id a factor");
         }
         | PARENTESIS_ABRE expresion PARENTESIS_CIERRA {
@@ -1092,4 +1149,21 @@ void mostrarTercetos(ArrayTercetos * a){
 
 		
 	}
+}
+
+void verificarTipoDato(int tipo) {
+
+	if(tipoDatoActual == -1) {
+		tipoDatoActual = tipo;
+	}
+	
+	if(tipoDatoActual != tipo) {
+		yyerror("No se admiten operaciones aritmeticas con tipo de datos distintos");
+		exit(0);
+	}
+	
+}
+
+void reiniciarTipoDato() {
+	tipoDatoActual = -1;
 }

@@ -115,6 +115,8 @@ void pprintff(float str) {
         // Asignacion simple
         int Aind = -1;
         int AIind = -1;
+        int ASInd = -1;
+        int ASSind = -1;
 
         int LVind = -1;
         int LDind = -1;
@@ -136,10 +138,10 @@ void pprintff(float str) {
 
 %type <intValue> CONST_INT
 %type <floatValue> CONST_FLOAT
-%type <stringValue> ID CONST_STRING TIPO_FLOAT TIPO_INTEGER
+%type <stringValue> ID CONST_STRING TIPO_FLOAT TIPO_INTEGER TIPO_STRING
 
 // Sector declaraciones
-%token VAR ENDVAR TIPO_INTEGER TIPO_FLOAT
+%token VAR ENDVAR TIPO_INTEGER TIPO_FLOAT TIPO_STRING
 
 // Condiciones
 %token IF THEN ELSE ENDIF
@@ -219,6 +221,9 @@ tipo_dato:
                 ponerEnPilaS(&pilaTipoDeclare, $1);
         }
         | TIPO_FLOAT {
+                ponerEnPilaS(&pilaTipoDeclare, $1);
+        }
+        | TIPO_STRING {
                 ponerEnPilaS(&pilaTipoDeclare, $1);
         };
 
@@ -412,40 +417,34 @@ ciclo_repeat:
         } 
         cuerpo UNTIL expresion_logica {
 	        Cind = sacarDePila(&pilaRepeat);
-			for(i=0;i<expr_repeat_index;i++)
-			{
-				printf("\n A [%d] por #%d\n", expr_repeat[i].posicion, Cind  );
-				ActualizarArchivo(expr_repeat[i].posicion, Cind );
-                aTercetos.array[expr_repeat[i].posicion].left = Cind ;
-			}
+                for(i=0;i<expr_repeat_index;i++)
+                {
+                        printf("\n A [%d] por #%d\n", expr_repeat[i].posicion, Cind  );
+                        ActualizarArchivo(expr_repeat[i].posicion, Cind );
+                        aTercetos.array[expr_repeat[i].posicion].left = Cind ;
+                }
 			
-		/*while(!pilaVacia(&pilaExpresion)){
-                        int sacaPilaExpresion = sacarDePila(&pilaExpresion);
-                        printf("\n A [%d] por #%d\n", sacaPilaExpresion, Cind);
-                        ActualizarArchivo(sacaPilaExpresion, Cind);
-                        aTercetos.array[sacaPilaExpresion].left = Cind;
-                }*/
-			Terceto tEtiqueta;
+                Terceto tEtiqueta;
                 tEtiqueta.isOperator = 1;
                 tEtiqueta.isOperand = 0;
                 tEtiqueta.operator = TOP_ETIQUETA;
                 tEtiqueta.left = numeracionTercetos;
                 tEtiqueta.right = 0;
                 tEtiqueta.tercetoID = numeracionTercetos;
-			crearTerceto("ETIQUETA", "_", "_", numeracionTercetos);
-			insertarTercetos(&aTercetos, tEtiqueta);
-            numeracionTercetos = avanzarTerceto(numeracionTercetos);
-			repeat = 0;
-			expr_repeat_index=0;
+                crearTerceto("ETIQUETA", "_", "_", numeracionTercetos);
+                insertarTercetos(&aTercetos, tEtiqueta);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+                repeat = 0;
+                expr_repeat_index=0;
         };
 
 asignacion:
         ID {
-				if(getType($1) == 0)
-				{
-					yyerror("La variable no fue declarada");
-					exit(2);
-				}
+                if(getType($1) == 0)
+                {
+                        yyerror("La variable no fue declarada");
+                        exit(2);
+                }
                 Terceto tIdAsignacion;
                 tIdAsignacion.isOperand = 1;
                 tIdAsignacion.isOperator = 0;
@@ -460,12 +459,12 @@ asignacion:
 
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
 				
-				reiniciarTipoDato();
+                reiniciarTipoDato();
         } OP_ASIG expresion_algebraica {
-				if(getType($1) != tipoDatoActual){
-					yyerror("No se pueden asignar variables de distintos tipos");
-					exit(0);
-				}
+                if(getType($1) != tipoDatoActual){
+                        yyerror("No se pueden asignar variables de distintos tipos");
+                        exit(0);
+                }
                 Terceto tOpAsignacion;
                 tOpAsignacion.isOperator = 1;
                 tOpAsignacion.isOperand = 0;
@@ -478,19 +477,74 @@ asignacion:
 
                 insertarTercetos(&aTercetos, tOpAsignacion);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
+        } 
+        | TIPO_STRING ID OP_ASIG CONST_STRING {
+                //if(getType($1) == 0)
+                //{
+                //        yyerror("La variable no fue declarada");
+                //        exit(2);
+                //}
+                Terceto tIdAsignacionString;
+                tIdAsignacionString.isOperand = 1;
+                tIdAsignacionString.isOperator = 0;
+                tIdAsignacionString.type = 'S';
+                tIdAsignacionString.stringValue = malloc(strlen($2)+1);
+                strcpy(tIdAsignacionString.stringValue, $2);
+
+                ASInd = crearTerceto($2, "_", "_", numeracionTercetos);
+                tIdAsignacionString.tercetoID = AIind;
+
+                insertarTercetos(&aTercetos, tIdAsignacionString);
+
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				
+
+                // Ingreso la string a asignar a los tercetos
+                Terceto tStringAsignada;
+                tStringAsignada.isOperator = 0;
+                tStringAsignada.isOperand = 1;
+                tStringAsignada.stringValue = malloc(strlen($4)+1);
+                tStringAsignada.type = 'S';
+                strcpy(tStringAsignada.stringValue, $4);
+
+                ASSind = crearTerceto($4, "_", "_", numeracionTercetos);
+                tStringAsignada.tercetoID = ASSind;
+
+                insertarTercetos(&aTercetos, tStringAsignada);
+
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+
+
+                // Ingreso la op de asig a los tercetos
+                //if(getType($1) != tipoDatoActual){
+                //        yyerror("No se pueden asignar variables de distintos tipos");
+                //        exit(0);
+                //}
+                Terceto tOpAsignacion;
+                tOpAsignacion.isOperator = 1;
+                tOpAsignacion.isOperand = 0;
+                tOpAsignacion.operator = TOP_ASIG;
+                tOpAsignacion.left = ASInd;
+                tOpAsignacion.right = ASSind;
+
+                Aind = crearTercetoOperacion(":=", ASInd, ASSind, numeracionTercetos);
+                tOpAsignacion.tercetoID = Aind;
+
+                insertarTercetos(&aTercetos, tOpAsignacion);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
 
 asignacion_multiple:
         asignacion_multiple_declare OP_ASIG asignacion_multiple_asign {
-				for(i=0;i<cant_var;i++)
-				{
-					if(variables[i].type != asig[i].type ){
-						yyerror("No se pueden asignar variables de distintos tipos");
-						exit(0);
-					}
-				}
-				reiniciarTipoDato();
-			}
+                for(i=0;i<cant_var;i++)
+                {
+                        if(variables[i].type != asig[i].type ){
+                                yyerror("No se pueden asignar variables de distintos tipos");
+                                exit(0);
+                        }
+                }
+                reiniciarTipoDato();
+        };
 
 asignacion_multiple_declare:
         CORCHETE_ABRE lista_variables CORCHETE_CIERRA;

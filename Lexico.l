@@ -43,6 +43,7 @@
 ":"                                     return DOS_PUNTOS;
 "INTEGER"                               { yylval.stringValue = strdup(yytext); return TIPO_INTEGER; }
 "FLOAT"                                 { yylval.stringValue = strdup(yytext); return TIPO_FLOAT; }
+"STRING"								{ yylval.stringValue = strdup(yytext); return TIPO_STRING; }
 [0-9]+                                  { validType(yytext, TYPE_INT); yylval.intValue = atoi(yytext); return CONST_INT; }
 [0-9]+"."[0-9\+\-\e]+                   { validType(yytext, TYPE_FLOAT); yylval.floatValue = atof(yytext); return CONST_FLOAT; }
 [a-zA-Z][a-zA-Z0-9_]*                   { validType(yytext, TYPE_ID); yylval.stringValue = strdup(yytext); return ID; }

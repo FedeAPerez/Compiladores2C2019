@@ -1,9 +1,11 @@
 VAR 
     [INTEGER, INTEGER, INTEGER, INTEGER] : [pepe1, pepe2]
-	[INTEGER, INTEGER] : [pepe3, pepe4] 
+	[INTEGER, INTEGER, STRING] : [pepe3, pepe4, varString] 
 ENDVAR
 
 IF pepe1 != 3 OR pepe2 <= 3
 THEN
 	pepe4 := 10
 ENDIF
+
+STRING varString := "hola don pepito"

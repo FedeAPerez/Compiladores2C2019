@@ -14,9 +14,9 @@ void generarAssembler(ArrayTercetos *a)
     
 	generarData(fpAss);
 	
-    fprintf(fpAss, ".CODE \n");
-	 fprintf(fpAss, "MAIN:\n");
-	 fprintf(fpAss, "\n");
+    fprintf(fpAss, "\n.CODE \n");
+	fprintf(fpAss, "MAIN:\n");
+	fprintf(fpAss, "\n");
 
     fprintf(fpAss, "\n");
     fprintf(fpAss, "\t MOV AX,@DATA 	;inicializa el segmento de datos\n");
@@ -54,7 +54,6 @@ void generarOperandoDerecho(FILE *fpAss, ArrayTercetos *a, int i)
 
 void generarCode(FILE *fpAss, ArrayTercetos *a)
 {
-    fprintf(fpAss, "\n.CODE");
 
     fprintf(fpAss, "\nFINIT");
     

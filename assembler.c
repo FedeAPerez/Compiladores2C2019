@@ -62,23 +62,13 @@ void generarCode(FILE *fpAss, ArrayTercetos *a)
     ArrayTercetos arrayTercetos;
     crearTercetos(&arrayTercetos, 100);
 
-    printf("\n------ Ini de CI ------\n");
-    while(fgets(linea, sizeof(linea), fpTs))
-    {
-        printf("\n%s", trim(linea, NULL));
-    }
-    printf("\n------ Fin de CI ------\n");
-
         if((int)a->tamanioUsado > 0) {
         for(int i=0; i < (int)a->tamanioUsado; i++) {
 
             if(a->array[i].isOperand == 1) {
                 if(a->array[i].type == 'S') {
-                    printf("\n[%d] -%c- es operando, de valor '%s'", a->array[i].tercetoID, a->array[i].type, a->array[i].stringValue);
                 } else if (a->array[i].type == 'F') {
-                    printf("\n[%d] -%c- es operando, de valor '%f'", a->array[i].tercetoID, a->array[i].type, a->array[i].floatValue);
                 } else if (a->array[i].type == 'I') {
-                    printf("\n[%d] -%c- es operando, de valor '%d'", a->array[i].tercetoID, a->array[i].type, a->array[i].intValue);
                 }
             }
             else if(a->array[i].isOperator == 1) {
@@ -174,9 +164,7 @@ void generarCode(FILE *fpAss, ArrayTercetos *a)
                     fprintf(fpAss, "\n#%d", a->array[i].left);
                 }
 
-                printf("\n[%d] es operador ('%s', [%d], [%d])", a->array[i].tercetoID, getStringFromOperator(a->array[i].operator), a->array[i].left, a->array[i].right);
             } else {
-                printf("\n[%d] hay error ", a->array[i].tercetoID);
             }
         }
         

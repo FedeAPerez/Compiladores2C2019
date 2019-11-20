@@ -1,5 +1,8 @@
 #include "archivos.h"
 
+
+
+
 char *ltrim(char *str, const char *seps)
 {
     size_t totrim;

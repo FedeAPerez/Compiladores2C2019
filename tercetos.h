@@ -49,14 +49,6 @@ int crearTercetoOperacion(char *op, int ind1, int ind2, int numeracion)
     return crearTerceto(op, aux1, aux2, numeracion);
 };
 
-int crearTercetoID(char *op, char *str1, int ind1, int numeracion)
-{
-    char aux1[5];
-    sprintf(aux1, "[%d]", ind1);
-
-    return crearTerceto(op, str1, aux1, numeracion);
-};
-
 int crearTercetoSalto(char *op, int ind1, char *a, int numeracion)
 {
     char aux1[5];

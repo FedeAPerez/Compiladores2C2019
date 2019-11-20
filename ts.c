@@ -53,6 +53,42 @@ int searchTs(char *text){
 	return 0;
 }
 
+int getType(char *text){
+	
+	char linea[1000],word[100], type[100],value[100],length[100];
+	
+	FILE *fp = fopen("ts.txt", READ_FILE);
+    if(fp!= NULL) 
+	{	
+		
+		while(fgets(linea,sizeof(linea),fp))
+		{
+			strcpy(type,"");
+			strcpy(word,"");
+			sscanf(linea, "%s %s", word, type);
+			
+			if(strcmp(word,text)==0){
+				
+				if(strcmp(type,TYPE_INTEGER_TS)==0 || strcmp(type,TYPE_CONST_INT_TS)==0){ 
+
+					return 1;
+				}
+				if(strcmp(type,TYPE_FLOAT_TS)==0 || strcmp(type,TYPE_CONST_FLOAT_TS)==0){ 
+
+					return 2;
+				}
+				if(strcmp(type,TYPE_STRING_TS)==0 || strcmp(type,TYPE_CONST_STRING_TS)==0){ 
+
+					return 3;
+				}
+
+			}
+		}
+	}
+	fclose(fp);
+	return 0;
+}
+
 
 int modifyTypeTs(char *name, char *type){
 	

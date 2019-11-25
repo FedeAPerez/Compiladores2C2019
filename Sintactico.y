@@ -19,6 +19,7 @@ void controlar_if_anidados(int cant);
 char* getCodOp(char* salto);
 void verificarTipoDato(int tipo);
 void reiniciarTipoDato();
+int ponerEtiqueta(int numeracion);
 void yyerror(const char *str)
 {
         printf("\033[0;31m");        
@@ -134,6 +135,7 @@ void pprintff(float str) {
 	int tipoDatoActual = -1;
 	int cant_var = -1;
 	int cant_asig=-1;
+	int is_or = 0;
 %}
 
 %type <intValue> CONST_INT
@@ -317,10 +319,23 @@ condicional:
 					expr_if_index = 0;
 					
                 int sPEelseEndIf = sacarDePila(&pilaExpresion);
+				
+				Terceto tEtiquetaIfThenEndif;
+                tEtiquetaIfThenEndif.isOperator = 1;
+                tEtiquetaIfThenEndif.isOperand = 0;
+                tEtiquetaIfThenEndif.operator = TOP_ETIQUETA;
+                tEtiquetaIfThenEndif.left = numeracionTercetos;
+                tEtiquetaIfThenEndif.right = 0;
+                tEtiquetaIfThenEndif.tercetoID = numeracionTercetos;
 
-              
+                crearTerceto("ETIQUETA", "_", "_", numeracionTercetos);
+
+            
                 ActualizarArchivo(sPEelseEndIf, numeracionTercetos);
                 aTercetos.array[sPEelseEndIf].left = numeracionTercetos;
+
+                insertarTercetos(&aTercetos, tEtiquetaIfThenEndif);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
         }
         | IF expresion_logica THEN cuerpo {
                 Cind = crearTerceto("JI","#", "_", numeracionTercetos);
@@ -753,6 +768,7 @@ expresion_logica:
 					expr_if[expr_if_index].posicion = ELind;
 					expr_if[expr_if_index].nro_if = cant_if;
 					expr_if_index++;
+					numeracionTercetos=ponerEtiqueta(numeracionTercetos+1);
 				}
 				if(repeat > 0)
 				{
@@ -1189,4 +1205,22 @@ void verificarTipoDato(int tipo) {
 
 void reiniciarTipoDato() {
 	tipoDatoActual = -1;
+}
+
+int ponerEtiqueta(int numeracion){
+
+		Terceto tEtiquetaElse;
+		tEtiquetaElse.isOperator = 1;
+		tEtiquetaElse.isOperand = 0;
+		tEtiquetaElse.operator = TOP_ETIQUETA;
+		tEtiquetaElse.left = numeracion;
+		tEtiquetaElse.right = 0;
+		tEtiquetaElse.tercetoID = numeracion;
+
+		crearTerceto("ETIQUETA", "_", "_", numeracion);
+
+		insertarTercetos(&aTercetos, tEtiquetaElse);
+		return numeracion;
+	
+	
 }

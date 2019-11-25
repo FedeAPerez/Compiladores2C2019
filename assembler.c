@@ -8,24 +8,25 @@ void generarAssembler(ArrayTercetos *a)
     fpAss = fopen("Final.asm", "a");
     fprintf(fpAss, "include macros2.asm\n");
 	fprintf(fpAss, "include number.asm\n");
-	fprintf(fpAss, ".MODEL	LARGE \n");
+	fprintf(fpAss, ".MODEL SMALL \n");
 	fprintf(fpAss, ".386\n");
 	fprintf(fpAss, ".STACK 200h \n");
     
 	generarData(fpAss);
 	
     fprintf(fpAss, "\n.CODE \n");
-	fprintf(fpAss, "MAIN:\n");
-	fprintf(fpAss, "\n");
-
-    fprintf(fpAss, "\n");
     fprintf(fpAss, "\t MOV AX,@DATA 	;inicializa el segmento de datos\n");
     fprintf(fpAss, "\t MOV DS,AX \n");
-    fprintf(fpAss, "\t MOV ES,AX \n");
-    fprintf(fpAss, "\t FNINIT \n");;
+    fprintf(fpAss, "\t FINIT \n");;
     fprintf(fpAss, "\n");
 	
     generarCode(fpAss, a);
+	/*generamos el final */
+	fprintf(fpAss, "\n mov ah, 1 ; pausa, espera que oprima una tecla \n");
+	fprintf(fpAss, "int 21h ; AH=1 es el servicio de lectura \n  ");
+	fprintf(fpAss, "MOV AX, 4C00h ; Sale del Dos \n");
+	fprintf(fpAss, "INT 21h ; Enviamos la interripcion 21h \n  ");
+	fprintf(fpAss, "END ; final del archivo. \n");
     fclose(fpAss);
     pprints("Assembler generado...");
 };
@@ -35,7 +36,7 @@ void generarOperandoIzquierdo(FILE *fpAss, ArrayTercetos *a, int i)
     if(a->array[a->array[i].left].type == 'I') {
         fprintf(fpAss, "\nFLD _%d", a->array[a->array[i].left].intValue);
     } else if (a->array[a->array[i].left].type == 'S') {
-        fprintf(fpAss, "\nFLD _%s", a->array[a->array[i].left].stringValue);
+        fprintf(fpAss, "\nFLD %s", a->array[a->array[i].left].stringValue);
     } else if (a->array[a->array[i].left].type == 'F') {
         fprintf(fpAss, "\nFLD _%f", a->array[a->array[i].left].floatValue);
     }
@@ -46,7 +47,7 @@ void generarOperandoDerecho(FILE *fpAss, ArrayTercetos *a, int i)
     if(a->array[a->array[i].right].type == 'I') {
         fprintf(fpAss, "\nFLD _%d", a->array[a->array[i].right].intValue);
     } else if (a->array[a->array[i].right].type == 'S') {
-        fprintf(fpAss, "\nFLD _%s", a->array[a->array[i].right].stringValue);
+        fprintf(fpAss, "\nFLD %s", a->array[a->array[i].right].stringValue);
     } else if (a->array[a->array[i].right].type == 'F') {
         fprintf(fpAss, "\nFLD _%f", a->array[a->array[i].right].floatValue);
     }
@@ -54,8 +55,6 @@ void generarOperandoDerecho(FILE *fpAss, ArrayTercetos *a, int i)
 
 void generarCode(FILE *fpAss, ArrayTercetos *a)
 {
-
-    fprintf(fpAss, "\nFINIT");
     
     FILE *fpTs = fopen("intermedia.txt", "r");
     char linea[200];
@@ -76,7 +75,7 @@ void generarCode(FILE *fpAss, ArrayTercetos *a)
                 char operador = a->array[i].operator;
 				if(operador == TOP_PRINT){
 					if (a->array[a->array[i].right].type == 'S') {
-						fprintf(fpAss, "\nFLD _%s", a->array[a->array[i].right].stringValue);
+						fprintf(fpAss, "\nFLD %s", a->array[a->array[i].right].stringValue);
 					}
 				}
                 else if(operador == TOP_SUM) {
@@ -123,7 +122,7 @@ void generarCode(FILE *fpAss, ArrayTercetos *a)
                     if(a->array[a->array[i].right].isOperand == 1) {
                         generarOperandoDerecho(fpAss, a, i);
                     }
-                    fprintf(fpAss, "\nFSTP _%s", a->array[a->array[i].left].stringValue);
+                    fprintf(fpAss, "\nFSTP %s", a->array[a->array[i].left].stringValue);
 					fprintf(fpAss, "\nFFREE ST(0)");
                 }
                 else if (operador == TOP_MOD) {
@@ -158,10 +157,10 @@ void generarCode(FILE *fpAss, ArrayTercetos *a)
 					fprintf(fpAss, "\n SAHF ");
                 }
                 else if (operador == TOP_JUMP) {
-                    fprintf(fpAss, "\n%s #%d", a->array[i].operatorStringValue, a->array[i].left);
+                    fprintf(fpAss, "\n%s ET_%d", a->array[i].operatorStringValue, a->array[i].left);
                 }
                 else if(operador == TOP_ETIQUETA) {
-                    fprintf(fpAss, "\n#%d", a->array[i].left);
+                    fprintf(fpAss, "\n ET_%d:", a->array[i].left);
                 }
 
             } else {
@@ -183,12 +182,17 @@ char *getAsmType(char *tsType)
     else if (strcmp(tsType, "CONST_STRING") == 0 ) {
         return "db";
     }
-    else 
+    else if(strcmp(tsType, "CONST_INT") == 0)
     {
-        return "erase_consts";
+        return "dd";
+    }
+	else if(strcmp(tsType, "CONST_FLOAT") == 0)
+    {
+        return "dd";
     }
 }
 
+/*
 void generarData(FILE *fpAss)
 {
     char linea[124];
@@ -213,6 +217,46 @@ void generarData(FILE *fpAss)
                 // Change if var is initialized
                 fprintf(fpAss, "\n_%s %s ?", lineaName, getAsmType(trim(lineaType, NULL)));
             }
+        }
+    }
+};*/
+
+void generarData(FILE *fpAss)
+{
+    char linea[124];
+    char lineaValue[36],word[100], type[100],value[100];
+    int esLineaEncabezado = 0;
+    FILE *fpTs = fopen("ts.txt", "r");
+
+    fprintf(fpAss, "\n.DATA");
+	fprintf(fpAss, "\nresult dd ?");
+	fprintf(fpAss, "\nR dd ?");
+    
+    while(fgets(linea, sizeof(linea), fpTs))
+    {
+        strcpy(type,"");
+		strcpy(word,"");
+		strcpy(value,"");
+		sscanf(linea, "%s %s %s", word, type, value);
+        if(esLineaEncabezado == 0) {
+            esLineaEncabezado = 1;
+        } else {
+            if(strcmp(type, "FLOAT") == 0 || strcmp(type, "INTEGER") == 0 )
+			{
+				fprintf(fpAss, "\n%s dd 0", word);
+			}
+			else if (strcmp(type, "CONST_STRING") == 0 ) {
+				fprintf(fpAss, "\n%s db %s", word, value);
+			}
+			else if(strcmp(type, "CONST_INT") == 0)
+			{
+				fprintf(fpAss, "\n%s dd %s.0", word,value);
+			}
+			else if(strcmp(type, "CONST_FLOAT") == 0)
+			{
+				fprintf(fpAss, "\n%s dd %s", word,value);
+			}
+		
         }
     }
 };

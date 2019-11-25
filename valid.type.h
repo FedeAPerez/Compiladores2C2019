@@ -60,7 +60,12 @@ int validType(char *text, int type)
         }
         else
         {
-            insertInTs(text, "CONST_INT", text, "");
+			char str1[16];
+		    char str2[16];
+		    strcpy(str1, "_");
+		    strcpy(str2, text);
+		    strcat(str1, str2);
+            insertInTs(str1, "CONST_INT", text, "");
         }
         break;
     case TYPE_FLOAT:
@@ -71,7 +76,12 @@ int validType(char *text, int type)
         }
         else
         {
-            insertInTs(text, "CONST_FLOAT", text, "");
+			char str3[16];
+		    char str4[16];
+		    strcpy(str3, "_");
+		    strcpy(str4, text);
+		    strcat(str3, str4);
+            insertInTs(str3, "CONST_FLOAT", text, "");
         }
         return 1;
         break;

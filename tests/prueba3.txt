@@ -29,22 +29,3 @@ THEN
 ELSE
 	pepe4 := 10
 ENDIF
-
-REPEAT
-    pepe2 := pepe2 - 1
-    pepe1 := pepe4 * 10
-UNTIL pepe2 == 0 AND pepe1 > 10
-
-IF NOT pepe3 == 4
-THEN
-	pepe2 := (1 DIV 3)
-ELSE
-	pepe4 := (10 MOD 3)
-ENDIF
-
-REPEAT
-    pepe2 := pepe2 - 1
-    pepe1 := pepe4 * 10
-UNTIL pepe2 != 3
-
-pepe2 := 6

@@ -4,11 +4,11 @@ ENDVAR
 
 --/ Asi son los comentarios en el 2doCuat de LyC --/ Comentario  /-- /--
 
-[pepe1, pepe2, pepe3, pepe4] := [10*2, 100, 3, 1+2]
+[pepe1, pepe2, pepe3, pepe4] := [10*2, 100, 6, 1+2]
 
 IF pepe1 != 3 OR pepe2 == 3
 THEN
-	pepe2 := 1
+	pepe2 := 4
 	IF pepe1 == 2 
 	THEN
 	   pepe1 := pepe4 * pepe3
@@ -21,9 +21,9 @@ ENDIF
 REPEAT
     pepe2 := pepe2 - 1
     pepe1 := pepe4 * 10
-UNTIL pepe2 == 1 OR pepe1 > 100
+UNTIL pepe2 == 3 OR pepe1 > 100
 
-IF pepe3 >= 3 AND pepe2 < 3
+IF pepe3 >= 4 AND pepe2 < 3
 THEN
 	pepe2 := pepe1 / pepe4
 ELSE
@@ -33,18 +33,9 @@ ENDIF
 REPEAT
     pepe2 := pepe2 - 1
     pepe1 := pepe4 * 10
-UNTIL pepe2 == 0 AND pepe1 > 10
-
-IF NOT pepe3 == 4
-THEN
-	pepe2 := (1 DIV 3)
-ELSE
-	pepe4 := (10 MOD 3)
-ENDIF
+UNTIL pepe2 == 2 AND pepe1 == 100
 
 REPEAT
     pepe2 := pepe2 - 1
-    pepe1 := pepe4 * 10
+    pepe1 := pepe3 + pepe2
 UNTIL pepe2 != 3
-
-pepe2 := 6

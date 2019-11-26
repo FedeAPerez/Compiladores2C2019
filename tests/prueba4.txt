@@ -23,14 +23,9 @@ REPEAT
     pepe1 := pepe4 * 10
 UNTIL pepe2 == 3 OR pepe1 > 100
 
-IF pepe3 >= 4 AND pepe2 < 3
+IF pepe3 >= 4 AND pepe2 <= 3
 THEN
 	pepe2 := pepe1 / pepe4
 ELSE
 	pepe4 := 10
 ENDIF
-
-REPEAT
-    pepe2 := pepe2 - 1
-    pepe1 := pepe4 * 10
-UNTIL pepe2 == 2 AND pepe1 == 100

@@ -144,15 +144,15 @@ void generarCode(FILE *fpAss, ArrayTercetos *a)
                     fprintf(fpAss, "\nFDIV");
                 }
                 else if (operador == TOP_CMP) {
-                    if(a->array[a->array[i].left].isOperand == 1) {
-                        generarOperandoIzquierdo(fpAss, a, i);
-                    }
-
                     if(a->array[a->array[i].right].isOperand == 1) {
                         generarOperandoDerecho(fpAss, a, i);
                     }
+					
+					if(a->array[a->array[i].left].isOperand == 1) {
+                        generarOperandoIzquierdo(fpAss, a, i);
+                    }
+                
                     fprintf(fpAss, "\n FCOMP");
-					fprintf(fpAss, "\n FFREE ST(0)");
 					fprintf(fpAss, "\n FSTSW AX ");
 					fprintf(fpAss, "\n SAHF ");
                 }

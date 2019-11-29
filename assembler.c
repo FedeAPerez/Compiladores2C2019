@@ -34,18 +34,22 @@ void generarAssembler(ArrayTercetos *a)
 void generarOperandoIzquierdo(FILE *fpAss, ArrayTercetos *a, int i)
 {
     if(a->array[a->array[i].left].type == 'I') {
-        fprintf(fpAss, "\nFLD _%d", a->array[a->array[i].left].intValue);
+        fprintf(fpAss, "\nFILD _%d", a->array[a->array[i].left].intValue);
     } else if (a->array[a->array[i].left].type == 'S') {
-        fprintf(fpAss, "\nFLD %s", a->array[a->array[i].left].stringValue);
+		
+		if(getType(a->array[a->array[i].left].stringValue) == 1)
+			fprintf(fpAss, "\nFILD %s", a->array[a->array[i].left].stringValue);
+		else
+			fprintf(fpAss, "\nFLD %s", a->array[a->array[i].left].stringValue);
     } else if (a->array[a->array[i].left].type == 'F') {
-        fprintf(fpAss, "\nFLD _%f", a->array[a->array[i].left].floatValue);
+        fprintf(fpAss, "\nFLD _%f_", a->array[a->array[i].left].floatValue);
     }
 }
 
 void generarOperandoDerecho(FILE *fpAss, ArrayTercetos *a, int i)
 {
     if(a->array[a->array[i].right].type == 'I') {
-        fprintf(fpAss, "\nFLD _%d", a->array[a->array[i].right].intValue);
+        fprintf(fpAss, "\nFILD _%d", a->array[a->array[i].right].intValue);
     } else if (a->array[a->array[i].right].type == 'S') {
         fprintf(fpAss, "\nFLD %s", a->array[a->array[i].right].stringValue);
     } else if (a->array[a->array[i].right].type == 'F') {
@@ -74,9 +78,26 @@ void generarCode(FILE *fpAss, ArrayTercetos *a)
 
                 char operador = a->array[i].operator;
 				if(operador == TOP_PRINT){
-					if (a->array[a->array[i].right].type == 'S') {
-						fprintf(fpAss, "\nFLD %s", a->array[a->array[i].right].stringValue);
+					if (a->array[i].type == 'F'){
+						fprintf(fpAss, "\nDisplayFloat %s,2", a->array[i].stringValue);
+						fprintf(fpAss, "\nnewLine 1");
 					}
+					else if (a->array[i].type == 'I'){
+						fprintf(fpAss, "\nDisplayInteger %s,2", a->array[i].stringValue);
+						fprintf(fpAss, "\nnewLine 1");
+					}
+					else 
+					{
+						fprintf(fpAss, "\nDisplayString %s \n", a->array[i].stringValue);
+						fprintf(fpAss, "\nnewLine 1");
+					}
+					
+				}
+				else if(operador == TOP_READ){
+					
+						fprintf(fpAss, "\nGetString %s ", a->array[i].stringValue);
+						fprintf(fpAss, "\nnewLine 1");
+					
 				}
                 else if(operador == TOP_SUM) {
                     if(a->array[a->array[i].left].isOperand == 1) {
@@ -84,18 +105,48 @@ void generarCode(FILE *fpAss, ArrayTercetos *a)
                     }
 
                     if(a->array[a->array[i].right].isOperand == 1) {
-                        generarOperandoDerecho(fpAss, a, i);
+						if(a->array[a->array[i].right].type == 'F') 
+						{
+							generarOperandoDerecho(fpAss, a, i);
+							fprintf(fpAss, "\nFADD");
+						}
+						else if(a->array[a->array[i].right].type == 'I'){
+							fprintf(fpAss, "\nFIADD _%d", a->array[a->array[i].right].intValue);
+						}
+						else if(a->array[a->array[i].right].type == 'S'){
+							if(getType(a->array[a->array[i].right].stringValue) == 1)
+								fprintf(fpAss, "\nFIADD %s", a->array[a->array[i].right].stringValue);
+							else
+							{
+								generarOperandoDerecho(fpAss, a, i);
+								fprintf(fpAss, "\nFADD");
+							}
+						}
                     }
-                    fprintf(fpAss, "\nFADD");
+                    
                 }
                 else if(operador == TOP_MUL) {
                     if(a->array[a->array[i].left].isOperand == 1) {
                         generarOperandoIzquierdo(fpAss, a, i);
                     }
                     if(a->array[a->array[i].right].isOperand == 1) {
-                        generarOperandoDerecho(fpAss, a, i);
+						if(a->array[a->array[i].right].type == 'F') 
+						{
+							generarOperandoDerecho(fpAss, a, i);
+							fprintf(fpAss, "\nFMUL");
+						}else if(a->array[a->array[i].right].type == 'I'){
+							fprintf(fpAss, "\nFIMUL _%d", a->array[a->array[i].right].intValue);
+						}else if(a->array[a->array[i].right].type == 'S'){
+							if(getType(a->array[a->array[i].right].stringValue) == 1)
+								fprintf(fpAss, "\nFIMUL %s", a->array[a->array[i].right].stringValue);
+							else
+							{
+								generarOperandoDerecho(fpAss, a, i);
+								fprintf(fpAss, "\nFMUL");
+							}
+						}
                     }
-                    fprintf(fpAss, "\nFMUL");
+                    
                 }
 
                 else if(operador == TOP_DIV) {
@@ -103,9 +154,23 @@ void generarCode(FILE *fpAss, ArrayTercetos *a)
                         generarOperandoIzquierdo(fpAss, a, i);
                     }
                     if(a->array[a->array[i].right].isOperand == 1) {
-                        generarOperandoDerecho(fpAss, a, i);
+						if(a->array[a->array[i].right].type == 'F') 
+						{
+							generarOperandoDerecho(fpAss, a, i);
+							fprintf(fpAss, "\nFDIV");
+						}else if(a->array[a->array[i].right].type == 'I'){
+							fprintf(fpAss, "\nFIDIV _%d", a->array[a->array[i].right].intValue);
+						}else if(a->array[a->array[i].right].type == 'S'){
+							if(getType(a->array[a->array[i].right].stringValue) == 1)
+								fprintf(fpAss, "\nFIDIV %s", a->array[a->array[i].right].stringValue);
+							else
+							{
+								generarOperandoDerecho(fpAss, a, i);
+								fprintf(fpAss, "\nFDIV");
+							}
+						}
                     }
-                    fprintf(fpAss, "\nFDIV");
+                    
                 }
 
                 else if (operador == TOP_RES) {
@@ -113,19 +178,39 @@ void generarCode(FILE *fpAss, ArrayTercetos *a)
                         generarOperandoIzquierdo(fpAss, a, i);
                     }
                     if(a->array[a->array[i].right].isOperand == 1) {
-                        generarOperandoDerecho(fpAss, a, i);
+						if(a->array[a->array[i].right].type == 'F') 
+						{
+							generarOperandoDerecho(fpAss, a, i);
+							fprintf(fpAss, "\nFSUB");
+						}else if(a->array[a->array[i].right].type == 'I'){
+							fprintf(fpAss, "\nFISUB _%d", a->array[a->array[i].right].intValue);
+						}else if(a->array[a->array[i].right].type == 'S'){
+							if(getType(a->array[a->array[i].right].stringValue) == 1)
+								fprintf(fpAss, "\nFISUB %s", a->array[a->array[i].right].stringValue);
+							else
+							{
+								generarOperandoDerecho(fpAss, a, i);
+								fprintf(fpAss, "\nFSUB");
+							}
+						}
                     }
-                    fprintf(fpAss, "\nFSUB");
+                    
                 }
 
                 else if (operador == TOP_ASIG) {
                     if(a->array[a->array[i].right].isOperand == 1) {
                         generarOperandoDerecho(fpAss, a, i);
                     }
-                    fprintf(fpAss, "\nFSTP %s", a->array[a->array[i].left].stringValue);
+					if(a->array[a->array[i].left].type == 'F') 
+					{
+						fprintf(fpAss, "\nFSTP %s", a->array[a->array[i].left].stringValue);
+					}else{
+						fprintf(fpAss, "\nFISTP %s", a->array[a->array[i].left].stringValue);
+					}
+                    
 					fprintf(fpAss, "\nFFREE ST(0)");
                 }
-                else if (operador == TOP_MOD) {
+                /*else if (operador == TOP_MOD) {
                     if(a->array[a->array[i].left].isOperand == 1) {
                         generarOperandoIzquierdo(fpAss, a, i);
                     }
@@ -133,15 +218,28 @@ void generarCode(FILE *fpAss, ArrayTercetos *a)
                         generarOperandoDerecho(fpAss, a, i);
                     }
                     fprintf(fpAss, "\nFPREM");
-                }
-                else if (operador == TOP_DIV) {
+                }*/
+                else if (operador == TOP_DIV_ENTERA) {
                     if(a->array[a->array[i].left].isOperand == 1) {
                         generarOperandoIzquierdo(fpAss, a, i);
                     }
                     if(a->array[a->array[i].right].isOperand == 1) {
-                        generarOperandoDerecho(fpAss, a, i);
+						if(a->array[a->array[i].right].type == 'F') 
+						{
+							generarOperandoDerecho(fpAss, a, i);
+							fprintf(fpAss, "\nFIDIV");
+						}else if(a->array[a->array[i].right].type == 'I'){
+							fprintf(fpAss, "\nFIDIV _%d", a->array[a->array[i].right].intValue);
+						}else if(a->array[a->array[i].right].type == 'S'){
+							if(getType(a->array[a->array[i].right].stringValue) == 1)
+								fprintf(fpAss, "\nFIDIV %s", a->array[a->array[i].right].stringValue);
+							else
+							{
+								generarOperandoDerecho(fpAss, a, i);
+								fprintf(fpAss, "\nFIDIV");
+							}
+						}
                     }
-                    fprintf(fpAss, "\nFDIV");
                 }
                 else if (operador == TOP_CMP) {
                     if(a->array[a->array[i].right].isOperand == 1) {
@@ -245,16 +343,17 @@ void generarData(FILE *fpAss)
 			{
 				fprintf(fpAss, "\n%s dd 0", word);
 			}
+			
 			else if (strcmp(type, "CONST_STRING") == 0 ) {
 				fprintf(fpAss, "\n%s db %s", word, value);
 			}
 			else if(strcmp(type, "CONST_INT") == 0)
 			{
-				fprintf(fpAss, "\n%s dd %s.0", word,value);
+				fprintf(fpAss, "\n%s dd %s", word,value);
 			}
 			else if(strcmp(type, "CONST_FLOAT") == 0)
 			{
-				fprintf(fpAss, "\n%s dd %s", word,value);
+				fprintf(fpAss, "\n%s_ dd %s", word,value);
 			}
 		
         }

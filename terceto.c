@@ -52,16 +52,27 @@ void insertarTercetos(ArrayTercetos *a, Terceto element)
     a->array[a->tamanioUsado].tercetoID = element.tercetoID;
 	
     if(element.isOperator == 1) {
-        a->array[a->tamanioUsado].isOperand = 0;
-        a->array[a->tamanioUsado].isOperator = 1;
-        a->array[a->tamanioUsado].operator = element.operator;
-        a->array[a->tamanioUsado].left = element.left;
-        a->array[a->tamanioUsado].right = element.right;
+		if(element.operator == TOP_PRINT || element.operator == TOP_READ)
+		{
+			a->array[a->tamanioUsado].isOperand = 0;
+			a->array[a->tamanioUsado].isOperator = 1;
+			a->array[a->tamanioUsado].operator = element.operator;
+			a->array[a->tamanioUsado].type = element.type;
+			a->array[a->tamanioUsado].stringValue = malloc(strlen(element.stringValue) + 1);
+            strcpy(a->array[a->tamanioUsado].stringValue, element.stringValue);
+		}else{
+		
+			a->array[a->tamanioUsado].isOperand = 0;
+			a->array[a->tamanioUsado].isOperator = 1;
+			a->array[a->tamanioUsado].operator = element.operator;
+			a->array[a->tamanioUsado].left = element.left;
+			a->array[a->tamanioUsado].right = element.right;
 
-        if(element.operator == TOP_JUMP) {
-            a->array[a->tamanioUsado].operatorStringValue = malloc(strlen(element.operatorStringValue) + 1);
-            strcpy(a->array[a->tamanioUsado].operatorStringValue, element.operatorStringValue);
-        }
+			if(element.operator == TOP_JUMP) {
+				a->array[a->tamanioUsado].operatorStringValue = malloc(strlen(element.operatorStringValue) + 1);
+				strcpy(a->array[a->tamanioUsado].operatorStringValue, element.operatorStringValue);
+			}
+		}
     }
 
     if(element.isOperand == 1) {

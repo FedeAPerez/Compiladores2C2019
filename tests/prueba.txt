@@ -1,5 +1,5 @@
 VAR 
-    [INTEGER, INTEGER, INTEGER, INTEGER] : [pepe1, pepe2,pepe3,pepe4]
+    [INTEGER, INTEGER, INTEGER, INTEGER, INTEGER] : [pepe1, pepe2,pepe3,pepe4,pepe5]
 ENDVAR
 
 --/ Asi son los comentarios en el 2doCuat de LyC --/ Comentario  /-- /--
@@ -35,9 +35,16 @@ REPEAT
     pepe1 := pepe1 + 70
 UNTIL pepe3 == 5 AND pepe1 == 100
 
+
 IF NOT pepe3 == 4
 THEN
-	pepe2 := (9 DIV 3)
+	pepe5 := (100 MOD 3)
 ELSE
-	pepe4 := (10 MOD 3)
+	pepe4 := (9 DIV 3)
 ENDIF
+
+PRINT pepe1
+PRINT pepe2
+PRINT pepe3
+PRINT pepe4
+PRINT pepe5

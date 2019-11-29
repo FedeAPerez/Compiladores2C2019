@@ -136,6 +136,10 @@ void pprintff(float str) {
 	int cant_var = -1;
 	int cant_asig=-1;
 	int is_or = 0;
+	int PInd=-1;
+	int Auxind=-1;
+	int Auxind2=-1;
+	int Auxind3=-1;
 %}
 
 %type <intValue> CONST_INT
@@ -246,18 +250,59 @@ sentencia:
 
 io_lectura:
         READ ID {
-                crearTerceto("READ", $2, "_", numeracionTercetos);
-                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				Terceto tRead;
+                tRead.isOperand = 0;
+                tRead.isOperator = 1;
+				tRead.operator = TOP_READ;
+                tRead.type = 'S';
+                tRead.stringValue = malloc(strlen($2)+1);
+                strcpy(tRead.stringValue, $2);
+				
+                PInd = crearTerceto("READ", $2, "_", numeracionTercetos);
+                tRead.tercetoID = PInd;
+
+                insertarTercetos(&aTercetos, tRead);
+				numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
 
 io_salida:
         PRINT CONST_STRING {
-                crearTerceto("PRINT", $2, "_", numeracionTercetos);
-                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+                //crearTerceto("PRINT", $2, "_", numeracionTercetos);
+                //numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				
+				Terceto tPrint;
+                tPrint.isOperand = 0;
+                tPrint.isOperator = 1;
+				tPrint.operator = TOP_PRINT;
+                tPrint.type = 'S';
+                tPrint.stringValue = malloc(strlen($2)+1);
+                strcpy(tPrint.stringValue, $2);
+
+                PInd = crearTerceto("PRINT", $2, "_", numeracionTercetos);;
+                tPrint.tercetoID = PInd;
+
+                insertarTercetos(&aTercetos, tPrint);
+				numeracionTercetos = avanzarTerceto(numeracionTercetos);
 		
         } | PRINT ID {
-                crearTerceto("PRINT", $2, "_", numeracionTercetos);
-                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+                //crearTerceto("PRINT", $2, "_", numeracionTercetos);
+                //numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				Terceto tPrint;
+                tPrint.isOperand = 0;
+                tPrint.isOperator = 1;
+				tPrint.operator = TOP_PRINT;
+				if(getType($2) == 1)
+					tPrint.type = 'I';
+				else
+					tPrint.type = 'F';
+                tPrint.stringValue = malloc(strlen($2)+1);
+                strcpy(tPrint.stringValue, $2);
+
+                PInd = crearTerceto("PRINT", $2, "_", numeracionTercetos);;
+                tPrint.tercetoID = PInd;
+
+                insertarTercetos(&aTercetos, tPrint);
+				numeracionTercetos = avanzarTerceto(numeracionTercetos);
         };
 
 condicional:
@@ -1094,22 +1139,160 @@ factor:
                 Find = Eind;
                 status("pa expresion pc a factor");
         }
-        | PARENTESIS_ABRE expresion {Find1=Eind;} MOD expresion PARENTESIS_CIERRA {
-                Terceto tMod;
+        | PARENTESIS_ABRE expresion {Find1=Eind;
+				//Asignamos a una auxilar 1
+				Terceto tIdAsignacion;
+                tIdAsignacion.isOperand = 1;
+                tIdAsignacion.isOperator = 0;
+                tIdAsignacion.type = 'S';
+                tIdAsignacion.stringValue = malloc(strlen("auxMod0")+1);
+                strcpy(tIdAsignacion.stringValue, "auxMod0");
+
+                Auxind=crearTerceto("auxMod0", "_", "_", numeracionTercetos);
+                tIdAsignacion.tercetoID = Auxind;
+
+                insertarTercetos(&aTercetos, tIdAsignacion);
+				
+				numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				
+				Terceto tOpAsignacion;
+                tOpAsignacion.isOperator = 1;
+                tOpAsignacion.isOperand = 0;
+                tOpAsignacion.operator = TOP_ASIG;
+                tOpAsignacion.left = Auxind;
+                tOpAsignacion.right = Find1;
+
+                Tind1 = crearTercetoOperacion(":=", Auxind, Find1, numeracionTercetos);
+                tOpAsignacion.tercetoID = Tind1;
+
+                insertarTercetos(&aTercetos, tOpAsignacion);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+		
+				} MOD expresion PARENTESIS_CIERRA {
+                /*Terceto tMod;
                 tMod.isOperator = 1;
                 tMod.isOperand = 0;
                 tMod.operator = TOP_MOD;
                 tMod.left = Find1;
-                tMod.right = Find;
+                tMod.right = Find;*/
 
-                Find = crearTercetoOperacion("OP_MOD", Find1, Find, numeracionTercetos);
-                tMod.tercetoID = Find;
+				insertInTs("auxMod0", "INTEGER", "", "");
+				insertInTs("auxMod1", "INTEGER", "", "");
+				insertInTs("aux", "INTEGER", "", "");
+				
+				
+				
+				//Asignamos a una auxiliar 2
+				Terceto tIdAsignacion;
+                tIdAsignacion.isOperand = 1;
+                tIdAsignacion.isOperator = 0;
+                tIdAsignacion.type = 'S';
+                tIdAsignacion.stringValue = malloc(strlen("auxMod1")+1);
+                strcpy(tIdAsignacion.stringValue, "auxMod1");
 
-                // Insertar en array
-                insertarTercetos(&aTercetos, tMod);
+                Auxind2=crearTerceto("auxMod1", "_", "_", numeracionTercetos);
+                tIdAsignacion.tercetoID = Auxind2;
 
-                // Avanzo la numeración
+                insertarTercetos(&aTercetos, tIdAsignacion);
+				
+				numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				
+				Terceto tOpAsignacion;
+                tOpAsignacion.isOperator = 1;
+                tOpAsignacion.isOperand = 0;
+                tOpAsignacion.operator = TOP_ASIG;
+                tOpAsignacion.left = Auxind2;
+                tOpAsignacion.right = Find;
+
+                Tind2 = crearTercetoOperacion(":=", Auxind2, Find, numeracionTercetos);
+                tOpAsignacion.tercetoID = Tind2;
+
+                insertarTercetos(&aTercetos, tOpAsignacion);
                 numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				
+				//Division de ambos aux
+				Terceto tOperadorDiv;
+                tOperadorDiv.isOperator = 1;
+				tOperadorDiv.isOperand = 0;
+                tOperadorDiv.operator = TOP_DIV;
+                tOperadorDiv.left = Auxind;
+                tOperadorDiv.right = Auxind2;
+
+                Tind = crearTercetoOperacion("/", Tind1, Tind2, numeracionTercetos);
+                tOperadorDiv.tercetoID = Tind;
+
+                insertarTercetos(&aTercetos, tOperadorDiv);
+
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				
+				//Asignamos a una aux
+		
+                tIdAsignacion.isOperand = 1;
+                tIdAsignacion.isOperator = 0;
+                tIdAsignacion.type = 'S';
+                tIdAsignacion.stringValue = malloc(strlen("aux")+1);
+                strcpy(tIdAsignacion.stringValue, "aux");
+
+                Auxind3=crearTerceto("aux", "_", "_", numeracionTercetos);
+                tIdAsignacion.tercetoID = Auxind3;
+
+                insertarTercetos(&aTercetos, tIdAsignacion);
+				
+				numeracionTercetos = avanzarTerceto(numeracionTercetos);
+                tOpAsignacion.isOperator = 1;
+                tOpAsignacion.isOperand = 0;
+                tOpAsignacion.operator = TOP_ASIG;
+                tOpAsignacion.left = Auxind3;
+                tOpAsignacion.right = Tind;
+
+				Tind= crearTercetoOperacion(":=", Auxind3, Tind, numeracionTercetos);
+                tOpAsignacion.tercetoID = Tind;
+
+                insertarTercetos(&aTercetos, tOpAsignacion);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				
+				//Multiplicamos
+                Terceto tOperadorMulti;
+                tOperadorMulti.isOperator = 1;
+				tOperadorMulti.isOperand = 0;
+                tOperadorMulti.operator = TOP_MUL;
+                tOperadorMulti.left = Auxind2;
+                tOperadorMulti.right = Auxind3;
+                Tind = crearTercetoOperacion("*", Tind2, Tind, numeracionTercetos);
+                tOperadorMulti.tercetoID = Tind;
+                insertarTercetos(&aTercetos, tOperadorMulti);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				
+				//Asignacion a aux
+				tOpAsignacion.isOperator = 1;
+                tOpAsignacion.isOperand = 0;
+                tOpAsignacion.operator = TOP_ASIG;
+                tOpAsignacion.left = Auxind3;
+                tOpAsignacion.right = Tind;
+
+                Aind = crearTercetoOperacion(":=", Auxind3, Tind, numeracionTercetos);
+                tOpAsignacion.tercetoID = Aind;
+
+                insertarTercetos(&aTercetos, tOpAsignacion);
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				
+				//Resta
+				Terceto tResta;
+                tResta.isOperator = 1;
+                tResta.isOperand = 0;
+                tResta.operator = TOP_RES;
+                tResta.left = Auxind;
+                tResta.right = Auxind3;
+
+                Find = crearTercetoOperacion("-", Tind1, Aind, numeracionTercetos);
+                tResta.tercetoID = Find;
+
+                // Inserto en la lista de structs
+                insertarTercetos(&aTercetos, tResta);
+
+                // pido la nueva numeracion
+                numeracionTercetos = avanzarTerceto(numeracionTercetos);
+				
                 status("MOD a Factor");
         }
         | PARENTESIS_ABRE  expresion {Find1=Eind;} DIV expresion PARENTESIS_CIERRA {

@@ -18,3 +18,9 @@ THEN
 ELSE
 	pepe4 := 10
 ENDIF
+
+
+PRINT pepe1
+PRINT pepe2
+PRINT pepe3
+PRINT pepe4

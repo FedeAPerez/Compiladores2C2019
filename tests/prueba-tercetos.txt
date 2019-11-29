@@ -2,7 +2,5 @@ VAR
     [INTEGER] : [varMod]
 ENDVAR
 
-REPEAT
 varMod := 1
 varMod := varMod + 2
-UNTIL varMod > 3

@@ -3,7 +3,7 @@ VAR
 ENDVAR
 
 --/ pepe es la de string /--
-[pepe1, pepe2, pepe3, pepe4] := [10*2, 2, 3, 1+2]
+[pepe1, pepe2, pepe3, pepe4] := [1, 2, 3, 1+2]
 
 IF pepe1 > 3 OR pepe2 < 3
 THEN
